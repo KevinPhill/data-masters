@@ -52,6 +52,7 @@ METODOS_EN = {
 ES = {
     # ---------------------------------------------------------------- marca y encabezado
     "app_nombre": "Data Masters",
+    "pagina_titulo": "Data Masters · El calendario del fuego visto desde el espacio",
     "app_lead": "MODIS (desde 2000) y VIIRS (desde 2012) cuentan el fuego de forma distinta. Los unimos en una "
                 "sola serie de 25 años, comparable en todo el mundo, para saber si este mes hubo más fuego de lo "
                 "normal.",
@@ -93,14 +94,12 @@ ES = {
     "area_como": "¿Cómo eliges el área?",
     "area_pais": "País",
     "area_region": "Región de ejemplo",
-    "area_dibujar": "Dibujar en el mapa",
     "area_coords": "Coordenadas",
     "pais": "País",
     "region": "Región",
     "latitud": "Latitud",
     "longitud": "Longitud",
     "radio_km": "Radio (km)",
-    "dibuja_info": "Dibuja un rectángulo o polígono en el mapa de la derecha.",
     "periodo_titulo": "Periodo",
     "tipo_titulo": "Tipo de punto de calor",
     "tipo_ayuda": "FIRMS clasifica cada detección: vegetación (incendios y quemas), industria y gas (quema de gas "
@@ -123,8 +122,6 @@ ES = {
     "nota_datos": "Datos: NASA FIRMS · MODIS C6.1, VIIRS S-NPP y NOAA-20 · celdas de 0.5° · {a0}–{a1}",
     # ---------------------------------------------------------------- área
     "area_circulo": "{r} km alrededor de {lat:.2f}, {lon:.2f}",
-    "area_dibujada": "Área dibujada",
-    "dibuja_titulo": "Dibuja tu área de interés",
     # ---------------------------------------------------------------- globo
     "globo_sub": "Promedio anual {a0}–{a1}, en detecciones equivalentes a VIIRS.",
     "globo_hover": "detecciones / año",
@@ -151,7 +148,6 @@ ES = {
     "hist_entra_viirs": "entra VIIRS",
     "hist_nota": "Promedio mensual de cada año (mínimo 9 meses). Punto lleno: visto por VIIRS. Punto hueco: "
                  "estimado desde MODIS; la banda es su rango.",
-    "dibuja_usa": "Usa las herramientas ▭ o ⬠ del mapa para dibujar. El análisis aparecerá abajo.",
     "area_vacia": "En esta área no hay celdas con detecciones de fuego. Prueba con un área más grande.",
     "faltan_datos": "Faltan los datos de la app (carpeta `data/app`).",
     "faltan_pasos": "1. Corre el notebook `notebooks/03_modelo.ipynb` hasta la sección 2 "
@@ -179,8 +175,8 @@ ES = {
                   "alerta. Termina en {mes} {año}, el mes que se evalúa.",
     "al_por_semana": "Por semana",
     "al_por_mes": "Por mes",
-    "al_sin_semanas": "La vista por semana está para países y regiones de ejemplo. Para un área dibujada o por "
-                      "coordenadas se compara mes a mes.",
+    "al_sin_semanas": "La vista por semana está para países y regiones de ejemplo. Por coordenadas se compara mes "
+                      "a mes.",
     "al_u_semana": "semana",
     "al_u_semanas": "semanas",
     "al_u_mes": "mes",
@@ -698,8 +694,8 @@ ES = {
     "cob_col_donde": "Dónde está en la app",
     "cob_1": "Armonizar MODIS y VIIRS en una sola serie",
     "cob_1_d": "¿Cómo armonizamos? · Método",
-    "cob_2": "Elegir una región: dibujarla en el mapa o con latitud/longitud",
-    "cob_2_d": "Panel lateral: País, Región de ejemplo, Dibujar en el mapa, Coordenadas",
+    "cob_2": "Elegir una región: país, región de ejemplo o latitud/longitud con un radio",
+    "cob_2_d": "Panel lateral: País, Región de ejemplo, Coordenadas · o un clic en el globo",
     "cob_3": "Elegir un rango de fechas",
     "cob_3_d": "Panel lateral (años y mes) · Descargas (fechas exactas)",
     "cob_4": "Calendario de quemas desde inicios de los 2000 hasta hoy",
@@ -769,6 +765,7 @@ ES = {
 
 EN = {
     "app_nombre": "Data Masters",
+    "pagina_titulo": "Data Masters · The fire calendar seen from space",
     "app_lead": "MODIS (since 2000) and VIIRS (since 2012) count fire differently. We join them into a single "
                 "25-year series, comparable worldwide, to tell whether this month had more fire than usual.",
     "app_evento": "NASA Space Apps Challenge 2026 · Costa Rica",
@@ -806,14 +803,12 @@ EN = {
     "area_como": "How do you choose the area?",
     "area_pais": "Country",
     "area_region": "Example region",
-    "area_dibujar": "Draw on the map",
     "area_coords": "Coordinates",
     "pais": "Country",
     "region": "Region",
     "latitud": "Latitude",
     "longitud": "Longitude",
     "radio_km": "Radius (km)",
-    "dibuja_info": "Draw a rectangle or polygon on the map to the right.",
     "periodo_titulo": "Period",
     "tipo_titulo": "Hot spot type",
     "tipo_ayuda": "FIRMS classifies every detection: vegetation (wildfires and burning), industry and gas (gas "
@@ -835,8 +830,6 @@ EN = {
     "nota_armonizacion": "Harmonization",
     "nota_datos": "Data: NASA FIRMS · MODIS C6.1, VIIRS S-NPP and NOAA-20 · 0.5° cells · {a0}–{a1}",
     "area_circulo": "{r} km around {lat:.2f}, {lon:.2f}",
-    "area_dibujada": "Drawn area",
-    "dibuja_titulo": "Draw your area of interest",
     # ---------------------------------------------------------------- globe
     "globo_sub": "Yearly average {a0}–{a1}, in VIIRS-equivalent detections.",
     "globo_hover": "detections / year",
@@ -863,7 +856,6 @@ EN = {
     "hist_entra_viirs": "VIIRS starts",
     "hist_nota": "Monthly average for each year (at least 9 months). Filled point: seen by VIIRS. Hollow point: "
                  "estimated from MODIS; the band is its range.",
-    "dibuja_usa": "Use the ▭ or ⬠ tools on the map to draw. The analysis will appear below.",
     "area_vacia": "There are no cells with fire detections in this area. Try a larger area.",
     "faltan_datos": "The app data is missing (folder `data/app`).",
     "faltan_pasos": "1. Run the notebook `notebooks/03_modelo.ipynb` up to section 2 "
@@ -890,8 +882,8 @@ EN = {
                   "threshold. It ends in {mes} {año}, the month being evaluated.",
     "al_por_semana": "By week",
     "al_por_mes": "By month",
-    "al_sin_semanas": "The weekly view is available for countries and example regions. For a drawn area or "
-                      "coordinates, the comparison is month by month.",
+    "al_sin_semanas": "The weekly view is available for countries and example regions. For coordinates, the "
+                      "comparison is month by month.",
     "al_u_semana": "week",
     "al_u_semanas": "weeks",
     "al_u_mes": "month",
@@ -1386,8 +1378,8 @@ EN = {
     "cob_col_donde": "Where it is in the app",
     "cob_1": "Harmonize MODIS and VIIRS into one series",
     "cob_1_d": "How do we harmonize? · Method",
-    "cob_2": "Choose a region: draw it on a map or enter latitude/longitude",
-    "cob_2_d": "Side panel: Country, Example region, Draw on the map, Coordinates",
+    "cob_2": "Choose a region: country, example region or latitude/longitude with a radius",
+    "cob_2_d": "Side panel: Country, Example region, Coordinates · or a click on the globe",
     "cob_3": "Choose a date range",
     "cob_3_d": "Side panel (years and month) · Downloads (exact dates)",
     "cob_4": "Burn calendar from the early 2000s to today",
@@ -1458,8 +1450,8 @@ TEXTOS = {"es": ES, "en": EN}
 RETO = "Harmonization of MODIS and VIIRS Hot Spots"
 
 
-def t(clave: str, idioma: str = "es", **valores) -> str:
-    texto = TEXTOS.get(idioma, ES).get(clave, ES.get(clave, clave))
+def t(clave: str, idioma: str = "en", **valores) -> str:
+    texto = TEXTOS.get(idioma, EN).get(clave, EN.get(clave, clave))
     return texto.format(**valores) if valores else texto
 
 

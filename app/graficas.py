@@ -110,7 +110,7 @@ def _colorbar(p: dict, **kw) -> dict:
 
 # =============================================================================== calendario año × mes
 def calendario(s: pd.DataFrame, vista: str, rampa: str, escala_log: bool, ref: tuple[int, int] | None,
-               idioma: str = "es", modo: str = "claro"):
+               idioma: str = "en", modo: str = "claro"):
     """Mapa de calor año × mes. vista: 'armonizado' | 'sin_armonizar' | 'anomalia'."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
@@ -198,7 +198,7 @@ def calendario(s: pd.DataFrame, vista: str, rampa: str, escala_log: bool, ref: t
 
 
 # =============================================================================== tendencias
-def perfil_estacional(s: pd.DataFrame, año_ref: int, años_hist: tuple[int, int], idioma: str = "es",
+def perfil_estacional(s: pd.DataFrame, año_ref: int, años_hist: tuple[int, int], idioma: str = "en",
                       modo: str = "claro"):
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
@@ -226,7 +226,7 @@ def perfil_estacional(s: pd.DataFrame, año_ref: int, años_hist: tuple[int, int
     return _layout(fig, alto=380, modo=modo)
 
 
-def anual(s: pd.DataFrame, años: tuple[int, int], idioma: str = "es", modo: str = "claro"):
+def anual(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", modo: str = "claro"):
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
     d = s[s.año.between(*años)]
@@ -265,7 +265,7 @@ def _fecha_corta(f: pd.Timestamp, idioma: str, dia: bool = True) -> str:
     return f"{f.day} {m} {f.year}" if dia else f"{m} {f.year}"
 
 
-def alertas(n: pd.DataFrame, periodo: str, año0: int, idioma: str = "es", modo: str = "claro"):
+def alertas(n: pd.DataFrame, periodo: str, año0: int, idioma: str = "en", modo: str = "claro"):
     """Barras de cada semana (o mes) coloreadas por nivel, sobre el rango normal (percentiles 25–75 del mismo periodo
     en años anteriores), la mediana y el umbral de alerta."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
@@ -323,7 +323,7 @@ def alertas(n: pd.DataFrame, periodo: str, año0: int, idioma: str = "es", modo:
 COLOR_TIPO = {"veg": NARANJA, "industria": AZUL, "volcan": AMARILLO, "mar": "#2E96F5"}
 
 
-def composicion(c: pd.DataFrame, años: tuple[int, int], idioma: str = "es", modo: str = "claro"):
+def composicion(c: pd.DataFrame, años: tuple[int, int], idioma: str = "en", modo: str = "claro"):
     """Barras apiladas por año: cuánto de lo detectado es vegetación, industria y gas, volcanes o costa afuera."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
@@ -364,7 +364,7 @@ def viirs_puro(d: pd.DataFrame, minimo: int = 9) -> pd.Series:
     return g.loc[(g.n == g.nv) & (g.n >= minimo), "v"]
 
 
-def antes_despues(s: pd.DataFrame, años: tuple[int, int], idioma: str = "es", modo: str = "claro"):
+def antes_despues(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", modo: str = "claro"):
     """Dos paneles con el mismo eje y los mismos colores: a la izquierda MODIS y VIIRS unidos tal cual (salto falso),
     a la derecha MODIS armonizado (con su rango) junto a VIIRS. Lo único que se mueve es la línea azul.
     Cada punto es el promedio mensual de un año con al menos 9 meses válidos (como en el notebook 03)."""
@@ -474,7 +474,7 @@ def escala_globo(df: pd.DataFrame, modo: str = "banda") -> tuple[list, list[tupl
     return FUEGO[modo], marcas
 
 
-def globo(df: pd.DataFrame, seleccionado: str | None, idioma: str = "es", modo: str = "claro", alto: int = 560,
+def globo(df: pd.DataFrame, seleccionado: str | None, idioma: str = "en", modo: str = "claro", alto: int = 560,
           barra: bool = True):
     """Globo ortográfico con todos los países, color = detecciones armonizadas por año (escala log).
     Se gira arrastrando; el país elegido queda al centro y con borde. customdata = [nombre FIRMS, valor, nombre].
@@ -526,7 +526,7 @@ def globo(df: pd.DataFrame, seleccionado: str | None, idioma: str = "es", modo: 
     return fig
 
 
-def historia_pais(s: pd.DataFrame, años: tuple[int, int], idioma: str = "es", modo: str = "claro"):
+def historia_pais(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", modo: str = "claro"):
     """Historia anual del país, estilo EDA: la serie armonizada (punto lleno = año observado por VIIRS, hueco =
     estimado desde MODIS, con su banda) contra MODIS tal cual. Nombres al final de cada línea, sin leyenda."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
@@ -587,7 +587,7 @@ def historia_pais(s: pd.DataFrame, años: tuple[int, int], idioma: str = "es", m
     return fig
 
 
-def validacion(v: pd.DataFrame, idioma: str = "es", modo: str = "claro"):
+def validacion(v: pd.DataFrame, idioma: str = "en", modo: str = "claro"):
     """Validación por año en el área: VIIRS observado contra lo que se predijo desde MODIS sin haber visto ese año
     (2012–2021 dejando un año fuera; 2022–2025 nunca usados para calibrar), y MODIS tal cual."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
@@ -635,7 +635,7 @@ def validacion(v: pd.DataFrame, idioma: str = "es", modo: str = "claro"):
     return fig
 
 
-def serie_global(g: pd.DataFrame, idioma: str = "es", modo: str = "claro"):
+def serie_global(g: pd.DataFrame, idioma: str = "en", modo: str = "claro"):
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
     fig = go.Figure()

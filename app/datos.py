@@ -5,7 +5,6 @@ from __future__ import annotations
 import calendar
 import io
 import json
-import math
 import os
 from datetime import date, timedelta
 from pathlib import Path
@@ -158,26 +157,6 @@ def celdas_circulo(lat, lon, radio_km) -> pd.DataFrame:
     return c[cerca]
 
 
-def celdas_poligono(coords: list[list[float]]) -> pd.DataFrame:
-    """coords = [[lon, lat], ...] (GeoJSON). Celdas cuyo centro cae dentro del polígono."""
-    c = todas_las_celdas()
-    poly = np.asarray(coords, dtype=float)
-    x, y = c.lon.to_numpy(), c.lat.to_numpy()
-    dentro = np.zeros(len(c), bool)
-    j = len(poly) - 1
-    for i in range(len(poly)):
-        xi, yi = poly[i]
-        xj, yj = poly[j]
-        cruza = ((yi > y) != (yj > y)) & (x < (xj - xi) * (y - yi) / (yj - yi + 1e-12) + xi)
-        dentro ^= cruza
-        j = i
-    sel = c[dentro]
-    if sel.empty:  # polígono menor que una celda: la celda que contiene su centro
-        lon_c, lat_c = poly[:, 0].mean(), poly[:, 1].mean()
-        sel = c[(c.fila == math.floor(lat_c / GRADO)) & (c.col == math.floor(lon_c / GRADO))]
-    return sel
-
-
 # ------------------------------------------------------------------------------- series
 def _registrar(sel: pd.DataFrame):
     con = conexion()
@@ -215,7 +194,7 @@ def semanas_completas() -> pd.DatetimeIndex:
 @st.cache_data(show_spinner=False)
 def serie_semanal(area: str, cats: tuple[str, ...] | None = None) -> pd.DataFrame | None:
     """Detecciones armonizadas por semana de un país ("pais:<país>") o región de ejemplo ("region:<región>"), con
-    ceros en las semanas sin fuego. None si el área no tiene serie semanal (dibujada o por coordenadas)."""
+    ceros en las semanas sin fuego. None si el área no tiene serie semanal (por coordenadas)."""
     if not (APP / "semanas.parquet").exists() or not area.startswith(("pais:", "region:")):
         return None
     d = conexion().sql(f"SELECT semana, sum(det) det FROM semanas s WHERE s.area = ? {_cat(cats, 's')} GROUP BY 1",

@@ -25,7 +25,7 @@ if sys.prefix == sys.base_prefix:
     subprocess.check_call([PY, "-m", "venv", str(ROOT / ".venv")])
     sys.exit(subprocess.call([str(CANDIDATOS[0]), __file__, *sys.argv[1:]]))
 
-faltan = [m for m in ("streamlit", "plotly", "folium", "streamlit_folium", "duckdb", "pyarrow", "requests")
+faltan = [m for m in ("streamlit", "plotly", "duckdb", "pyarrow", "requests")
           if importlib.util.find_spec(m) is None]
 if faltan:
     print(f"Instalando dependencias que faltan: {faltan} …", flush=True)

@@ -15,7 +15,7 @@ Datos: NASA FIRMS · Proyecto para NASA Space Apps Challenge 2026 Costa Rica. No
 
 ## Qué hace
 - **Globo de todos los países**: clic en uno y sale su historia del fuego (una frase, tres cifras y la serie armonizada contra MODIS tal cual); todo el análisis cambia a ese país.
-- **Área de interés**: país, región de ejemplo, dibujar en el mapa o coordenadas; periodo de años y mes a evaluar.
+- **Área de interés**: país (también con un clic en el globo), región de ejemplo o coordenadas con un radio; periodo de años y mes a evaluar.
 - **Tipo de punto de calor**: todos, vegetación, industria y gas, volcanes o costa afuera. Cambia el globo, la ficha del país, el calendario, el mapa y la validación; la pestaña Tendencias muestra qué produce el calor año a año.
 - **Estado del mes**: lo compara con la mediana histórica del mismo mes (razón, percentil y z robusto) y lo dice en una frase con semáforo.
 - **Alertas por semana o por mes**: cada semana (o mes) contra la misma semana del año en los años anteriores. Avisa cuando hay una racha de alzas fuera de lo normal (3 semanas o 2 meses seguidos), o una sola semana que duplica lo normal. Lista las rachas del periodo y los países del mundo que están por encima de lo normal ese mes; con un clic se pasa a cualquiera de ellos. La vista por semana está para países y regiones de ejemplo.
@@ -23,7 +23,7 @@ Datos: NASA FIRMS · Proyecto para NASA Space Apps Challenge 2026 Costa Rica. No
 - **Últimos días**: detecciones VIIRS en tiempo casi real de FIRMS (NOAA-20 y NOAA-21) contra lo normal para esa semana del año.
 - **Descargas**: informe HTML del área (se abre sin internet), resumen analítico CSV, calendario CSV y puntos de calor originales CSV entre dos fechas. Cada gráfica se guarda como PNG.
 - **¿Cómo armonizamos?**: el modelo, antes y después, validación, R² y MSE, sobreajuste y en qué países no funciona.
-- Tour para jueces, modo presentación, español e inglés, modo claro y noche.
+- Tour para jueces, modo presentación, inglés (por defecto) y español, modo claro y noche.
 
 ## Cómo armonizamos
 Modelo de la app: **integral**, un modelo para cada tipo de punto de calor de FIRMS.
@@ -90,7 +90,7 @@ Con `pip install -r requirements-modelo.txt` (agrega LightGBM, scikit-learn, PyT
 
 1. Descargar de NASA FIRMS los resúmenes anuales por país (https://firms.modaps.eosdis.nasa.gov/country/, procesamiento estándar) a `data/raw/`: `modis_2000..2025_all_countries.zip`, `viirs-snpp_2012..2017_all_countries.zip` y `viirs-jpss1_2018..2025_all_countries.zip`.
 2. `python scripts/crear_db.py`: une los ZIP en Parquet (`scripts/consolidar.py`) y crea `data/db_nasa.duckdb`.
-3. `notebooks/03_modelo.ipynb`: arma la tabla celda × mes, entrena y valida los modelos y guarda `data/modelo/` (también están los análisis exploratorios `01_eda` y `02_eda`).
+3. `notebooks/03_modelo.ipynb`: arma la tabla celda × mes, entrena y valida los modelos y guarda `data/modelo/` (el análisis exploratorio global está en `02_eda`).
 4. `python scripts/modelo_integral.py` (~40 min): conteos por tipo de fuente y LightGBM de vegetación, con su validación dejando un año fuera → `data/modelo/tipos_celdas.parquet`, `veg_celdas.parquet`, `veg_loyo.parquet`.
 5. `python scripts/preparar_app.py`: arma `data/app` (celdas armonizadas por tipo, meses, países).
 6. `python scripts/semanas.py`: reparte cada mes armonizado entre sus semanas según lo que vio el sensor de ese mes, por país y región de ejemplo → `data/app/semanas.parquet` y `paises_mes.parquet` (alertas).

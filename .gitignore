@@ -10,7 +10,5 @@ data/db_nasa.duckdb
 data/db_nasa.duckdb.*
 data/modelo/*.parquet
 
-# copias de trabajo y capturas de revisión
-/01_eda.ipynb
-notebooks/01_eda copy.ipynb
-capturas_ui/
+# editor
+.vscode/

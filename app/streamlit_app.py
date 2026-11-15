@@ -27,19 +27,17 @@ import informe as INF  # noqa: E402
 import textos as X  # noqa: E402
 import ui  # noqa: E402
 
-st.set_page_config(page_title="Data Masters · El calendario del fuego visto desde el espacio", page_icon="🔥",
-                   layout="wide", initial_sidebar_state="auto")
-
 # =============================================================================== estado de la interfaz
 ss = st.session_state
-for _clave, _valor in {"idioma": "es", "modo": "claro", "presentacion": False, "vista": "armonizado",
+for _clave, _valor in {"idioma": "en", "modo": "claro", "presentacion": False, "vista": "armonizado",
                        "capa": "total", "tour_paso": 0}.items():
     ss.setdefault(_clave, _valor)
-IDI = ss.idioma if ss.idioma in X.IDIOMAS else "es"
+IDI = ss.idioma if ss.idioma in X.IDIOMAS else "en"
 MODO = ss.modo if ss.modo in ("claro", "noche") else "claro"
 PRES = bool(ss.presentacion)
 MESES_LARGO = X.MESES_LARGO[IDI]
 esc = html.escape
+st.set_page_config(page_title=X.t("pagina_titulo", IDI), page_icon="🔥", layout="wide", initial_sidebar_state="auto")
 
 # clic en el globo: se aplica antes de crear los widgets de la barra lateral (después ya no se pueden cambiar).
 # La clave del globo cambia tras cada clic para que la selección se vacíe y el mismo país se pueda volver a elegir.
@@ -218,10 +216,12 @@ with st.sidebar:
     st.html(ui.marca_lateral(T("app_nombre"), T("lateral_sub")))
 
     st.html(ui.paso(T("area_titulo")))
-    modos = ["pais", "region", "dibujar", "coords"]
+    modos = ["pais", "region", "coords"]
     paises = D.lista_paises()
     if not paises:
         modos.remove("pais")
+    if ss.get("modo_area") not in modos:
+        ss.pop("modo_area", None)
     modo_area = st.radio(T("area_como"), modos, key="modo_area", format_func=lambda m: T(f"area_{m}"),
                          label_visibility="collapsed")
 
@@ -236,13 +236,11 @@ with st.sidebar:
     elif modo_area == "region":
         region = st.selectbox(T("region"), list(D.REGIONES), key=clave_idioma("region"),
                               format_func=lambda r: X.region(r, IDI))
-    elif modo_area == "coords":
+    else:
         c1, c2 = st.columns(2)
         lat = c1.number_input(T("latitud"), -90.0, 90.0, 10.5, 0.1, format="%.3f", key="lat")
         lon = c2.number_input(T("longitud"), -180.0, 180.0, -85.4, 0.1, format="%.3f", key="lon")
         radio = st.slider(T("radio_km"), 25, 500, 100, 25, key="radio")
-    else:
-        st.info(T("dibuja_info"), icon=":material/draw:")
 
     # tipo de punto de calor (FIRMS): vegetación, industria y gas, volcanes, costa afuera; "todos" = la suma
     CATS = D.categorias_disponibles()
@@ -256,9 +254,7 @@ with st.sidebar:
 
     # meses traídos de FIRMS para esta área (pestaña Últimos días): alargan el periodo hasta hoy
     id_previo = {"pais": lambda: f"pais:{pais}", "region": lambda: f"region:{region}",
-                 "coords": lambda: f"coords:{lat},{lon},{radio}"}.get(
-        modo_area, lambda: ("poligono:" + ",".join(f"{x:.4f}" for q in ss["poligono"] for x in q))
-        if "poligono" in ss else None)()
+                 "coords": lambda: f"coords:{lat},{lon},{radio}"}[modo_area]()
     ss.setdefault("recientes", {})
     ss.setdefault("recientes_pts", {})
     recientes = ss.recientes.get(id_previo) if not CATS_SEL else None  # FIRMS casi real no trae el tipo
@@ -448,7 +444,8 @@ def seccion_globo() -> None:
             st.html(ui.ficha_pais(X.pais(pais_g, IDI), sub_g, frase)
                     + ui.kpis(cifras, "dm-kpis-mini")
                     + (f'<p class="dm-reparto">{esc(T("hist_reparto"))} {esc(rep_g)}</p>' if rep_g else ""))
-            grafica(G.historia_pais(s_g, años, idioma=IDI, modo="banda"))
+            if prom > 0:  # sin puntos de ese tipo no hay historia que dibujar (la frase ya lo dice)
+                grafica(G.historia_pais(s_g, años, idioma=IDI, modo="banda"))
             st.html(ui.nota(None, esc(T("hist_nota"))))
 
 
@@ -461,32 +458,9 @@ if modo_area == "pais":
     sel, nombre_area, id_area = D.celdas_pais(pais), X.pais(pais, IDI), f"pais:{pais}"
 elif modo_area == "region":
     sel, nombre_area, id_area = D.celdas_caja(*D.REGIONES[region]), X.region(region, IDI), f"region:{region}"
-elif modo_area == "coords":
+else:
     sel = D.celdas_circulo(lat, lon, radio)
     nombre_area, id_area = T("area_circulo", r=radio, lat=lat, lon=lon), f"coords:{lat},{lon},{radio}"
-else:
-    import folium
-    from folium.plugins import Draw
-    from streamlit_folium import st_folium
-
-    mostrar_contexto(T("area_dibujada"), None, años)
-    with st.container(key="tarjeta_dibujo"):
-        st.html(ui.seccion(T("dibuja_titulo")))
-        m = folium.Map(location=[10, -84], zoom_start=5, tiles="CartoDB positron")
-        Draw(draw_options={"polyline": False, "circle": False, "marker": False, "circlemarker": False,
-                           "rectangle": {"shapeOptions": {"color": "#FF5A1F", "weight": 3}},
-                           "polygon": {"shapeOptions": {"color": "#FF5A1F", "weight": 3}}},
-             edit_options={"edit": False}).add_to(m)
-        out = st_folium(m, height=420, use_container_width=True, returned_objects=["last_active_drawing"])
-    geom = (out or {}).get("last_active_drawing")
-    if geom and geom.get("geometry", {}).get("type") == "Polygon":
-        ss["poligono"] = geom["geometry"]["coordinates"][0]
-    if "poligono" not in ss:
-        st.info(T("dibuja_usa"), icon=":material/draw:")
-        st.html(ui.pie(T))
-        st.stop()
-    sel, nombre_area = D.celdas_poligono(ss["poligono"]), T("area_dibujada")
-    id_area = "poligono:" + ",".join(f"{x:.4f}" for p in ss["poligono"] for x in p)
 
 if sel.empty:
     mostrar_contexto(nombre_area, 0, años)
