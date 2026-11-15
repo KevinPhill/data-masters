@@ -80,7 +80,7 @@ El total mundial por mes se equivoca 1.3 % (un año fuera) y 1.5 % (2022–2025)
 Las guías de Space Apps 2026 llaman a estas herramientas "Super Intelligence (SI)". Aquí está todo lo que se usó y cómo.
 
 - **IA generativa, como asistente de programación**: Claude (Anthropic), usado a través de Claude Code.
-  - Código: escribió y refactorizó la mayor parte del Python: la app, el flujo de datos, los scripts de entrenamiento y validación del modelo y las pruebas automáticas de la interfaz.
+  - Código: escribió y refactorizó la mayor parte del Python: la app, el flujo de datos, los scripts de entrenamiento y validación del modelo y las pruebas automáticas de la interfaz que corrimos durante el desarrollo.
   - Diseño y textos: el diseño de la interfaz y el CSS, los textos de la interfaz en español e inglés y sus traducciones, y este README.
   - Fuentes: ayudó a buscar y revisar las fuentes públicas que se citan.
   - Presentación: las filminas de `docs/presentacion/` se redactaron con Claude y se dibujan desde HTML.
