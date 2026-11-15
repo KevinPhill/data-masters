@@ -3,7 +3,7 @@
 NASA Space Apps Challenge 2026 · Costa Rica · Reto **Harmonization of MODIS and VIIRS Hot Spots**.
 
 - **Demo:** DEMO_URL
-- **Código:** REPO_URL
+- **Código:** https://github.com/KevinPhill/data-masters
 
 MODIS (desde 2000) y VIIRS (desde 2012) cuentan el fuego de forma distinta: VIIRS ve unas 4.5 veces más detecciones. Si se unen tal cual, 2012 parece una ola de incendios que nunca existió. Data Masters los armoniza en una sola serie de 25 años, en detecciones equivalentes a VIIRS, para que brigadas forestales, gestores de alerta temprana y científicos sepan en segundos si **este mes es normal en su zona**.
 
