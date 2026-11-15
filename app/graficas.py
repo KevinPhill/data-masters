@@ -3,7 +3,7 @@
 Plantillas "datamasters_claro", "datamasters_noche" y "datamasters_banda" (la franja azul del globo, igual en los
 dos modos): mismo fondo que lo que hay detrás, rejilla tenue, Overpass en el texto y Fira Sans en los rótulos, y
 nombres directos sobre las líneas en lugar de leyendas. Colores de la paleta de NASA Space Apps (azules, Rocket Red,
-Martian Red, Neon Yellow). Las rampas del calendario son Cividis/Viridis/Inferno/Magma (aptas para daltonismo).
+Martian Red, Neon Yellow). El calendario y el mapa usan Cividis (perceptualmente uniforme).
 """
 
 from __future__ import annotations
@@ -137,7 +137,7 @@ def calendario(s: pd.DataFrame, vista: str, rampa: str, escala_log: bool, ref: t
         zmin, zmax = -100, 200
         zplot = z
     else:
-        colorscale, zmid = RAMPAS[rampa], None
+        colorscale, zmid = RAMPAS.get(rampa, rampa), None
         zplot = np.log10(tabla + 1) if escala_log else tabla
         custom = np.dstack([custom, tabla.to_numpy()])
         hover = (f"<b>%{{y}} · %{{x}}</b><br>%{{customdata[3]:,.0f}} {t('g_det_viirs')}"
@@ -253,6 +253,69 @@ def anual(s: pd.DataFrame, años: tuple[int, int], idioma: str = "es", modo: str
     fig.update_layout(barmode="overlay", bargap=0.18)
     fig.update_yaxes(title=t("g_det_año"), rangemode="tozero")
     return _layout(fig, alto=380, modo=modo)
+
+
+# =============================================================================== alertas por semana o por mes
+COLOR_NIVEL = {"muy_alto": "#E43700", "alto": "#FFA51F", "normal": "#3FA37F", "bajo": "#2E96F5"}
+
+
+def _fecha_corta(f: pd.Timestamp, idioma: str, dia: bool = True) -> str:
+    m = X.MESES_CORTO.get(idioma, MESES)[f.month - 1]
+    m = m.lower() if idioma == "es" else m  # en español los meses van en minúscula dentro de la frase
+    return f"{f.day} {m} {f.year}" if dia else f"{m} {f.year}"
+
+
+def alertas(n: pd.DataFrame, periodo: str, año0: int, idioma: str = "es", modo: str = "claro"):
+    """Barras de cada semana (o mes) coloreadas por nivel, sobre el rango normal (percentiles 25–75 del mismo periodo
+    en años anteriores), la mediana y el umbral de alerta."""
+    t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
+    p = PALETA[modo]
+    semana = periodo == "semana"
+    medio = pd.Timedelta(days=3.5) if semana else pd.Timedelta(days=15)
+    x = n.fecha + medio
+    ancho = (6 if semana else 26) * 24 * 3600 * 1000
+    r, g_, b = (9, 96, 225) if modo == "claro" else (111, 177, 255)
+    fig = go.Figure()
+    h = n[n.nivel != "sin_historia"]
+    if len(h):
+        xh = h.fecha + medio
+        fig.add_trace(go.Scatter(x=xh, y=h.p75, mode="lines", line=dict(width=0, shape="hvh"), hoverinfo="skip",
+                                 showlegend=False))
+        fig.add_trace(go.Scatter(x=xh, y=h.p25, mode="lines", fill="tonexty", fillcolor=f"rgba({r},{g_},{b},0.14)",
+                                 line=dict(width=0, shape="hvh"), name=t("g_al_normal"), hoverinfo="skip"))
+    nivel_txt = n.nivel.map(lambda v: t(f"esc_{v}") if v in COLOR_NIVEL else t("nivel_sin_historia"))
+    etiqueta = [t("g_al_semana", f=_fecha_corta(f, idioma)) if semana else _fecha_corta(f, idioma, dia=False)
+                for f in n.fecha]
+    razon = n.razon.where(np.isfinite(n.razon)) if "razon" in n else pd.Series(np.nan, index=n.index)
+    fig.add_trace(go.Bar(
+        x=x, y=n.det, width=ancho, name=t("g_al_det"), showlegend=False,
+        marker=dict(color=[COLOR_NIVEL.get(v, p["tenue"]) for v in n.nivel], line=dict(width=0)),
+        customdata=np.column_stack([etiqueta, n.get("med", pd.Series(np.nan, index=n.index)).round(), razon.round(1),
+                                    nivel_txt]),
+        hovertemplate=(f"<b>%{{customdata[0]}}</b><br>%{{y:,.0f}} {t('g_det_viirs')}"
+                       f"<br>{t('g_al_lo_normal')}: %{{customdata[1]:,.0f}} (%{{customdata[2]}}×)"
+                       f"<br>%{{customdata[3]}}<extra></extra>")))
+    if len(h):
+        fig.add_trace(go.Scatter(x=xh, y=h.med, mode="lines", line=dict(color=p["azul"], width=1.8, shape="hvh"),
+                                 name=t("g_al_mediana", a0=año0), hoverinfo="skip"))
+        fig.add_trace(go.Scatter(x=xh, y=h.umbral, mode="lines", line=dict(color=p["acento"], width=1.6, dash="dot",
+                                                                           shape="hvh"),
+                                 name=t("g_al_umbral"), hoverinfo="skip"))
+    for nv in ("muy_alto", "alto", "normal", "bajo"):  # leyenda de colores de las barras (texto, no solo color)
+        if (n.nivel == nv).any():
+            fig.add_trace(go.Bar(x=[None], y=[None], marker_color=COLOR_NIVEL[nv], name=t(f"esc_{nv}"),
+                                 hoverinfo="skip"))
+    meses = X.MESES_CORTO.get(idioma, MESES)
+    inicios = pd.date_range(n.fecha.min(), n.fecha.max() + medio, freq="MS")
+    paso = 1 if semana else 3
+    ticks = [f for f in inicios[::paso]]
+    fig.update_xaxes(tickvals=ticks, ticktext=[f"{meses[f.month - 1]}<br>{f.year}" if f.month == 1 or i == 0
+                                               else meses[f.month - 1] for i, f in enumerate(ticks)],
+                     range=[n.fecha.min() - medio / 2, n.fecha.max() + 2 * medio])
+    fig.update_yaxes(title=t("g_al_det_semana" if semana else "g_det_mes"), rangemode="tozero")
+    fig.update_layout(bargap=0.15, barmode="overlay", hovermode="closest",
+                      legend=dict(traceorder="normal"))
+    return _layout(fig, alto=400, modo=modo)
 
 
 # colores de los tipos de punto de calor: vegetación en el rojo del fuego, volcanes en amarillo, industria y costa

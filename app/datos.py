@@ -62,6 +62,10 @@ def conexion() -> duckdb.DuckDBPyConnection:
     con.execute(f"CREATE TABLE meses AS SELECT * FROM read_parquet('{(APP / 'meses.parquet').as_posix()}')")
     if (APP / "paises.parquet").exists():
         con.execute(f"CREATE TABLE paises AS SELECT * FROM read_parquet('{(APP / 'paises.parquet').as_posix()}')")
+    if (APP / "semanas.parquet").exists():  # scripts/semanas.py
+        con.execute(f"CREATE VIEW semanas AS SELECT * FROM read_parquet('{(APP / 'semanas.parquet').as_posix()}')")
+    if (APP / "paises_mes.parquet").exists():
+        con.execute(f"CREATE TABLE paises_mes AS SELECT * FROM read_parquet('{(APP / 'paises_mes.parquet').as_posix()}')")
     if (APP / "validacion.parquet").exists():
         con.execute(f"CREATE VIEW validacion AS SELECT * FROM read_parquet('{(APP / 'validacion.parquet').as_posix()}')")
         con.execute("CREATE TABLE meses_val AS SELECT DISTINCT año, mes, prueba FROM validacion")
@@ -200,6 +204,37 @@ def serie_mensual(sel: pd.DataFrame, cats: tuple[str, ...] | None = None) -> pd.
     # "sin armonizar": MODIS tal cual hasta que hay VIIRS, después VIIRS (lo que pasa si se unen sin más)
     s["sin_armonizar"] = np.where(s.fuente.isin(["N", "S"]), s.viirs_n, s.modis_n)
     return s
+
+
+@st.cache_data
+def semanas_completas() -> pd.DatetimeIndex:
+    """Lunes de cada semana ISO con los siete días dentro de meses con datos."""
+    return pd.DatetimeIndex(conexion().sql("SELECT DISTINCT semana FROM semanas ORDER BY 1").df().semana)
+
+
+@st.cache_data(show_spinner=False)
+def serie_semanal(area: str, cats: tuple[str, ...] | None = None) -> pd.DataFrame | None:
+    """Detecciones armonizadas por semana de un país ("pais:<país>") o región de ejemplo ("region:<región>"), con
+    ceros en las semanas sin fuego. None si el área no tiene serie semanal (dibujada o por coordenadas)."""
+    if not (APP / "semanas.parquet").exists() or not area.startswith(("pais:", "region:")):
+        return None
+    d = conexion().sql(f"SELECT semana, sum(det) det FROM semanas s WHERE s.area = ? {_cat(cats, 's')} GROUP BY 1",
+                       params=[area]).df()
+    hay = conexion().sql("SELECT count(*) FROM semanas WHERE area = ?", params=[area]).fetchall()[0][0]
+    if not hay:
+        return None
+    d["semana"] = pd.to_datetime(d.semana)
+    d = d.set_index("semana").reindex(semanas_completas(), fill_value=0.0).rename_axis("fecha").reset_index()
+    return d.astype({"det": float})
+
+
+@st.cache_data(show_spinner=False)
+def paises_mes(cats: tuple[str, ...] | None = None) -> pd.DataFrame:
+    """Detecciones armonizadas por país y mes (para ver qué países están fuera de lo normal)."""
+    if not (APP / "paises_mes.parquet").exists():
+        return pd.DataFrame(columns=["country", "año", "mes", "det"])
+    return conexion().sql(f"SELECT country, año, mes, sum(det) det FROM paises_mes p WHERE TRUE {_cat(cats, 'p')} "
+                          "GROUP BY ALL").df()
 
 
 def mapa_celdas(sel: pd.DataFrame, año0: int, año1: int, cats: tuple[str, ...] | None = None) -> pd.DataFrame:

@@ -20,6 +20,7 @@ import pandas as pd
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import alertas as A  # noqa: E402
 import datos as D  # noqa: E402
 import graficas as G  # noqa: E402
 import informe as INF  # noqa: E402
@@ -56,6 +57,16 @@ if _puntos:
 
 def T(clave: str, **kw) -> str:
     return X.t(clave, IDI, **kw)
+
+
+def ir_a_pais() -> None:
+    """Elegir un país de la lista de alertas: se aplica antes de crear la barra lateral, como el clic en el globo."""
+    nombre = ss.get("al_ver")
+    if nombre:
+        ss.modo_area = "pais"
+        ss[f"pais_{IDI}"] = nombre
+        ss.pais_globo = nombre
+    ss.al_ver = None
 
 
 def mes_nombre(m: int, mayuscula: bool = True) -> str:
@@ -274,13 +285,12 @@ with st.sidebar:
                            format_func=lambda k: f"{mes_nombre(int(k[5:]))} {k[:4]}")
     año_ref, mes_ref = int(mes_sel[:4]), int(mes_sel[5:])
 
-    st.html(ui.paso(T("visual_titulo")))
-    rampa = st.selectbox(T("rampa"), list(G.RAMPAS), key="rampa", format_func=lambda r: G.RAMPAS[r])
-    escala_log = st.toggle(T("escala_log"), value=True, key="escala_log", help=T("escala_log_ayuda"))
-
     st.html(ui.nota(T("nota_armonizacion"), esc(X.metodo(META.get("metodo", "—"), IDI))))
     st.html(ui.nota(None, esc(T("nota_datos", a0=AÑO_MIN, a1=AÑO_MAX))))
 
+
+
+RAMPA = "Cividis"  # calendario y mapa: perceptualmente uniforme y legible para daltonismo
 
 
 @st.cache_data(show_spinner=False)
@@ -515,23 +525,7 @@ def evaluar_mes(s, año, mes, año0):
     if len(fila) and "dias" in s.columns and pd.notna(fila.dias.iloc[0]):
         frac = float(fila.dias.iloc[0]) / float(fila.dias_mes.iloc[0])
     hist = s[(s.mes == mes) & s.año.between(año0, año - 1) & (s.fuente != "R")].det.to_numpy() * frac
-    if len(hist) < 3 or np.isnan(x):
-        return dict(x=x, n=len(hist), nivel="sin_historia", frac=frac)
-    med = float(np.median(hist))
-    mad = float(np.median(np.abs(hist - med)))
-    pct = 100 * (np.sum(hist < x) + 0.5 * np.sum(hist == x)) / len(hist)
-    razon = x / med if med > 0 else (np.inf if x > 0 else 1.0)
-    z = (x - med) / (1.4826 * mad) if mad > 0 else 0.0
-    rank = int(np.sum(hist > x)) + 1
-    if razon >= 2 or pct >= 90:
-        nivel = "muy_alto"
-    elif razon >= 1.25 or pct >= 75:
-        nivel = "alto"
-    elif razon <= 0.5 and med > 0:
-        nivel = "bajo"
-    else:
-        nivel = "normal"
-    return dict(x=x, med=med, pct=pct, razon=razon, z=z, rank=rank, n=len(hist), nivel=nivel, frac=frac)
+    return {**A.clasificar(x, hist, A.MINIMO["mes"]), "frac": frac}  # la misma regla que la pestaña Alertas
 
 
 ev = evaluar_mes(s, año_ref, mes_ref, años[0])
@@ -625,16 +619,132 @@ frase = T(f"frase_{nivel}", mes=Mes_txt if nivel != "sin_historia" else mes_txt,
 st.html(ui.alerta(T, nivel, frase, T("alerta_titulo", mes=Mes_txt, año=año_ref, area=nombre_area), detalle, tarjetas))
 
 # =============================================================================== pestañas
-t_cal, t_imp, t_tend, t_mapa, t_arm, t_nrt, t_datos, t_met = st.tabs(
-    [T("tab_calendario"), T("tab_impacto"), T("tab_tendencias"), T("tab_mapa"), T("tab_armonizacion"), T("tab_nrt"),
-     T("tab_descargas"), T("tab_metodo")], key="pestanas")
+t_al, t_cal, t_imp, t_tend, t_mapa, t_arm, t_nrt, t_datos, t_met = st.tabs(
+    [T("tab_alertas"), T("tab_calendario"), T("tab_impacto"), T("tab_tendencias"), T("tab_mapa"), T("tab_armonizacion"),
+     T("tab_nrt"), T("tab_descargas"), T("tab_metodo")], key="pestanas")
+
+# =============================================================================== alertas por semana o por mes
+sem = D.serie_semanal(id_area, CATS_SEL)
+sem_todos = D.serie_semanal(id_area) if CATS_SEL else sem
+
+
+def unidades(periodo: str, n: int = 2) -> str:
+    return T(f"al_u_{periodo}" + ("" if n == 1 else ("s" if periodo == "semana" else "es")))
+
+
+def fecha_periodo(f: pd.Timestamp, periodo: str, dia: bool = True) -> str:
+    if periodo == "semana":
+        return G._fecha_corta(f, IDI) if dia else T("al_la_semana", f=G._fecha_corta(f, IDI))
+    return f"{mes_nombre(f.month, False)} {f.year}"
+
+
+def aviso_alerta(e: dict, periodo: str) -> tuple[str, str]:
+    """(nivel para el color, frase) del final de la ventana."""
+    mes_ = periodo == "mes"
+    k = e.get("clave")
+    if k == "racha":
+        return e["nivel"], T("al_racha_mes" if mes_ else "al_racha", n=e["periodos"], u=unidades(periodo),
+                             inicio=fecha_periodo(e["inicio"], periodo), r=e["razon"])
+    if k == "pico":
+        return "muy_alto", T("al_pico", periodo=fecha_periodo(ultimo.fecha, periodo, dia=False),
+                             r=e["ultima"], pct=e["pct"])
+    if k == "subiendo":
+        return "alto", T("al_subiendo_mes" if mes_ else "al_subiendo",
+                         periodo=fecha_periodo(ultimo.fecha, periodo, dia=False), r=e["ultima"],
+                         k=A.RACHA[periodo], u=unidades(periodo))
+    if k == "termino":
+        fin_ep = e["fin"] + pd.Timedelta(days=6) if periodo == "semana" else e["fin"]  # último día de la racha
+        return "normal", T("al_termino", n=e["periodos"], u=unidades(periodo, e["periodos"]),
+                           inicio=fecha_periodo(e["inicio"], periodo), fin=fecha_periodo(fin_ep, periodo))
+    if k == "normal":
+        if e["nivel"] == "bajo":
+            return "bajo", T("al_normal_bajo")
+        return "normal", T(f"al_normal_{periodo}", u=f"{min(e['periodos'], A.VENTANA[periodo])} {unidades(periodo)}")
+    if k == "sin_historia":
+        return "sin_historia", T("al_sin_historia", u=unidades(periodo, 1))
+    return "sin_historia", T("al_sin_datos")
+
+
+with t_al:
+    with st.container(key="tarjeta_alertas"):
+        st.html(ui.seccion(T("al_titulo")))
+        opciones_al = ["semana", "mes"] if sem is not None else ["mes"]
+        if len(opciones_al) == 1:  # área sin serie semanal: por mes, sin olvidar lo que se había elegido
+            ss._al_forzado = ss.get("_al_forzado") or ss.get("al_periodo") != "mes"
+            ss.al_periodo = "mes"
+        elif ss.pop("_al_forzado", False) or ss.get("al_periodo") not in opciones_al:
+            ss.al_periodo = "semana"
+        periodo = st.segmented_control(T("al_titulo"), opciones_al, key="al_periodo", required=True,
+                                       label_visibility="collapsed", format_func=lambda v: T(f"al_por_{v}"))
+        fin_mes = pd.Timestamp(año_ref, mes_ref, 1) + pd.offsets.MonthEnd(0)
+        if periodo == "semana":
+            base = sem[(sem.fecha >= pd.Timestamp(años[0], 1, 1)) & (sem.fecha <= fin_mes)]
+        else:
+            base = s[(s.año >= años[0]) & (s.fecha <= fin_mes)].copy()
+            if "dias" in base:  # mes en curso traído de FIRMS: la historia se escala a los días que van
+                base["frac"] = (base.dias / base.dias_mes).fillna(1.0)
+            base = base[["fecha", "det", *(["frac"] if "frac" in base else [])]]
+        n_al = A.niveles(base.reset_index(drop=True), periodo, años[0]) if len(base) else base.assign(nivel=[])
+        ep_al = A.episodios(n_al, periodo) if len(n_al) else pd.DataFrame(columns=["alerta"])
+        ultimo = n_al.iloc[-1] if len(n_al) else None
+        nivel_al, frase_al = aviso_alerta(A.estado(n_al, ep_al, periodo), periodo)
+        st.html(f'<p class="dm-aviso dm-nivel-{nivel_al}" aria-live="polite"><i aria-hidden="true"></i>'
+                f'{esc(frase_al)}</p>'
+                + f'<p class="dm-texto">{esc(T(f"al_sub_{periodo}", area=nombre_area, a0=años[0], mes=mes_txt, año=año_ref))}</p>')
+        if sem is None:
+            st.html(ui.nota(None, esc(T("al_sin_semanas"))))
+        ventana = n_al.tail(A.VENTANA[periodo])
+        if len(ventana):
+            grafica(G.alertas(ventana, periodo, años[0], idioma=IDI, modo=MODO))
+        st.html(ui.nota(None, esc(T("al_regla_mes" if periodo == "mes" else "al_regla", m=A.MINIMO[periodo],
+                                    k=A.RACHA[periodo], u=unidades(periodo), m3=3 * A.MINIMO[periodo]))))
+
+    c1, c2 = st.columns([1.15, 1], gap="large")
+    with c1, st.container(key="tarjeta_rachas"):
+        a_ini = int(n_al[n_al.nivel != "sin_historia"].año.min()) if (n_al.nivel != "sin_historia").any() else años[0]
+        st.html(ui.seccion(T("al_ep_titulo", a0=a_ini, a1=año_ref), T("al_ep_sub", u=unidades(periodo))))
+        rachas = ep_al[ep_al.alerta].sort_values("inicio", ascending=False).head(10) if len(ep_al) else ep_al
+        if len(rachas):
+            fin_txt = (lambda f: G._fecha_corta(f + pd.Timedelta(days=6), IDI)) if periodo == "semana" \
+                else (lambda f: fecha_periodo(f, "mes"))
+            tabla_r = pd.DataFrame({
+                T("al_col_desde"): [fecha_periodo(f, periodo) for f in rachas.inicio],
+                T("al_col_hasta"): [fin_txt(f) for f in rachas.fin],
+                T("al_col_dura"): [f"{int(k)} {unidades(periodo, int(k))}" for k in rachas.periodos],
+                T("al_col_det"): rachas.det.round(), T("al_col_normal"): rachas.normal.round(),
+                T("al_col_veces"): [f"{r:.1f}×" if np.isfinite(r) else "—" for r in rachas.razon]})
+            st.html(ui.tabla(tabla_r))
+        else:
+            st.info(T("al_ep_ninguna"), icon=":material/check_circle:")
+    pm = D.paises_mes(CATS_SEL)
+    if len(pm):
+        with c2, st.container(key="tarjeta_paises_alerta"):
+            st.html(ui.seccion(T("al_pa_titulo", mes=mes_txt, año=año_ref),
+                               T("al_pa_sub", m=A.MINIMO["pais"], mes=mes_txt, a0=años[0], a1=año_ref - 1)))
+            rk = A.ranking_paises(pm, año_ref, mes_ref, años[0])
+            if len(rk):
+                st.html(f'<p class="dm-texto">{esc(T("al_pa_n", n=len(rk), k=int((rk.nivel == "muy_alto").sum())))}</p>')
+                top_rk = rk.head(12)
+                st.html(ui.tabla(pd.DataFrame({
+                    T("al_col_pais"): [X.pais(c, IDI) for c in top_rk.country],
+                    T("al_col_nivel"): [T(f"esc_{v}") for v in top_rk.nivel],
+                    T("al_col_det"): top_rk.x.round(), T("al_col_normal"): top_rk.med.round(),
+                    T("al_col_veces"): [f"{r:.1f}×" if np.isfinite(r) else "—" for r in top_rk.razon]})))
+                st.selectbox(T("al_pa_ver"), list(rk.country), index=None, key="al_ver", on_change=ir_a_pais,
+                             format_func=lambda c: X.pais(c, IDI), placeholder=T("al_pa_ver_ph"))
+            else:
+                st.info(T("al_pa_ninguno", mes=mes_txt, año=año_ref), icon=":material/check_circle:")
 
 with t_cal:
     with st.container(key="tarjeta_calendario"):
         st.html(ui.seccion(T("cal_titulo"), T("cal_sub", area=nombre_area, a0=años[0], a1=años[1])))
-        vista = st.segmented_control(T("vista"), ["armonizado", "anomalia", "sin_armonizar"], key="vista",
-                                     required=True, label_visibility="collapsed", format_func=lambda v: T(f"vista_{v}"))
-        grafica(G.calendario(s_rango, vista, rampa, escala_log, (año_ref, mes_ref), idioma=IDI, modo=MODO))
+        with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
+            vista = st.segmented_control(T("vista"), ["armonizado", "anomalia", "sin_armonizar"], key="vista",
+                                         required=True, label_visibility="collapsed",
+                                         format_func=lambda v: T(f"vista_{v}"))
+            escala_log = st.toggle(T("cal_escala_log"), value=True, key="escala_log", help=T("escala_log_ayuda"),
+                                   disabled=vista == "anomalia")
+        grafica(G.calendario(s_rango, vista, RAMPA, escala_log, (año_ref, mes_ref), idioma=IDI, modo=MODO))
         _ley = [("estrella", T("cal_leyenda_estrella")), ("punto", T("cal_leyenda_punto"))]
         if (s_rango.fuente == "R").any():
             _ley.append(("anillo", T("cal_leyenda_reciente")))
@@ -713,7 +823,7 @@ with t_mapa:
                         else T("capa_anomalia", mes=mes_txt, año=año_ref))
     if capa == "total":
         md = D.mapa_celdas(sel, *años, CATS_SEL)
-        fig = G.mapa(md, "det", T("mapa_color_total"), rampa=G.RAMPAS[rampa], modo=MODO) if len(md) else None
+        fig = G.mapa(md, "det", T("mapa_color_total"), rampa=RAMPA, modo=MODO) if len(md) else None
         nota_mapa = T("mapa_nota_total")
     else:
         md = D.mapa_anomalia_mes(sel, año_ref, mes_ref, años[0], CATS_SEL)
@@ -786,9 +896,15 @@ with t_nrt:
                 else:
                     (nrt, satelite), dias = D.firms_7d(sel), 7
             hoy = date.today()
-            # FIRMS en tiempo casi real no trae el tipo de fuente: se compara con todos los puntos de calor
-            hist = s_todos[(s_todos.mes == hoy.month) & (s_todos.fuente.isin(["N", "S", "M"]))].det
-            esperado = float(np.median(hist)) / 30.4 * dias if len(hist) else np.nan
+            # FIRMS en tiempo casi real no trae el tipo de fuente: se compara con todos los puntos de calor. Lo normal
+            # es la mediana de la misma semana del año (países y regiones) o del mismo mes, escalada a los días
+            if sem_todos is not None:
+                _w = sem_todos.fecha.dt.isocalendar().week.clip(upper=52)
+                hist = sem_todos[_w == min(hoy.isocalendar().week, 52)].det
+                esperado = float(np.median(hist)) / 7 * dias if len(hist) else np.nan
+            else:
+                hist = s_todos[(s_todos.mes == hoy.month) & (s_todos.fuente.isin(["N", "S", "M"]))].det
+                esperado = float(np.median(hist)) / 30.4 * dias if len(hist) else np.nan
             n = len(nrt)
             tarjetas_n = [ui.kpi(T("nrt_det", d=dias), f"{n:,}"),
                           ui.kpi(T("nrt_normal", d=dias, mes=mes_nombre(hoy.month, False)), f"{esperado:,.0f}"
@@ -857,7 +973,7 @@ def metricas_area() -> list[tuple[str, str]]:
 
 
 def informe_html() -> str:
-    figs = [(T("cal_titulo"), G.calendario(s_rango, "armonizado", rampa, escala_log, (año_ref, mes_ref), idioma=IDI)),
+    figs = [(T("cal_titulo"), G.calendario(s_rango, "armonizado", RAMPA, escala_log, (año_ref, mes_ref), idioma=IDI)),
             (T("perfil_titulo"), G.perfil_estacional(s, año_ref, años, idioma=IDI)),
             (T("anual_titulo"), G.anual(s, años, idioma=IDI)),
             (T("antes_titulo"), G.antes_despues(s, años, idioma=IDI))]

@@ -18,11 +18,12 @@ Datos: NASA FIRMS · Proyecto para NASA Space Apps Challenge 2026 Costa Rica. No
 - **Área de interés**: país, región de ejemplo, dibujar en el mapa o coordenadas; periodo de años y mes a evaluar.
 - **Tipo de punto de calor**: todos, vegetación, industria y gas, volcanes o costa afuera. Cambia el globo, la ficha del país, el calendario, el mapa y la validación; la pestaña Tendencias muestra qué produce el calor año a año.
 - **Estado del mes**: lo compara con la mediana histórica del mismo mes (razón, percentil y z robusto) y lo dice en una frase con semáforo.
+- **Alertas por semana o por mes**: cada semana (o mes) contra la misma semana del año en los años anteriores. Avisa cuando hay una racha de alzas fuera de lo normal (3 semanas o 2 meses seguidos), o una sola semana que duplica lo normal. Lista las rachas del periodo y los países del mundo que están por encima de lo normal ese mes; con un clic se pasa a cualquiera de ellos. La vista por semana está para países y regiones de ejemplo.
 - **Calendario de quemas** 2000–2025 (y hasta hoy con una MAP_KEY de FIRMS), tendencias, mapa de anomalías.
-- **Últimos días**: detecciones VIIRS en tiempo casi real de FIRMS (NOAA-20 y NOAA-21) contra lo normal para el mes.
+- **Últimos días**: detecciones VIIRS en tiempo casi real de FIRMS (NOAA-20 y NOAA-21) contra lo normal para esa semana del año.
 - **Descargas**: informe HTML del área (se abre sin internet), resumen analítico CSV, calendario CSV y puntos de calor originales CSV entre dos fechas. Cada gráfica se guarda como PNG.
 - **¿Cómo armonizamos?**: el modelo, antes y después, validación, R² y MSE, sobreajuste y en qué países no funciona.
-- Tour para jueces, modo presentación, español e inglés, modo claro y noche, rampas de color aptas para daltonismo.
+- Tour para jueces, modo presentación, español e inglés, modo claro y noche.
 
 ## Cómo armonizamos
 Modelo de la app: **integral**, un modelo para cada tipo de punto de calor de FIRMS.
@@ -92,9 +93,10 @@ Con `pip install -r requirements-modelo.txt` (agrega LightGBM, scikit-learn, PyT
 3. `notebooks/03_modelo.ipynb`: arma la tabla celda × mes, entrena y valida los modelos y guarda `data/modelo/` (también están los análisis exploratorios `01_eda` y `02_eda`).
 4. `python scripts/modelo_integral.py` (~40 min): conteos por tipo de fuente y LightGBM de vegetación, con su validación dejando un año fuera → `data/modelo/tipos_celdas.parquet`, `veg_celdas.parquet`, `veg_loyo.parquet`.
 5. `python scripts/preparar_app.py`: arma `data/app` (celdas armonizadas por tipo, meses, países).
-6. `python scripts/validar.py`: validación dejando un año fuera y en años nunca vistos, total y por tipo → `data/app/validacion.*` y `serie_mundial.csv`.
-7. `python scripts/evaluar_modelos.py` (~6 min): R², MSE, sobreajuste y países donde falla, para los cinco modelos → `data/app/evaluacion.*`.
-8. `python scripts/exportar_puntos.py`: puntos de calor de Centroamérica para correr sin la base completa.
+6. `python scripts/semanas.py`: reparte cada mes armonizado entre sus semanas según lo que vio el sensor de ese mes, por país y región de ejemplo → `data/app/semanas.parquet` y `paises_mes.parquet` (alertas).
+7. `python scripts/validar.py`: validación dejando un año fuera y en años nunca vistos, total y por tipo → `data/app/validacion.*` y `serie_mundial.csv`.
+8. `python scripts/evaluar_modelos.py` (~6 min): R², MSE, sobreajuste y países donde falla, para los cinco modelos → `data/app/evaluacion.*`.
+9. `python scripts/exportar_puntos.py`: puntos de calor de Centroamérica para correr sin la base completa.
 
 ## Estructura
 ```
@@ -103,7 +105,7 @@ app/static/          tipografías (OFL) y mapas servidos localmente
 data/app/            datos listos para la app
 data/modelo/         serie mundial armonizada (los Parquet del modelo se regeneran con el notebook 03 y scripts/modelo_integral.py)
 notebooks/           análisis exploratorio y modelo
-scripts/             consolidar, base de datos, modelo integral, preparar, validar, evaluar y exportar
+scripts/             consolidar, base de datos, modelo integral, preparar, semanas, validar, evaluar y exportar
 ```
 
 Colores y tipografías siguen la guía de marca de NASA Space Apps: azules Electric, Neon, Blue Yonder y Deep Blue, Rocket Red y Martian Red para el fuego, Neon Yellow solo como acento; Fira Sans y Overpass. No se usa ningún logo de la NASA ni de Space Apps.

@@ -169,6 +169,76 @@ ES = {
     "frase_normal": "{mes} {año} está dentro de lo normal.",
     "frase_bajo": "{mes} {año} está por debajo de lo normal: hubo menos fuego que de costumbre.",
     "frase_sin_historia": "Sin comparación todavía: hacen falta al menos 3 años anteriores de {mes}.",
+    "tab_alertas": "Alertas",
+    "al_titulo": "¿Hay alzas de fuego fuera de lo normal?",
+    "al_sub_semana": "Cada semana de {area} contra la misma semana del año en los años anteriores (desde {a0}). La "
+                     "banda es lo normal (la mitad central de los años), la línea azul la mediana y la punteada el "
+                     "umbral de alerta. Termina en {mes} {año}, el mes que se evalúa.",
+    "al_sub_mes": "Cada mes de {area} contra el mismo mes en los años anteriores (desde {a0}). La banda es lo "
+                  "normal (la mitad central de los años), la línea azul la mediana y la punteada el umbral de "
+                  "alerta. Termina en {mes} {año}, el mes que se evalúa.",
+    "al_por_semana": "Por semana",
+    "al_por_mes": "Por mes",
+    "al_sin_semanas": "La vista por semana está para países y regiones de ejemplo. Para un área dibujada o por "
+                      "coordenadas se compara mes a mes.",
+    "al_u_semana": "semana",
+    "al_u_semanas": "semanas",
+    "al_u_mes": "mes",
+    "al_u_meses": "meses",
+    "al_racha": "Alerta: {n} {u} seguidas por encima de lo normal, desde {inicio}. En total, {r:.1f} veces lo "
+                "normal.",
+    "al_racha_mes": "Alerta: {n} {u} seguidos por encima de lo normal, desde {inicio}. En total, {r:.1f} veces lo "
+                    "normal.",
+    "al_pico": "Alerta: {periodo} muy por encima de lo normal: {r:.1f} veces la mediana, más que el {pct:.0f} % de "
+               "los años anteriores.",
+    "al_subiendo": "Atención: {periodo} por encima de lo normal ({r:.1f} veces). Si se repite {k} {u} seguidas, es "
+                   "alerta.",
+    "al_subiendo_mes": "Atención: {periodo} por encima de lo normal ({r:.1f} veces). Si se repite {k} {u} seguidos, "
+                       "es alerta.",
+    "al_termino": "Ya volvió a lo normal. Hubo una racha de {n} {u} por encima de lo normal, de {inicio} a {fin}.",
+    "al_normal_semana": "Sin alzas fuera de lo normal en las últimas {u}.",
+    "al_normal_mes": "Sin alzas fuera de lo normal en los últimos {u}.",
+    "al_normal_bajo": "Sin alzas: el último periodo está por debajo de lo normal.",
+    "al_sin_historia": "Sin comparación todavía: hacen falta al menos 3 años anteriores con la misma {u}.",
+    "al_sin_datos": "No hay datos para este periodo.",
+    "al_la_semana": "la semana del {f}",
+    "al_el_mes": "{f}",
+    "al_regla": "Regla: alto si pasa 1.25 veces la mediana o el percentil 75; muy alto si pasa 2 veces la mediana o "
+                "el percentil 90. Para no alertar por ruido, el alza tiene que ser de al menos {m} detecciones. Es "
+                "alerta una racha de {k} {u} altas seguidas, o una sola muy alta que duplique la mediana y la pase "
+                "por {m3} detecciones.",
+    "al_regla_mes": "Regla: alto si pasa 1.25 veces la mediana o el percentil 75; muy alto si pasa 2 veces la "
+                    "mediana o el percentil 90. Para no alertar por ruido, el alza tiene que ser de al menos {m} "
+                    "detecciones. Es alerta una racha de {k} {u} altos seguidos, o uno solo muy alto que duplique "
+                    "la mediana y la pase por {m3} detecciones.",
+    "al_ep_titulo": "Rachas de alzas, {a0}–{a1}",
+    "al_ep_sub": "Seguidillas de {u} por encima de lo normal. Las más recientes primero.",
+    "al_ep_ninguna": "No hubo alzas fuera de lo normal en este periodo.",
+    "al_col_desde": "Desde",
+    "al_col_hasta": "Hasta",
+    "al_col_dura": "Duración",
+    "al_col_det": "Detecciones",
+    "al_col_normal": "Lo normal",
+    "al_col_veces": "× normal",
+    "al_col_alerta": "Alerta",
+    "al_si": "Sí",
+    "al_pa_titulo": "Países fuera de lo normal en {mes} {año}",
+    "al_pa_sub": "Países con un alza de al menos {m} detecciones sobre su mediana de {mes} ({a0}–{a1}). Toca uno "
+                 "para verlo.",
+    "al_pa_ninguno": "Ningún país está fuera de lo normal en {mes} {año}.",
+    "al_pa_n": "{n} países por encima de lo normal; {k} muy por encima.",
+    "al_col_pais": "País",
+    "al_col_nivel": "Nivel",
+    "al_pa_ver": "Ver un país de la lista",
+    "al_pa_ver_ph": "Elige un país…",
+    "g_al_normal": "Rango normal",
+    "g_al_mediana": "Mediana desde {a0}",
+    "g_al_umbral": "Umbral de alerta",
+    "g_al_det": "Detecciones",
+    "g_al_semana": "Semana del {f}",
+    "g_al_lo_normal": "Lo normal",
+    "g_al_det_semana": "detecciones / semana",
+    "cal_escala_log": "Escala logarítmica",
     "alerta_titulo": "{mes} {año} · {area}",
     "alerta_razon": "{r:.1f}× la mediana",
     "alerta_sin_fuego_previo": "sin fuego en años anteriores",
@@ -320,9 +390,9 @@ ES = {
              "percentil y z robusto (MAD). Semáforo: rojo ≥ 2× la mediana o percentil ≥ 90; amarillo ≥ 1.25× o "
              "percentil ≥ 75; azul ≤ 0.5×.",
     "met_6_t": "Accesibilidad",
-    "met_6": "Rampas Cividis/Viridis/Inferno/Magma (perceptualmente uniformes y aptas para daltonismo), escala "
-             "logarítmica opcional, semáforo siempre con texto e ícono, y todos los valores disponibles al pasar "
-             "el cursor y en CSV.",
+    "met_6": "Calendario y mapa en Cividis (perceptualmente uniforme y legible para daltonismo), escala logarítmica "
+             "opcional, semáforo siempre con texto e ícono, y todos los valores disponibles al pasar el cursor y en "
+             "CSV.",
     "met_pie": "Datos generados: {generado} · {celdas} celdas · {filas} celda-mes.",
     # ---------------------------------------------------------------- tour
     "tour_titulo": "Tour para jueces",
@@ -352,8 +422,9 @@ ES = {
     "tour_3_m": "Los dos paneles de “Antes y después”: a la izquierda, el salto falso de 2012; a la derecha, la misma "
                 "serie sin salto. Debajo, la validación: cada año se esconde al calibrar y se predice desde MODIS.",
     "tour_4_t": "De la historia a la acción",
-    "tour_4": "“Últimos días” compara los fuegos de la última semana con lo normal del mes, sin llave. Con una MAP_KEY "
-              "gratuita se completa el calendario hasta hoy. “Descargas” entrega un informe HTML, el resumen y los CSV.",
+    "tour_4": "“Últimos días” compara los fuegos de los últimos días con lo normal de esa semana del año, sin "
+              "llave. Con una MAP_KEY gratuita se completa el calendario hasta hoy. “Descargas” entrega un informe "
+              "HTML, el resumen y los CSV.",
     "tour_4_m": "Prueba el modo presentación (arriba a la derecha) y cambia el área a “Amazonía brasileña” para ver "
                 "otra región del mundo.",
     # ---------------------------------------------------------------- pie
@@ -636,19 +707,19 @@ ES = {
     "cob_5": "Periodos del año con más fuego y años más activos",
     "cob_5_d": "Calendario · Temporada de fuego · Periodos críticos · Tendencias",
     "cob_6": "Comparar un fuego actual con los anteriores",
-    "cob_6_d": "Estado del mes (puesto entre todos los años) · Últimos días",
+    "cob_6_d": "Alertas: cada semana o mes contra los mismos de años anteriores · Estado del mes · Últimos días",
     "cob_7": "Comparar el mes actual con la mediana histórica",
-    "cob_7_d": "Estado del mes: razón, percentil y z robusto · Mapa de anomalía",
+    "cob_7_d": "Estado del mes: razón, percentil y z robusto · Alertas por semana y por mes · Mapa de anomalía",
     "cob_8": "Descargar analíticas, visualizaciones y CSV de los focos",
     "cob_8_d": "Descargas: informe HTML, resumen CSV, calendario CSV, puntos CSV por fechas · PNG en cada gráfica",
     "cob_9": "Rampas de color accesibles",
-    "cob_9_d": "Panel lateral: Cividis, Viridis, Inferno, Magma · texto junto a todo color",
+    "cob_9_d": "Calendario y mapa en Cividis (legible para daltonismo) · texto junto a todo color",
     "cob_10": "Anomalías frente a promedios multianuales",
     "cob_10_d": "Calendario, vista Anomalía · Mapa de anomalía",
     "cob_11": "Mostrar método, validación e incertidumbre",
     "cob_11_d": "¿Cómo armonizamos?: validación dejando un año fuera, R² y MSE, sobreajuste y países donde falla · rango en cada mes estimado · Método",
     "cob_12": "Alerta temprana en tiempo casi real",
-    "cob_12_d": "Últimos días (FIRMS, NOAA-20 y NOAA-21)",
+    "cob_12_d": "Alertas (rachas de alzas, países fuera de lo normal) · Últimos días (FIRMS, NOAA-20 y NOAA-21)",
     "cob_13": "Todos los tipos de punto de calor, no solo incendios",
     "cob_13_d": "Panel lateral: Tipo de punto de calor (vegetación, industria y gas, volcanes, costa afuera) · "
                 "Tendencias: qué produce el calor · cada tipo con su modelo y su validación",
@@ -657,6 +728,12 @@ ES = {
               "y cuándo prepararse en el área elegida.",
     "tour_5_m": "La conclusión falsa que se evita: sin armonizar, el fuego parece multiplicarse desde 2012; "
                 "armonizado, se ve el cambio real.",
+    "tour_6_t": "Alertas: ¿hay un patrón de alzas?",
+    "tour_6": "La pestaña Alertas compara cada semana (o cada mes) con la misma semana de los años anteriores y "
+              "avisa cuando hay una racha de alzas fuera de lo normal, no solo un mes raro. También dice qué países "
+              "del mundo están por encima de lo normal ese mes.",
+    "tour_6_m": "Elige Estados Unidos y septiembre de 2020: 7 semanas seguidas por encima de lo normal. Las barras "
+                "rojas pasan el umbral de alerta (línea punteada); la banda es lo normal.",
     # ---------------------------------------------------------------- gráficas
     "g_sin_datos": "sin datos",
     "g_det_viirs": "detecciones (unidades VIIRS)",
@@ -803,6 +880,74 @@ EN = {
     "frase_normal": "{mes} {año} is within normal.",
     "frase_bajo": "{mes} {año} is below normal: there was less fire than usual.",
     "frase_sin_historia": "No comparison yet: at least 3 previous years of {mes} are needed.",
+    "tab_alertas": "Alerts",
+    "al_titulo": "Are there unusual rises in fire?",
+    "al_sub_semana": "Each week in {area} against the same week of the year in previous years (from {a0}). The band "
+                     "is normal (the middle half of the years), the blue line the median and the dotted line the "
+                     "alert threshold. It ends in {mes} {año}, the month being evaluated.",
+    "al_sub_mes": "Each month in {area} against the same month in previous years (from {a0}). The band is normal "
+                  "(the middle half of the years), the blue line the median and the dotted line the alert "
+                  "threshold. It ends in {mes} {año}, the month being evaluated.",
+    "al_por_semana": "By week",
+    "al_por_mes": "By month",
+    "al_sin_semanas": "The weekly view is available for countries and example regions. For a drawn area or "
+                      "coordinates, the comparison is month by month.",
+    "al_u_semana": "week",
+    "al_u_semanas": "weeks",
+    "al_u_mes": "month",
+    "al_u_meses": "months",
+    "al_racha": "Alert: {n} {u} in a row above normal, since {inicio}. Overall, {r:.1f} times normal.",
+    "al_racha_mes": "Alert: {n} {u} in a row above normal, since {inicio}. Overall, {r:.1f} times normal.",
+    "al_pico": "Alert: {periodo} far above normal: {r:.1f} times the median, more than {pct:.0f} % of previous "
+               "years.",
+    "al_subiendo": "Watch: {periodo} above normal ({r:.1f} times). If it repeats for {k} {u} in a row, it is an "
+                   "alert.",
+    "al_subiendo_mes": "Watch: {periodo} above normal ({r:.1f} times). If it repeats for {k} {u} in a row, it is an "
+                       "alert.",
+    "al_termino": "Back to normal. There was a run of {n} {u} above normal, from {inicio} to {fin}.",
+    "al_normal_semana": "No unusual rises in the last {u}.",
+    "al_normal_mes": "No unusual rises in the last {u}.",
+    "al_normal_bajo": "No rises: the last period is below normal.",
+    "al_sin_historia": "No comparison yet: at least 3 previous years of the same {u} are needed.",
+    "al_sin_datos": "No data for this period.",
+    "al_la_semana": "the week of {f}",
+    "al_el_mes": "{f}",
+    "al_regla": "Rule: high above 1.25 times the median or the 75th percentile; very high above 2 times the median "
+                "or the 90th percentile. To avoid alerting on noise, the rise must be at least {m} detections. An "
+                "alert is a run of {k} high {u} in a row, or a single very high one that doubles the median and "
+                "exceeds it by {m3} detections.",
+    "al_regla_mes": "Rule: high above 1.25 times the median or the 75th percentile; very high above 2 times the "
+                    "median or the 90th percentile. To avoid alerting on noise, the rise must be at least {m} "
+                    "detections. An alert is a run of {k} high {u} in a row, or a single very high one that doubles "
+                    "the median and exceeds it by {m3} detections.",
+    "al_ep_titulo": "Runs of rises, {a0}–{a1}",
+    "al_ep_sub": "Stretches of {u} above normal. Most recent first.",
+    "al_ep_ninguna": "There were no unusual rises in this period.",
+    "al_col_desde": "From",
+    "al_col_hasta": "To",
+    "al_col_dura": "Duration",
+    "al_col_det": "Detections",
+    "al_col_normal": "Normal",
+    "al_col_veces": "× normal",
+    "al_col_alerta": "Alert",
+    "al_si": "Yes",
+    "al_pa_titulo": "Countries above normal in {mes} {año}",
+    "al_pa_sub": "Countries with a rise of at least {m} detections over their {mes} median ({a0}–{a1}). Tap one to "
+                 "see it.",
+    "al_pa_ninguno": "No country is above normal in {mes} {año}.",
+    "al_pa_n": "{n} countries above normal; {k} far above.",
+    "al_col_pais": "Country",
+    "al_col_nivel": "Level",
+    "al_pa_ver": "See a country from the list",
+    "al_pa_ver_ph": "Choose a country…",
+    "g_al_normal": "Normal range",
+    "g_al_mediana": "Median since {a0}",
+    "g_al_umbral": "Alert threshold",
+    "g_al_det": "Detections",
+    "g_al_semana": "Week of {f}",
+    "g_al_lo_normal": "Normal",
+    "g_al_det_semana": "detections / week",
+    "cal_escala_log": "Log scale",
     "alerta_titulo": "{mes} {año} · {area}",
     "alerta_razon": "{r:.1f}× the median",
     "alerta_sin_fuego_previo": "no fire in previous years",
@@ -946,8 +1091,8 @@ EN = {
              "ratio, percentile and robust z (MAD). Traffic light: red ≥ 2× the median or percentile ≥ 90; "
              "yellow ≥ 1.25× or percentile ≥ 75; blue ≤ 0.5×.",
     "met_6_t": "Accessibility",
-    "met_6": "Cividis/Viridis/Inferno/Magma ramps (perceptually uniform and colorblind-safe), optional log scale, "
-             "a traffic light that always carries text and an icon, and every value available on hover and as CSV.",
+    "met_6": "Calendar and map in Cividis (perceptually uniform and colorblind-safe), optional log scale, a traffic "
+             "light that always carries text and an icon, and every value available on hover and as CSV.",
     "met_pie": "Data generated: {generado} · {celdas} cells · {filas} cell-months.",
     "tour_titulo": "Judges' tour",
     "tour_paso": "Step {i} of {n}",
@@ -975,8 +1120,9 @@ EN = {
     "tour_3_m": "The two “Before and after” panels: on the left, the false jump of 2012; on the right, the same "
                 "series without it. Below, the validation: each year is hidden during calibration and predicted from MODIS.",
     "tour_4_t": "From history to action",
-    "tour_4": "“Last few days” compares last week's fires with the month's normal, no key needed. With a free MAP_KEY "
-              "the calendar is filled up to today. “Downloads” delivers an HTML report, the summary and the CSVs.",
+    "tour_4": "“Last few days” compares the latest fires with the normal for that week of the year, no key needed. "
+              "With a free MAP_KEY the calendar is filled up to today. “Downloads” delivers an HTML report, the "
+              "summary and the CSVs.",
     "tour_4_m": "Try presentation mode (top right) and switch the area to “Brazilian Amazon” to see another region "
                 "of the world.",
     "pie_credito": "Data: NASA FIRMS · Project for the NASA Space Apps Challenge 2026 Costa Rica. Not an official "
@@ -1249,19 +1395,19 @@ EN = {
     "cob_5": "Times of year with the most fire and the most active years",
     "cob_5_d": "Calendar · Fire season · Critical periods · Trends",
     "cob_6": "Compare a current fire with past ones",
-    "cob_6_d": "Month status (rank among all years) · Last few days",
+    "cob_6_d": "Alerts: each week or month against the same in previous years · Month status · Last few days",
     "cob_7": "Compare the current month with the historical median",
-    "cob_7_d": "Month status: ratio, percentile and robust z · Anomaly map",
+    "cob_7_d": "Month status: ratio, percentile and robust z · Alerts by week and by month · Anomaly map",
     "cob_8": "Download analytics, visualizations and a CSV of the hot spots",
     "cob_8_d": "Downloads: HTML report, summary CSV, calendar CSV, hot-spot CSV by dates · PNG on every chart",
     "cob_9": "Accessible color ramps",
-    "cob_9_d": "Side panel: Cividis, Viridis, Inferno, Magma · text next to every color",
+    "cob_9_d": "Calendar and map in Cividis (colorblind-safe) · text next to every color",
     "cob_10": "Anomalies against multi-year averages",
     "cob_10_d": "Calendar, Anomaly view · Anomaly map",
     "cob_11": "Show method, validation and uncertainty",
     "cob_11_d": "How we harmonize: leave-one-year-out validation, R² and MSE, overfitting and countries where it fails · range on every estimated month · Method",
     "cob_12": "Near-real-time early warning",
-    "cob_12_d": "Last few days (FIRMS, NOAA-20 and NOAA-21)",
+    "cob_12_d": "Alerts (runs of rises, countries above normal) · Last few days (FIRMS, NOAA-20 and NOAA-21)",
     "cob_13": "Every hot spot type, not just wildfires",
     "cob_13_d": "Sidebar: Hot spot type (vegetation, industry and gas, volcanoes, offshore) · Trends: what produces "
                 "the heat · each type with its own model and validation",
@@ -1270,6 +1416,12 @@ EN = {
               "avoids and when to get ready in the chosen area.",
     "tour_5_m": "The false conclusion avoided: without harmonizing, fire seems to multiply after 2012; harmonized, "
                 "you see the real change.",
+    "tour_6_t": "Alerts: is there a pattern of rises?",
+    "tour_6": "The Alerts tab compares each week (or month) with the same week in previous years and warns when "
+              "there is a run of unusual rises, not just one odd month. It also lists which countries are above "
+              "normal that month.",
+    "tour_6_m": "Choose the United States and September 2020: 7 weeks in a row above normal. Red bars cross the "
+                "alert threshold (dotted line); the band is normal.",
     "g_sin_datos": "no data",
     "g_det_viirs": "detections (VIIRS units)",
     "g_det_crudas": "raw detections",
@@ -1333,7 +1485,7 @@ def metodo(texto: str, idioma: str) -> str:
 
 def pasos_tour(idioma: str) -> list[dict]:
     return [dict(titulo=t(f"tour_{i}_t", idioma), texto=t(f"tour_{i}", idioma),
-                 mirar=t(f"tour_{i}_m", idioma)) for i in range(6)]
+                 mirar=t(f"tour_{i}_m", idioma)) for i in (0, 1, 6, 2, 3, 4, 5)]
 
 
 # Fuentes de la pestaña "Para qué sirve" (se citan tal cual, en su idioma original)
