@@ -7,13 +7,20 @@
   "viirs": 139534,
   "razon": 4.6
  },
- "costa_rica_viirs_2012_2025": 74570,
- "costa_rica_volcan": 573,
- "limites": {
-  "lon0": -89.05,
-  "lon1": -81.93888888888888,
-  "lat0": 7.55,
-  "lat1": 11.55
+ "mundo_tipos": {
+  "periodo": "2024–2025",
+  "sensor": "VIIRS NOAA-20",
+  "alto_px": 1429,
+  "limites": [
+   -180.0,
+   180.0,
+   -56.0,
+   78.0
+  ],
+  "costa_afuera": 161472,
+  "vegetacion": 38139462,
+  "industria_gas": 2532810,
+  "volcanes": 52773
  },
  "serie_mundial": {
   "mundo_tal_cual_antes": 391610,

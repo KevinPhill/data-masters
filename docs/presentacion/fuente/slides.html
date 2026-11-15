@@ -15,7 +15,7 @@
   <div class="bloque">
     <div class="evento">NASA Space Apps Challenge 2026 <span class="pt">·</span> Costa Rica</div>
     <div class="marca">DATA<br>MASTERS</div>
-    <div class="lema">The fire calendar, seen from space</div>
+    <div class="lema">Every hot spot on Earth,<br>on one calendar since 2000</div>
     <p class="reto">Challenge: <b>Harmonization of MODIS and VIIRS Hot Spots</b></p>
     <div class="enlaces">
       <div><span>Demo</span><a href="{{DEMO_URL}}">{{DEMO_TEXTO}}</a></div>
@@ -25,7 +25,7 @@
   </div>
   <div class="credito">Data: NASA FIRMS <span class="pt">·</span> Project for NASA Space Apps Challenge 2026 Costa Rica. Not an official NASA product.<br>Image: the 18,376,493 VIIRS (NOAA-20) detections of 2025, drawn by our code.</div>
   <div class="n">1 / 7</div>
-  <aside class="notas">We are Data Masters, from the Costa Rica local event. Our challenge is Harmonization of MODIS and VIIRS Hot Spots. The picture is not a photograph and not a generated image: it is the planet drawn only with the 18.4 million fire detections that VIIRS on NOAA-20 reported in 2025, taken from NASA FIRMS and plotted by our own code. Our app joins MODIS, flying since 2000, and VIIRS, since 2012, into one comparable 25-year series, so a firefighter, an early-warning manager or a scientist can tell in seconds whether this week or month has abnormal fire in their area. The demo and the code are public at the links on the slide.</aside>
+  <aside class="notas">We are Data Masters, from the Costa Rica local event. Our challenge is Harmonization of MODIS and VIIRS Hot Spots. The picture is not a photograph and not a generated image: it is the planet drawn only with the 18.4 million fire detections that VIIRS on NOAA-20 reported in 2025, taken from NASA FIRMS and plotted by our own code. Our app joins MODIS, flying since 2000, and VIIRS, since 2012, into one comparable 25-year series for any country on Earth, and not only for wildfires: it also separates gas flares and industry, volcanoes and heat over water. So a firefighter, an early-warning manager, an energy regulator or a scientist, anywhere, can tell in seconds whether this week or month is abnormal in their area. The demo and the code are public at the links on the slide.</aside>
 </section>
 
 <!-- 2 · The challenge: the same region and months seen by each sensor -->
@@ -58,31 +58,52 @@
   <aside class="notas">Why this matters now. Each line is a satellite. MODIS flies on Terra, with fire data from November 2000, and on Aqua, from July 2002. VIIRS started on Suomi NPP, with data from January 2012, then NOAA-20, which we use from 2018, and NOAA-21, launched in November 2022. Suomi NPP stopped delivering data on 2 November 2026, and NASA plans to end MODIS in 2027. Below is the world series. The white line is what you get if you join the records as they are: the monthly average goes from about 392 thousand detections in 2011 to 1.86 million in 2012, only because the instrument changed. The dashed orange line is our harmonized series, with its uncertainty range, expressed as the detections VIIRS would have seen. Without that bridge, 25 years of record cannot be compared with what NOAA-20 and NOAA-21 will keep measuring.</aside>
 </section>
 
-<!-- 4 · Social impact: Costa Rica carries the slide -->
+<!-- 4 · Global value: the four kinds of heat FIRMS sees, worldwide -->
 <section class="slide s4">
-  <img class="fondo" src="img/costa_rica.jpg" alt="Costa Rica drawn with every VIIRS fire detection from 2012 to 2025">
-  <div class="texto" style="width: 600px;">
-    <h2>Is this month normal here?</h2>
-    <p class="hecho"><b>233 wildfires, 30,868 hectares</b> burned in Costa Rica by May 2026.<i>El Observador, 2026</i></p>
-    <p class="hecho"><b>1.53 million deaths a year</b> are linked to smoke from landscape fires.<i>The Lancet, 2024</i></p>
-    <p class="hecho"><b>151 bcm of gas flared</b> in 2024, about 389 MtCO₂e. Not every hot spot is a wildfire.<i>World Bank, Global Gas Flaring Tracker 2025</i></p>
+  <img class="mapa" src="img/mundo_tipos.jpg" alt="World map of every VIIRS (NOAA-20) detection of 2024 and 2025, coloured by FIRMS type: vegetation fires, industry and gas, volcanoes, and heat over water">
+  <div class="aro" style="left: 512px; top: 363px;"></div>
+  <div class="guia" style="left: 232px; top: 363px; width: 266px;"></div>
+  <div class="cr" style="left: 96px; top: 345px;"><b>Costa Rica</b>233 wildfires and 30,868 ha burned by May 2026.<i>El Observador, 2026</i></div>
+  <h2>One planet, four kinds of heat</h2>
+  <div class="pregunta">One question in every country: <b>is this month normal here?</b></div>
+  <div class="tipos">
+    <div class="tipo veg">
+      <h3>Vegetation fires <small>38.1 M</small></h3>
+      <p>Smoke from landscape fires is linked to <b>1.53 million deaths a year</b>.</p>
+      <div class="src">The Lancet, 2024</div>
+      <div class="actua">Firefighters, emergency committees, public health</div>
+    </div>
+    <div class="tipo gas">
+      <h3>Industry and gas <small>2.53 M</small></h3>
+      <p><b>151 bcm of gas flared</b> in 2024, about 389 MtCO₂e of emissions.</p>
+      <div class="src">World Bank, Global Gas Flaring Tracker 2025</div>
+      <div class="actua">Energy regulators, climate inventories</div>
+    </div>
+    <div class="tipo vol">
+      <h3>Volcanoes <small>52,773</small></h3>
+      <p>Kīlauea, Nyiragongo, Etna, Semeru: <b>heat that must not raise a wildfire alert</b>.</p>
+      <div class="src">FIRMS type 1</div>
+      <div class="actua">Volcano observatories, civil protection</div>
+    </div>
+    <div class="tipo mar">
+      <h3>Over water <small>161,472</small></h3>
+      <p><b>Offshore platforms</b> and coastal plants, plus fires on lake and river shores.</p>
+      <div class="src">FIRMS type 3, “offshore”</div>
+      <div class="actua">Environmental and maritime agencies</div>
+    </div>
   </div>
-  <div class="rotulo" style="left: 728px; top: 292px;">Guanacaste</div>
-  <div class="rotulo vol" style="left: 1262px; top: 316px;">Poás</div>
-  <div class="rotulo vol" style="left: 1446px; top: 396px;">Turrialba</div>
-  <div class="quien"><b>Who decides with the answer:</b> wildland firefighters and emergency committees, public health, protected areas and land managers, energy ministries and volcano observatories.</div>
-  <div class="pie">Costa Rica: 74,570 VIIRS detections, 2012–2025, NASA FIRMS. Fire in red and orange; volcanoes in yellow.</div>
+  <div class="pie">Every VIIRS (NOAA-20) detection of 2024–2025 in NASA FIRMS, coloured by FIRMS type and drawn by our code <span class="pt">·</span> counts are detections, not fires</div>
   <div class="n">4 / 7</div>
-  <aside class="notas">The social impact. This is Costa Rica drawn with the 74,570 detections VIIRS recorded from 2012 to 2025. Guanacaste, in the north-west, burns every dry season; the two yellow points are the Poás and Turrialba volcanoes, which FIRMS also sees as heat. By May 2026 the fire service had counted 233 wildfires and 30,868 hectares burned in the country, according to El Observador. Worldwide, The Lancet in 2024 linked about 1.53 million deaths a year to smoke from landscape fires. And not every hot spot is a wildfire: the World Bank reports 151 billion cubic metres of gas flared in 2024, about 389 million tonnes of CO2 equivalent. That is why the app is integral: it covers vegetation, industry and gas, volcanoes and offshore sources. The question every user has is the same: is this month normal here? Firefighters and emergency committees use the answer to bring crews and closures forward; public health to warn schools, clinics and people with asthma before the smokiest weeks; land managers to measure whether prevention works without the false jump of 2012; energy ministries and volcano observatories to follow flaring and volcanic heat.</aside>
+  <aside class="notas">The value is global. This map is every detection VIIRS on NOAA-20 made in 2024 and 2025, taken from NASA FIRMS and coloured by the type FIRMS assigns. In orange, vegetation fires: 38.1 million detections, from the African savannas to the Amazon, India and Australia. Smoke from landscape fires is linked to about 1.53 million deaths a year, according to The Lancet in 2024. In yellow, industry and gas: 2.5 million detections, from Iraq and the Gulf to Nigeria, Siberia and Texas. The World Bank counted 151 billion cubic metres of gas flared in 2024, about 389 million tonnes of CO2 equivalent. In white, volcanoes, from Kīlauea to Nyiragongo, Etna and the Indonesian arc: heat that must not set off a wildfire alert. And in blue, what FIRMS sees over water: offshore platforms, coastal plants and fires on the shores of lakes and rivers. A single correction factor would mix all of this; that is why the app is integral and harmonizes each type separately. The question is the same in every country: is this month normal here? Firefighters and emergency committees use the answer to bring crews and closures forward; public health to warn schools and clinics before the smokiest weeks; energy regulators and climate inventories to follow flaring; volcano observatories and civil protection to tell volcanic heat from fire. Costa Rica, where our team works, is one case: by May 2026 the fire service had counted 233 wildfires and 30,868 hectares burned, according to El Observador.</aside>
 </section>
 
 <!-- 5 · What we built: real screenshots -->
 <section class="slide s5">
   <h2>The app</h2>
   <div class="texto">
-    <p>Tap a country on the globe, pick a region or type coordinates.</p>
+    <p>Tap <b>any country on Earth</b> on the globe, pick a region or type coordinates.</p>
     <p>You get <b>25 years of fire in one series</b>, a burn calendar from 2000 to today, and an alert when weeks or months run above normal.</p>
-    <p>Near-real-time VIIRS from FIRMS, four hot spot types, downloads, English and Spanish.</p>
+    <p>Each month, the countries running above normal, ranked. Near-real-time VIIRS from FIRMS, four hot spot types, downloads, English and Spanish.</p>
   </div>
   <div class="globo"><img src="img/app_costa_rica.png" alt="App screenshot: the globe of countries and the fire history of Costa Rica"></div>
   <div class="alerta" style="width: 1124px;"><img src="img/alerta_us.png" alt="App screenshot: weekly alert chart for the United States ending in September 2020"></div>
@@ -90,7 +111,7 @@
     <span>United States, September 2020, as the Alerts tab shows it. Each week is compared with the same week in earlier years, from 2003.</span></div>
   <div class="pie">Screenshots of the app <span class="pt">·</span> Python, Streamlit, DuckDB, LightGBM, Plotly <span class="pt">·</span> {{DEMO_TEXTO}}</div>
   <div class="n">5 / 7</div>
-  <aside class="notas">This is what we built: a web app, public at the demo link. You tap a country on the globe, choose an example region, or type coordinates with a radius. The app answers with the harmonized history of that place: one sentence, three figures and the series. The Alerts tab compares each week or month with the same period in earlier years and warns when there is a run of unusual rises: three high weeks or two high months in a row, or a single week that at least doubles the median. The example on screen is the United States in September 2020: seven weeks in a row above normal since 17 August, overall 4.1 times normal. There is also a burn calendar from 2000 to today, trends, an anomaly map, a tab with near-real-time VIIRS detections from FIRMS for NOAA-20 and NOAA-21, a filter by hot spot type (vegetation, industry and gas, volcanoes, offshore), and downloads as an HTML report, CSV and PNG. It runs in English and Spanish, with a colour-blind-safe palette and a presentation mode. It is built with Python, Streamlit, DuckDB, LightGBM and Plotly on NASA FIRMS data: MODIS Collection 6.1 from Terra and Aqua, and VIIRS from Suomi NPP, NOAA-20 and NOAA-21.</aside>
+  <aside class="notas">This is what we built: a web app, public at the demo link, that works for any country on Earth. You tap a country on the globe, choose an example region, or type coordinates with a radius. The app answers with the harmonized history of that place: one sentence, three figures and the series. The Alerts tab compares each week or month with the same period in earlier years and warns when there is a run of unusual rises: three high weeks or two high months in a row, or a single week that at least doubles the median. For the month you choose, it also ranks the countries of the world that are running above normal. The example on screen is the United States in September 2020: seven weeks in a row above normal since 17 August, overall 4.1 times normal. There is also a burn calendar from 2000 to today, trends, an anomaly map, a tab with near-real-time VIIRS detections from FIRMS for NOAA-20 and NOAA-21, a filter by hot spot type (vegetation, industry and gas, volcanoes, offshore), and downloads as an HTML report, CSV and PNG. It runs in English and Spanish, with a colour-blind-safe palette and a presentation mode. It is built with Python, Streamlit, DuckDB, LightGBM and Plotly on NASA FIRMS data: MODIS Collection 6.1 from Terra and Aqua, and VIIRS from Suomi NPP, NOAA-20 and NOAA-21.</aside>
 </section>
 
 <!-- 6 · How we harmonize, and how well -->

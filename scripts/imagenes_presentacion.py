@@ -4,7 +4,8 @@ Cada imagen es un conteo de puntos de calor por píxel, en escala logarítmica, 
 
   portada.jpg        el planeta en proyección ortográfica: todas las detecciones VIIRS (NOAA-20) de 2025
   modis_viirs.jpg    la misma región y los mismos dos meses vistos por MODIS (izquierda) y por VIIRS (derecha)
-  costa_rica.jpg     Costa Rica: todas las detecciones VIIRS 2012–2025; los volcanes (tipo 1 de FIRMS) en amarillo
+  mundo_tipos.jpg    el mundo con las detecciones VIIRS (NOAA-20) de 2024–2025, un color por tipo de FIRMS:
+                     vegetación (fuego), industria y gas (amarillo), volcanes (blanco) y sobre agua (azul)
   linea_tiempo.svg   los satélites con sus fechas y la serie mundial tal cual y armonizada (data/app/serie_mundial.csv)
   datos.json         las cifras que salen de estas consultas y que cita la presentación
 
@@ -23,6 +24,7 @@ from pathlib import Path
 import duckdb
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
+from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parents[1]
 DB = ROOT / "data" / "db_nasa.duckdb"
@@ -113,6 +115,13 @@ def brillo(g, radio, tope):
     return np.clip(np.maximum(v, halo * 1.6), 0, 1)
 
 
+def resplandor(g, sigma, tope):
+    """Para fuentes puntuales (un volcán ocupa uno o dos píxeles): el mismo núcleo logarítmico con un resplandor
+    gaussiano redondo, escalado para que un píxel aislado conserve su brillo en el centro."""
+    v = np.clip(np.log1p(g) / np.log1p(tope), 0, 1)
+    return np.clip(np.maximum(v, ndimage.gaussian_filter(v, sigma) * 2 * np.pi * sigma ** 2), 0, 1)
+
+
 def pintar(fondo, v, rampa=RAMPA):
     """Mezcla la rampa de fuego sobre el fondo: la opacidad crece con el brillo."""
     color = np.stack([np.interp(v, RAMPA_X, rampa[:, k]) for k in range(3)], axis=-1)
@@ -179,29 +188,66 @@ def modis_viirs(con, tierra_pols, paises_pols):
             "modis": cifras["modis"], "viirs": cifras["viirs"], "razon": round(cifras["viirs"] / cifras["modis"], 1)}
 
 
-# ---------- 4 · Costa Rica ----------
-def costa_rica(con, tierra_pols, paises_pols):
-    lat0, lat1 = 7.55, 11.55
-    ancho_lon = (lat1 - lat0) * ANCHO / ALTO
-    lon0 = -89.05
-    lon1 = lon0 + ancho_lon
-    viirs = "sensor IN ('VIIRS_SNPP', 'VIIRS_NOAA20')"
-    m = mascara_tierra(tierra_pols, lon0, lon1, lat0, lat1, ANCHO, ALTO)
-    cr = [p for p in paises_pols if p and p[0][:, 0].min() < -84 < p[0][:, 0].max() and p[0][:, 1].min() < 10 < p[0][:, 1].max()
-          and np.ptp(p[0][:, 0]) < 5]
-    b_todos = bordes(paises_pols, lon0, lon1, lat0, lat1, ANCHO, ALTO, 2)
-    b_cr = bordes(cr, lon0, lon1, lat0, lat1, ANCHO, ALTO, 5)
-    fondo = NOCHE + (TIERRA - NOCHE) * m[..., None] + b_todos[..., None] * np.array([16, 36, 84])
-    fondo = fondo * (1 - b_cr[..., None]) + b_cr[..., None] * np.array([46, 150, 245])
-    veg = conteo(con, f"{viirs} AND type <> 1", lon0, lon1, lat0, lat1, ANCHO, ALTO)
-    vol = conteo(con, f"{viirs} AND type = 1", lon0, lon1, lat0, lat1, ANCHO, ALTO)
-    im = pintar(fondo, brillo(veg, 2.0, 8))
-    amarillo = np.array([[90, 100, 0], [160, 175, 0], [234, 254, 7], [234, 254, 7], [250, 255, 160]], dtype=float)
-    im = pintar(im, brillo(vol, 3.0, 4), amarillo)
-    guardar(im, "costa_rica.jpg")
-    n, nv = con.execute(f"SELECT count(*), count(*) FILTER (type = 1) FROM hotspots WHERE {viirs} AND country = 'Costa Rica'").fetchone()
-    return {"costa_rica_viirs_2012_2025": int(n), "costa_rica_volcan": int(nv),
-            "limites": {"lon0": lon0, "lon1": lon1, "lat0": lat0, "lat1": lat1}}
+# ---------- 4 · el mundo, por tipo de punto de calor ----------
+MUNDO = (-180.0, 180.0, -56.0, 78.0)                           # sin la Antártida ni el Ártico alto
+TIPOS = [  # (clave, tipo FIRMS, rampa, sigma del resplandor o None para el fuego de vegetación, tope como percentil de
+           #  las celdas con puntos). Van en orden de dibujo: lo que cae sobre agua queda debajo de la vegetación.
+    ("costa_afuera", 3, np.array([[20, 70, 160], [30, 105, 215], [46, 150, 245], [70, 170, 250], [110, 190, 255]], float),
+     1.3, 95),
+    ("vegetacion", 0, RAMPA, None, 99.9),
+    ("industria_gas", 2, np.array([[70, 80, 0], [150, 165, 0], [234, 254, 7], [245, 255, 120], [250, 255, 200]], float),
+     1.1, 99.5),
+    ("volcanes", 1, np.array([[200, 200, 210], [235, 235, 240], [255, 255, 255], [255, 255, 255], [255, 255, 255]], float),
+     4.0, 50),
+]
+
+
+def mascara_mundo(pols, lon0, lon1, lat0, lat1, w, h):
+    """Como mascara_tierra, con dos arreglos para el mapa del mundo entero:
+    - los anillos que cruzan el meridiano 180 se desenvuelven y se dibujan a los dos lados (si no, quedan franjas de
+      lado a lado);
+    - los huecos se resuelven por paridad dentro de cada polígono: en el TopoJSON el anillo de Afro-Eurasia viene
+      después del Caspio, como si fuera su hueco."""
+    def dibujar(d, r):
+        lon = np.degrees(np.unwrap(np.radians(r[:, 0])))
+        for dx in ((0.0, -360.0, 360.0) if np.abs(np.diff(r[:, 0])).max(initial=0) > 180 else (0.0,)):
+            xy = np.column_stack([(lon + dx - lon0) / (lon1 - lon0) * w, (lat1 - r[:, 1]) / (lat1 - lat0) * h])
+            d.polygon([tuple(q) for q in xy], fill=255)
+
+    base = Image.new("L", (w, h), 0)
+    d = ImageDraw.Draw(base)
+    con_huecos = np.zeros((h, w), bool)
+    for pol in pols:
+        if len(pol) == 1:
+            dibujar(d, pol[0])
+            continue
+        paridad = np.zeros((h, w), bool)
+        for r in pol:
+            capa = Image.new("L", (w, h), 0)
+            dibujar(ImageDraw.Draw(capa), r)
+            paridad ^= np.asarray(capa) > 0
+        con_huecos |= paridad
+    return np.maximum(np.asarray(base, dtype=float) / 255, con_huecos)
+
+
+def mundo_tipos(con, tierra_pols):
+    lon0, lon1, lat0, lat1 = MUNDO
+    w = ANCHO
+    h = round(w * (lat1 - lat0) / (lon1 - lon0))
+    fechas = "sensor = 'VIIRS_NOAA20' AND acq_date BETWEEN '2024-01-01' AND '2025-12-31'"
+    m = mascara_mundo(tierra_pols, lon0, lon1, lat0, lat1, w, h)
+    im = NOCHE + (TIERRA - NOCHE) * m[..., None]
+    cuentas = {}
+    for clave, tipo, rampa, sigma, pct in TIPOS:
+        # tipo 3 es todo lo que FIRMS ve sobre agua: plataformas en el mar, pero también costas, bahías y lagos
+        g = conteo(con, f"{fechas} AND type = {tipo}", lon0, lon1, lat0, lat1, w, h)
+        cuentas[clave] = int(g.sum())
+        tope = np.percentile(g[g > 0], pct)
+        # la vegetación cubre continentes: sin halo y con gamma, para que el centro de África no quede todo blanco
+        v = np.clip(np.log1p(g) / np.log1p(tope), 0, 1) ** 1.8 if sigma is None else resplandor(g, sigma, tope)
+        im = pintar(im, v, rampa)
+    guardar(im, "mundo_tipos.jpg")
+    return {"periodo": "2024–2025", "sensor": "VIIRS NOAA-20", "alto_px": h, "limites": list(MUNDO), **cuentas}
 
 
 # ---------- 3 · línea de tiempo de los satélites y serie mundial ----------
@@ -282,7 +328,7 @@ def main():
     datos = {}
     datos.update(portada(con, tierra_pols))
     datos["modis_viirs"] = modis_viirs(con, tierra_pols, paises_pols)
-    datos.update(costa_rica(con, tierra_pols, paises_pols))
+    datos["mundo_tipos"] = mundo_tipos(con, tierra_pols)
     datos["serie_mundial"] = linea_tiempo()
     (OUT / "datos.json").write_text(json.dumps(datos, indent=1, ensure_ascii=False), encoding="utf-8")
     print(json.dumps(datos, ensure_ascii=False))
