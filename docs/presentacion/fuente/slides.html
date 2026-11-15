@@ -4,227 +4,138 @@
 <meta charset="utf-8">
 <title>Data Masters</title>
 <meta name="author" content="Data Masters">
-<meta name="description" content="NASA Space Apps Challenge 2026 Costa Rica · Harmonization of MODIS and VIIRS Hot Spots. Slides drafted with AI assistance (Claude, Anthropic); see slide 7.">
+<meta name="description" content="NASA Space Apps Challenge 2026 Costa Rica. Harmonization of MODIS and VIIRS Hot Spots. Slides written and designed with AI assistance (Claude, Anthropic); maps and charts are data visualizations drawn by code from NASA FIRMS detections. See slide 7.">
 <link rel="stylesheet" href="estilo.css">
-<style>aside.notas { display: none; }</style>
 </head>
 <body>
 
-<!-- 1 · Title -->
-<section class="slide portada">
-  <div class="izq">
+<!-- 1 · Title: the planet drawn with every VIIRS detection of 2025 -->
+<section class="slide s1">
+  <img class="fondo" src="img/portada.jpg" alt="The Americas seen from orbit, drawn only with the VIIRS fire detections of 2025">
+  <div class="bloque">
     <div class="evento">NASA Space Apps Challenge 2026 <span class="pt">·</span> Costa Rica</div>
-    <div class="marca">DATA MASTERS</div>
+    <div class="marca">DATA<br>MASTERS</div>
     <div class="lema">The fire calendar, seen from space</div>
     <p class="reto">Challenge: <b>Harmonization of MODIS and VIIRS Hot Spots</b></p>
-    <p class="valor">We join two generations of NASA fire sensors into one comparable 25-year series, so anyone can tell in seconds whether this week or month has abnormal fire in their area.</p>
     <div class="enlaces">
       <div><span>Demo</span><a href="{{DEMO_URL}}">{{DEMO_TEXTO}}</a></div>
       <div><span>Code</span><a href="https://github.com/KevinPhill/data-masters">github.com/KevinPhill/data-masters</a></div>
       <div><span>Team</span><a>Data Masters</a></div>
 {{EQUIPO}}    </div>
   </div>
-  <div class="der">
-    <img src="img/app_costa_rica.png" alt="App screenshot: globe of countries and the fire history of Costa Rica">
-    <p>Screenshot of the app: tap a country on the globe to see its harmonized fire history.</p>
-  </div>
-  <div class="credito"><span>Data: NASA FIRMS <span class="pt">·</span> Project for NASA Space Apps Challenge 2026 Costa Rica. Not an official NASA product.</span><span>1 / 7</span></div>
-  <aside class="notas">We are Data Masters, from the Costa Rica local event. Our challenge is Harmonization of MODIS and VIIRS Hot Spots. The app joins MODIS (since 2000) and VIIRS (since 2012) fire detections from NASA FIRMS into a single 25-year series, so a firefighter, an early-warning manager or a scientist can see in seconds whether this week or month is out of the ordinary in their area. The demo and the code are public at the links on the slide.</aside>
+  <div class="credito">Data: NASA FIRMS <span class="pt">·</span> Project for NASA Space Apps Challenge 2026 Costa Rica. Not an official NASA product.<br>Image: the 18,376,493 VIIRS (NOAA-20) detections of 2025, drawn by our code.</div>
+  <div class="n">1 / 7</div>
+  <aside class="notas">We are Data Masters, from the Costa Rica local event. Our challenge is Harmonization of MODIS and VIIRS Hot Spots. The picture is not a photograph and not a generated image: it is the planet drawn only with the 18.4 million fire detections that VIIRS on NOAA-20 reported in 2025, taken from NASA FIRMS and plotted by our own code. Our app joins MODIS, flying since 2000, and VIIRS, since 2012, into one comparable 25-year series, so a firefighter, an early-warning manager or a scientist can tell in seconds whether this week or month has abnormal fire in their area. The demo and the code are public at the links on the slide.</aside>
 </section>
 
-<!-- 2 · The challenge -->
-<section class="slide">
-  <div class="kicker"><b>02</b>The challenge</div>
-  <h1>Two sensors count fire differently. Joined as they are, 2012 looks like a fire wave that never happened.</h1>
-  <div class="cols">
-    <div style="width: 540px; display: grid; gap: 34px; align-content: start;">
-      <div class="dato">
-        <div class="cifra">4.5×</div>
-        <p>more detections reported by VIIRS (since 2012) than by MODIS (since 2000) worldwide, in the months when both flew.</p>
-        <div class="fuente">NASA FIRMS 2012–2021, our calculation</div>
-      </div>
-      <div class="dato">
-        <div class="cifra fuego">80 %</div>
-        <p>typical error per country and year if MODIS is merged as it is.</p>
-        <div class="fuente">Our validation, 160 countries</div>
-      </div>
-      <div class="dato">
-        <div class="cifra" style="font-size: 50px;">2026 <small>→</small> 2027</div>
-        <p>Suomi NPP stopped delivering data on 2 Nov 2026 and MODIS ends in 2027. The record needs a bridge to NOAA-20 and NOAA-21.</p>
-        <div class="fuente">NASA Earthdata <span class="pt">·</span> NASA LAADS</div>
-      </div>
-    </div>
-    <div style="flex: 1;">
-      <div class="marco"><img src="img/antes_despues_us.png" alt="Before: MODIS and VIIRS merged as they are show a false jump in 2012. After: harmonized, one continuous series."></div>
-      <p class="nota" style="margin-top: 14px;">Screenshot of the app, United States, all hot spot types. Left: the two sensors merged as they are. Right: the same years harmonized into VIIRS-equivalent detections, with the uncertainty range of the estimated years.</p>
-      <p style="margin-top: 34px; font-size: 25px;"><b>What the challenge asks for:</b> one comparable series, a burn calendar from the early 2000s to today, the current month against its historical median, near-real-time alerts, and the method, validation and uncertainty in plain view.</p>
-    </div>
+<!-- 2 · The challenge: the same region and months seen by each sensor -->
+<section class="slide s2">
+  <img class="fondo" src="img/modis_viirs.jpg" alt="Central America in March and April 2024: MODIS detections on the left, VIIRS detections on the right">
+  <div class="sensor" style="left: 572px; top: 236px;">
+    <div class="desde">Since 2000</div>
+    <div class="nombre">MODIS</div>
+    <div class="cuenta">30,252 <small>detections</small></div>
   </div>
-  <div class="pie"><span>Data Masters <span class="pt">·</span> NASA Space Apps Challenge 2026 Costa Rica</span><span>2 / 7</span></div>
-  <aside class="notas">MODIS has flown since 2000 and VIIRS since 2012. VIIRS is more sensitive: in the months when both flew it reports about 4.5 times more detections. If you simply append one record to the other, fire seems to surge in 2012 although only the satellite changed; merged as it is, MODIS misses the VIIRS count by about 80 % per country and year. This matters now: Suomi NPP stopped delivering data on 2 November 2026 and NASA plans to end MODIS in 2027, so the 25-year record needs a bridge to NOAA-20 and NOAA-21. The chart is a screenshot of the app for the United States: before and after harmonizing.</aside>
+  <div class="sensor" style="left: 1532px; top: 236px;">
+    <div class="desde">Since 2012</div>
+    <div class="nombre">VIIRS</div>
+    <div class="cuenta">139,534 <small>detections</small></div>
+  </div>
+  <div class="frase" style="width: 470px;">Same place, same two months, <b>4.6 times more fire</b> on the right. Only the instrument changed.</div>
+  <div class="frase2" style="width: 470px;">Worldwide the gap is 4.5×. Join the two records as they are and the error is 80 % per country and year.</div>
+  <div class="pie">Central America, March–April 2024 <span class="pt">·</span> NASA FIRMS: MODIS (Terra + Aqua) and VIIRS (NOAA-20)</div>
+  <div class="n">2 / 7</div>
+  <aside class="notas">This is the problem in one picture. Both halves show Central America in March and April 2024, drawn from NASA FIRMS. On the left, what MODIS on Terra and Aqua detected: 30,252 hot spots. On the right, what VIIRS on NOAA-20 detected in the same place and the same weeks: 139,534, which is 4.6 times more. VIIRS is simply more sensitive. Worldwide, in the months when both flew between 2012 and 2021, VIIRS reports about 4.5 times more detections. So if you append the VIIRS record to the MODIS record as they are, the typical error per country and year is about 80 %, and fire seems to explode in 2012 although nothing changed on the ground. The challenge asks for one comparable series, a burn calendar from the early 2000s to today, the current month against its historical median, near-real-time alerts, and the method, validation and uncertainty in plain view.</aside>
 </section>
 
-<!-- 3 · Social impact -->
-<section class="slide">
-  <div class="kicker"><b>03</b>Social impact</div>
-  <h1>“Is this month normal in my area?” An answer in seconds, for the people who have to decide.</h1>
-  <div class="cifras4">
-    <div class="dato">
-      <div class="cifra fuego">1.53 M</div>
-      <p>deaths a year are linked to smoke from landscape fires.</p>
-      <div class="fuente">The Lancet, 2024</div>
-    </div>
-    <div class="dato">
-      <div class="cifra fuego">30,868 ha</div>
-      <p>burned in 233 wildfires in Costa Rica by May 2026.</p>
-      <div class="fuente">El Observador (Costa Rica), 2026</div>
-    </div>
-    <div class="dato">
-      <div class="cifra">151 bcm</div>
-      <p>of gas flared worldwide in 2024, about 389 MtCO₂e. Not every hot spot is a wildfire.</p>
-      <div class="fuente">World Bank, Global Gas Flaring Tracker 2025</div>
-    </div>
-    <div class="dato">
-      <div class="cifra">25 years</div>
-      <p>of fire history in one series, free, built on NASA open data, in English and Spanish.</p>
-      <div class="fuente">NASA FIRMS, 2000–2025</div>
-    </div>
+<!-- 3 · Why now: satellites as tracks, the world series below -->
+<section class="slide s3">
+  <h2>25 years, five satellites</h2>
+  <div class="lado">Joined as they are, world fire seems to jump from <b>392 k to 1.86 M</b> detections a month between 2011 and 2012.</div>
+  {{LINEA_TIEMPO}}
+  <div class="pie">Tracks: first data in NASA FIRMS; Suomi NPP end of delivery from NASA Earthdata; MODIS end from NASA LAADS <span class="pt">·</span> Series: monthly average of each year, world</div>
+  <div class="n">3 / 7</div>
+  <aside class="notas">Why this matters now. Each line is a satellite. MODIS flies on Terra, with fire data from November 2000, and on Aqua, from July 2002. VIIRS started on Suomi NPP, with data from January 2012, then NOAA-20, which we use from 2018, and NOAA-21, launched in November 2022. Suomi NPP stopped delivering data on 2 November 2026, and NASA plans to end MODIS in 2027. Below is the world series. The white line is what you get if you join the records as they are: the monthly average goes from about 392 thousand detections in 2011 to 1.86 million in 2012, only because the instrument changed. The dashed orange line is our harmonized series, with its uncertainty range, expressed as the detections VIIRS would have seen. Without that bridge, 25 years of record cannot be compared with what NOAA-20 and NOAA-21 will keep measuring.</aside>
+</section>
+
+<!-- 4 · Social impact: Costa Rica carries the slide -->
+<section class="slide s4">
+  <img class="fondo" src="img/costa_rica.jpg" alt="Costa Rica drawn with every VIIRS fire detection from 2012 to 2025">
+  <div class="texto" style="width: 600px;">
+    <h2>Is this month normal here?</h2>
+    <p class="hecho"><b>233 wildfires, 30,868 hectares</b> burned in Costa Rica by May 2026.<i>El Observador, 2026</i></p>
+    <p class="hecho"><b>1.53 million deaths a year</b> are linked to smoke from landscape fires.<i>The Lancet, 2024</i></p>
+    <p class="hecho"><b>151 bcm of gas flared</b> in 2024, about 389 MtCO₂e. Not every hot spot is a wildfire.<i>World Bank, Global Gas Flaring Tracker 2025</i></p>
   </div>
-  <div class="rotulo" style="margin-top: 52px;">Who uses it and what they decide</div>
-  <table class="quien">
-    <tr><td>Wildland firefighters and emergency committees</td><td>Bring crews, patrols and closures forward when the week or month is running above normal.</td><td>Alerts <span class="pt">·</span> Last few days</td></tr>
-    <tr><td>Public health</td><td>Warn schools, clinics and people with asthma before the smokiest weeks.</td><td>Calendar <span class="pt">·</span> Fire season</td></tr>
-    <tr><td>Protected areas, land managers, scientists</td><td>Measure whether prevention works year over year, without the false jump of 2012.</td><td>Trends <span class="pt">·</span> Downloads</td></tr>
-    <tr><td>Energy ministries and volcano observatories</td><td>Follow gas flaring and volcanic heat: the series covers vegetation, industry and gas, volcanoes and offshore.</td><td>Hot spot type</td></tr>
+  <div class="rotulo" style="left: 728px; top: 292px;">Guanacaste</div>
+  <div class="rotulo vol" style="left: 1262px; top: 316px;">Poás</div>
+  <div class="rotulo vol" style="left: 1446px; top: 396px;">Turrialba</div>
+  <div class="quien"><b>Who decides with the answer:</b> wildland firefighters and emergency committees, public health, protected areas and land managers, energy ministries and volcano observatories.</div>
+  <div class="pie">Costa Rica: 74,570 VIIRS detections, 2012–2025, NASA FIRMS. Fire in red and orange; volcanoes in yellow.</div>
+  <div class="n">4 / 7</div>
+  <aside class="notas">The social impact. This is Costa Rica drawn with the 74,570 detections VIIRS recorded from 2012 to 2025. Guanacaste, in the north-west, burns every dry season; the two yellow points are the Poás and Turrialba volcanoes, which FIRMS also sees as heat. By May 2026 the fire service had counted 233 wildfires and 30,868 hectares burned in the country, according to El Observador. Worldwide, The Lancet in 2024 linked about 1.53 million deaths a year to smoke from landscape fires. And not every hot spot is a wildfire: the World Bank reports 151 billion cubic metres of gas flared in 2024, about 389 million tonnes of CO2 equivalent. That is why the app is integral: it covers vegetation, industry and gas, volcanoes and offshore sources. The question every user has is the same: is this month normal here? Firefighters and emergency committees use the answer to bring crews and closures forward; public health to warn schools, clinics and people with asthma before the smokiest weeks; land managers to measure whether prevention works without the false jump of 2012; energy ministries and volcano observatories to follow flaring and volcanic heat.</aside>
+</section>
+
+<!-- 5 · What we built: real screenshots -->
+<section class="slide s5">
+  <h2>The app</h2>
+  <div class="texto">
+    <p>Tap a country on the globe, pick a region or type coordinates.</p>
+    <p>You get <b>25 years of fire in one series</b>, a burn calendar from 2000 to today, and an alert when weeks or months run above normal.</p>
+    <p>Near-real-time VIIRS from FIRMS, four hot spot types, downloads, English and Spanish.</p>
+  </div>
+  <div class="globo"><img src="img/app_costa_rica.png" alt="App screenshot: the globe of countries and the fire history of Costa Rica"></div>
+  <div class="alerta" style="width: 1124px;"><img src="img/alerta_us.png" alt="App screenshot: weekly alert chart for the United States ending in September 2020"></div>
+  <div class="cita" style="top: 706px;">“Alert: 7 weeks in a row above normal, since 17 Aug 2020. Overall, 4.1 times normal.”
+    <span>United States, September 2020, as the Alerts tab shows it. Each week is compared with the same week in earlier years, from 2003.</span></div>
+  <div class="pie">Screenshots of the app <span class="pt">·</span> Python, Streamlit, DuckDB, LightGBM, Plotly <span class="pt">·</span> {{DEMO_TEXTO}}</div>
+  <div class="n">5 / 7</div>
+  <aside class="notas">This is what we built: a web app, public at the demo link. You tap a country on the globe, choose an example region, or type coordinates with a radius. The app answers with the harmonized history of that place: one sentence, three figures and the series. The Alerts tab compares each week or month with the same period in earlier years and warns when there is a run of unusual rises: three high weeks or two high months in a row, or a single week that at least doubles the median. The example on screen is the United States in September 2020: seven weeks in a row above normal since 17 August, overall 4.1 times normal. There is also a burn calendar from 2000 to today, trends, an anomaly map, a tab with near-real-time VIIRS detections from FIRMS for NOAA-20 and NOAA-21, a filter by hot spot type (vegetation, industry and gas, volcanoes, offshore), and downloads as an HTML report, CSV and PNG. It runs in English and Spanish, with a colour-blind-safe palette and a presentation mode. It is built with Python, Streamlit, DuckDB, LightGBM and Plotly on NASA FIRMS data: MODIS Collection 6.1 from Terra and Aqua, and VIIRS from Suomi NPP, NOAA-20 and NOAA-21.</aside>
+</section>
+
+<!-- 6 · How we harmonize, and how well -->
+<section class="slide s6">
+  <div class="grande">5.5<small>%</small></div>
+  <div class="que">typical error per country and year, when a year is hidden and predicted from MODIS.</div>
+  <div class="contra"><b>7.4 %</b> in 2022–2025, years the model never saw.<br><b>1.3 %</b> on the world monthly total.<br><span class="mal">80 %</span> if the two records are joined as they are.</div>
+  <div class="falla"><b>Where it fails:</b> 6 of 149 countries. Yemen, Trinidad and Tobago, Vanuatu, Haiti, Iceland and Bahrain. It cannot foresee an eruption or a new gas well that MODIS never saw.</div>
+  <div class="pista">
+    <h3>From MODIS to what VIIRS would have seen</h3>
+    <div class="paso"><div class="t">One grid</div><div class="d">The world in 0.5° cells. Detections counted per cell, month and hot spot type.</div></div>
+    <div class="paso"><div class="t">Vegetation: LightGBM</div><div class="d">93 % of what VIIRS sees. 600 trees, 28 inputs per cell and month, then a regional correction.</div></div>
+    <div class="paso"><div class="t">Fixed sources: one model per cell</div><div class="d">31,332 cells of volcanoes, industry and gas, and offshore. Learned separately before and after 2018, when VIIRS moved to NOAA-20.</div></div>
+    <div class="paso"><div class="t">One series, with its range</div><div class="d">Observed VIIRS from 2012, the prediction before, each estimated month with its uncertainty.</div></div>
+  </div>
+  <div class="modelos">
+    <h3>Five models <span class="pt">·</span> error per country and year (test: 2017, 2021)</h3>
+    <div><span>One worldwide factor</span><i style="width: 297px;"></i><b>19.8 %</b></div>
+    <div><span>Ratio per region and month</span><i style="width: 150px;"></i><b>10.0 %</b></div>
+    <div><span>LightGBM</span><i style="width: 105px;"></i><b>7.0 %</b></div>
+    <div><span>LightGBM + regional correction</span><i style="width: 100px;"></i><b>6.7 %</b></div>
+    <div class="app"><span>Integral, the app's model</span><i style="width: 100px;"></i><b>6.7 %</b></div>
+  </div>
+  <div class="n">6 / 7</div>
+  <aside class="notas">How we harmonize, and how well it works. We divide the world into half-degree cells, about 55 kilometres, and count MODIS and VIIRS detections per cell, month and FIRMS type. Vegetation is 93 % of what VIIRS sees: a LightGBM model with 600 trees and 28 inputs per cell and month (what Terra and Aqua saw by day and night, fire power, neighbouring cells and months, the position of the Sun, place and date) predicts the VIIRS count, and a correction per 10-degree region and month removes the remaining bias. Fixed sources, 31,332 cells of volcanoes, gas flares, industry and offshore platforms, get one relation per cell, learned separately before and after 2018, when VIIRS moved from Suomi NPP to NOAA-20. Where VIIRS exists we keep what it observed; before 2012 we use the prediction, with a range taken from the 5th and 95th percentiles of the validation error, and each month is split into weeks. Validation always uses predictions the model did not see. Hiding one year at a time from 2012 to 2021, the typical error per country and year is 5.5 %; in 2022 to 2025, never used, it is 7.4 %; on the world monthly total, 1.3 %. Joining the records as they are misses by about 80 %. We compared five models on test years 2017 and 2021: one worldwide factor 19.8 %, a ratio per region and month 10.0 %, LightGBM 7.0 %, LightGBM with regional correction 6.7 %, and the integral model of the app 6.7 % with the best R squared per cell, 0.817. It does not overfit: R squared in log scale per cell goes from 0.836 in training to 0.817 in test and 0.794 in never-seen years. And it fails somewhere: of 149 countries with at least 1,000 detections a year it works well in 130, fairly in 13 and not well in 6, mostly places where volcanoes erupt in some years or gas wells open and close. Volcanoes, 36.1 %, and offshore, 29.2 %, are the weakest types in 2022 to 2025. Costa Rica works well: 9.2 % per year. It counts heat detections, not burned hectares.</aside>
+</section>
+
+<!-- 7 · AI disclosure -->
+<section class="slide s7">
+  <h2>AI disclosure</h2>
+  <div class="sub">The 2026 Space Apps guides call these tools “Super Intelligence (SI)”. Every use is listed here.</div>
+  <div class="clave"><span class="eq">The team</span><span class="gen">Generative AI</span><span class="nog">Not generative</span></div>
+  <table>
+    <tr><td class="q eq">Challenge, idea, priorities, design direction, decisions</td><td class="r"><b>The team.</b> Which model to use, the integral approach, the alert rule; reviewing and testing every result.</td></tr>
+    <tr><td class="q gen">Python code</td><td class="r"><b>Claude (Anthropic), through Claude Code,</b> wrote and refactored most of it: the app, the data pipeline, the model training and validation scripts, and the automated interface tests we ran during development.</td></tr>
+    <tr><td class="q gen">Interface design, CSS, English and Spanish text, README</td><td class="r">Claude, under the team's direction.</td></tr>
+    <tr><td class="q gen">Public sources</td><td class="r">Claude helped find and check them.</td></tr>
+    <tr><td class="q gen">This deck</td><td class="r">Written, laid out and redesigned with Claude; rendered from HTML.</td></tr>
+    <tr><td class="q nog">Harmonization model</td><td class="r"><b>LightGBM,</b> machine learning trained on NASA FIRMS data, plus statistical models. A ratio baseline and a small neural network were also compared. No language or image model runs in the app.</td></tr>
+    <tr><td class="q nog">Maps and charts, in the app and in these slides</td><td class="r">Drawn by our code from NASA FIRMS detections: data visualization, not generated imagery. The other pictures are screenshots of the app.</td></tr>
+    <tr><td class="q nog">AI-generated images, video or audio</td><td class="r">None.</td></tr>
   </table>
-  <div class="pie"><span>Data Masters <span class="pt">·</span> NASA Space Apps Challenge 2026 Costa Rica</span><span>3 / 7</span></div>
-  <aside class="notas">Fire is not only a forest problem. The Lancet (2024) links about 1.53 million deaths a year to smoke from landscape fires. In Costa Rica, by May 2026 the fire service had counted 233 wildfires and 30,868 hectares burned (El Observador). And not every hot spot is a wildfire: the World Bank reports 151 billion cubic metres of gas flared in 2024, about 389 million tonnes of CO2 equivalent. Prevention needs to know when heat is out of the ordinary, and only a long, comparable history can answer that. The table shows who uses the app and which decision it supports. The app is integral: it harmonizes all four FIRMS hot spot types, not only vegetation fires.</aside>
-</section>
-
-<!-- 4 · What we built -->
-<section class="slide">
-  <div class="kicker"><b>04</b>What we built</div>
-  <h1>One web app: pick a place, see 25 years of fire and whether today is out of the ordinary.</h1>
-  <div class="cols" style="gap: 44px;">
-    <div style="width: 520px;">
-      <ul class="lista">
-        <li><b>Globe of every country.</b> Tap one for its fire history: one sentence, three figures, the harmonized series.</li>
-        <li><b>Alerts by week or month.</b> Each period against the same one in earlier years; runs of unusual rises and the countries above normal.</li>
-        <li><b>Burn calendar 2000–today,</b> trends and anomaly map, for a country, a region or coordinates with a radius.</li>
-        <li><b>Last few days.</b> Near-real-time VIIRS from FIRMS (NOAA-20, NOAA-21) against what is normal for that week.</li>
-        <li><b>Four hot spot types:</b> vegetation, industry and gas, volcanoes, offshore.</li>
-        <li><b>Downloads</b> (HTML report, CSV, PNG), English and Spanish, colour-blind-safe palette, presentation mode.</li>
-      </ul>
-      <p class="nota" style="margin-top: 22px;">Python <span class="pt">·</span> Streamlit <span class="pt">·</span> DuckDB <span class="pt">·</span> LightGBM <span class="pt">·</span> Plotly. Data: NASA FIRMS, MODIS C6.1 (Terra, Aqua) and VIIRS (S-NPP, NOAA-20, NOAA-21).</p>
-    </div>
-    <div style="width: 730px;">
-      <div class="marco"><img src="img/calendario_cr.png" alt="Burn calendar of Costa Rica, 2003–2025: one square per month"></div>
-      <p class="nota" style="margin-top: 12px;">Burn calendar, Costa Rica: one square per month. Dots mark months estimated from MODIS.</p>
-    </div>
-    <div style="flex: 1;">
-      <div class="marco"><img src="img/paises_alerta_us.png" alt="Table of countries above normal in September 2020"></div>
-      <p class="nota" style="margin-top: 12px;">Countries above normal in a chosen month; tap one to open it.</p>
-    </div>
-  </div>
-  <div class="pie"><span>Data Masters <span class="pt">·</span> NASA Space Apps Challenge 2026 Costa Rica <span class="pt">·</span> Screenshots of the app</span><span>4 / 7</span></div>
-  <aside class="notas">This is what we built: a Streamlit web app. You pick a country on the globe, an example region, or coordinates with a radius. The Alerts tab compares each week or month with the same period in earlier years and warns when there is a run of unusual rises. The calendar shows every month since 2000 in one picture; here, Costa Rica, where March and April stand out every year. The Last few days tab queries FIRMS near-real-time VIIRS data. Everything can be filtered by hot spot type and downloaded as an HTML report, CSV or PNG. The app is in English and Spanish, with a colour-blind-safe palette and a presentation mode.</aside>
-</section>
-
-<!-- 5 · How we harmonize -->
-<section class="slide">
-  <div class="kicker"><b>05</b>How we harmonize</div>
-  <h1>One model per hot spot type, all expressed as the detections VIIRS would have seen.</h1>
-  <div class="pasos">
-    <div class="paso"><div class="n">1</div><h3>Common unit</h3><p>The world in 0.5° cells (~55 km). MODIS and VIIRS detections counted per cell, month and type.</p></div>
-    <div class="paso"><div class="n">2</div><h3>Vegetation <span class="pt">·</span> 93 % of VIIRS</h3><p>LightGBM (600 trees, Poisson loss, 28 inputs per cell and month), then a correction per 10° region and month.</p></div>
-    <div class="paso"><div class="n">3</div><h3>Fixed sources <span class="pt">·</span> 31,332 cells</h3><p>Volcanoes, industry and gas, offshore: one relation per cell, learned separately before and after 2018, when VIIRS moved from S-NPP to NOAA-20.</p></div>
-    <div class="paso"><div class="n">4</div><h3>One series, with its range</h3><p>Observed VIIRS from 2012, the prediction before. Each estimated month carries the p5–p95 range of the validation error; months are split into weeks.</p></div>
-  </div>
-  <div class="cols" style="margin-top: 44px; gap: 60px;">
-    <div style="width: 640px;">
-      <div class="rotulo">Five models compared <span class="pt">·</span> typical error per country and year</div>
-      <div class="barras">
-        <div class="barra"><span class="n">One worldwide factor</span><span class="b" style="width: 198px;"></span><span class="v">19.8 %</span></div>
-        <div class="barra"><span class="n">Ratio per region and month</span><span class="b" style="width: 100px;"></span><span class="v">10.0 %</span></div>
-        <div class="barra"><span class="n">LightGBM</span><span class="b" style="width: 70px;"></span><span class="v">7.0 %</span></div>
-        <div class="barra"><span class="n">LightGBM + regional correction</span><span class="b" style="width: 67px;"></span><span class="v">6.7 %</span></div>
-        <div class="barra app"><span class="n">Integral (the app)</span><span class="b" style="width: 67px;"></span><span class="v">6.7 %</span></div>
-      </div>
-      <p class="nota" style="margin-top: 14px;">Test years 2017 and 2021, not seen in training. The integral model also has the best R² (log) per cell, 0.817 against 0.775, and fails in the fewest countries.</p>
-      <p style="margin-top: 16px; font-size: 20px; line-height: 1.34;"><b>No overfitting.</b> R² (log) per cell: 0.836 in training, 0.817 in test, 0.794 in never-seen 2022–2025. Error per country and year: 4.5 %, 6.7 %, 7.5 %.</p>
-    </div>
-    <div style="flex: 1;">
-      <div class="rotulo">Validation <span class="pt">·</span> hide a year and predict it</div>
-      <div class="marco" style="margin-top: 14px; padding: 12px 18px;"><img src="img/validacion_us.png" alt="Validation chart: predicted from MODIS against observed VIIRS, 2012–2025, United States"></div>
-      <p class="nota" style="margin-top: 12px;">Screenshot of the app, United States. Each year 2012–2021 was left out and predicted from MODIS; 2022–2025 were never used. Circles: prediction with its range. Dark line: what VIIRS saw. Blue: MODIS as it is.</p>
-    </div>
-  </div>
-  <div class="pie"><span>Data Masters <span class="pt">·</span> NASA Space Apps Challenge 2026 Costa Rica</span><span>5 / 7</span></div>
-  <aside class="notas">The method. We divide the world into half-degree cells and count MODIS and VIIRS detections per cell, month and FIRMS type. Vegetation is 93 % of what VIIRS sees: a LightGBM model with 28 inputs per cell and month (what Terra and Aqua saw by day and night, fire power, neighbouring cells and months, Sun position, place and date) predicts the VIIRS count, and a regional correction removes the remaining bias. Fixed sources such as volcanoes, gas flares and offshore platforms get one relation per cell, learned separately before and after 2018, when VIIRS moved from S-NPP to NOAA-20. Where VIIRS exists we keep the observation; before 2012 we use the prediction with an uncertainty range. We compared five models on the same years; the integral one is the app's model. Training used 2012–2016 and 2018–2020, test years are 2017 and 2021, and 2022–2025 were never seen. The error barely grows from training to unseen years, so it does not overfit.</aside>
-</section>
-
-<!-- 6 · Results -->
-<section class="slide">
-  <div class="kicker"><b>06</b>Results</div>
-  <h1>It flags real events, measures its error and says where it fails.</h1>
-  <div class="cols" style="gap: 52px;">
-    <div style="width: 1010px;">
-      <div class="marco"><img src="img/alerta_us.png" alt="Weekly alert chart for the United States ending in September 2020"></div>
-      <p class="cita">United States, September 2020: <span>“Alert: 7 weeks in a row above normal, since 17 Aug 2020. Overall, 4.1 times normal.”</span></p>
-      <p class="nota" style="margin-top: 10px; font-size: 19px;">Screenshot of the Alerts tab. Each week against the same week in earlier years (from 2003). An alert is a run of 3 high weeks or 2 high months, or a single week that at least doubles the median.</p>
-    </div>
-    <div style="flex: 1;">
-      <div class="cifras2">
-        <div class="dato"><div class="cifra">5.5 %</div><p>typical error per country and year, one year left out at a time (2012–2021).</p></div>
-        <div class="dato"><div class="cifra">7.4 %</div><p>in 2022–2025, years the model never saw.</p></div>
-        <div class="dato"><div class="cifra">1.3 %</div><p>on the worldwide monthly total.</p></div>
-        <div class="dato"><div class="cifra fuego">80 %</div><p>if MODIS is merged as it is.</p></div>
-      </div>
-      <div class="limites">
-        <h3>Where it does not work well</h3>
-        <p>Of 149 countries with at least 1,000 detections a year it works well in 130, fairly in 13 and not well in 6: Yemen, Trinidad and Tobago, Vanuatu, Haiti, Iceland and Bahrain. It cannot foresee an eruption or a new gas well that MODIS never saw.</p>
-        <p>Volcanoes (36.1 %) and offshore (29.2 %) are the weakest types in 2022–2025. It counts heat detections, not burned hectares.</p>
-      </div>
-    </div>
-  </div>
-  <div class="pie"><span>Data Masters <span class="pt">·</span> NASA Space Apps Challenge 2026 Costa Rica <span class="pt">·</span> Errors are the median absolute error, in %</span><span>6 / 7</span></div>
-  <aside class="notas">A walkthrough. Choose United States and September 2020, the month of the large wildfires in the western states. The Alerts tab says: alert, seven weeks in a row above normal since 17 August 2020, overall 4.1 times normal, with history counted from 2003. Validation, always with predictions the model did not see: the typical error per country and year is 5.5 % leaving one year out, 7.4 % in the never-seen years 2022–2025, and 1.3 % on the worldwide monthly total. Merging MODIS as it is misses by about 80 %. Costa Rica works well: 9.2 % typical error per year. We also show where it fails: 6 of 149 countries, mostly places with volcanoes that erupt in some years or gas wells that open and close; volcanoes and offshore are the weakest types. And it counts heat detections, not burned area or damage.</aside>
-</section>
-
-<!-- 7 · Use of AI -->
-<section class="slide">
-  <div class="kicker"><b>07</b>Use of AI <span class="pt">·</span> credits</div>
-  <h1>Where we used AI, and how.</h1>
-  <p class="nota" style="margin-top: 10px; font-size: 21px;">The 2026 Space Apps guides call these tools “Super Intelligence (SI)”. This is our disclosure of every use.</p>
-  <div class="ia">
-    <div class="bloque gen">
-      <h3>Generative AI: a programming assistant</h3>
-      <p><b>Claude (Anthropic), used through Claude Code.</b></p>
-      <ul class="lista">
-        <li><b>Code:</b> wrote and refactored most of the Python: the app, the data pipeline, the model training and validation scripts, and the automated interface tests we ran during development.</li>
-        <li><b>Design and text:</b> the interface design and CSS, the English and Spanish interface text and translations, and the README.</li>
-        <li><b>Sources:</b> helped find and check the public sources we cite.</li>
-        <li><b>This deck:</b> drafted with Claude and rendered from HTML.</li>
-      </ul>
-    </div>
-    <div class="bloque">
-      <h3>Machine learning in the product (not generative)</h3>
-      <p><b>LightGBM</b> gradient boosting, trained on NASA FIRMS data, estimates VIIRS-equivalent counts from MODIS for vegetation fires.</p>
-      <p>The rest is statistics: a regional correction factor and one linear relation per cell for fixed sources.</p>
-      <p>Also tried and compared: a single worldwide factor, a ratio per region and month, and a small neural network in the modelling notebook. No language or image model runs in the app.</p>
-    </div>
-    <div class="bloque">
-      <h3>What the team did, and what is not AI</h3>
-      <p><b>The team</b> chose the challenge and the idea, set the priorities and the design direction, made the decisions (which model, the integral approach, the alert rule) and reviewed and tested the results.</p>
-      <p><b>No AI-generated images, video or audio.</b> Charts and the globe are drawn from the data; map outlines come from a public TopoJSON; fonts are Fira Sans and Overpass (OFL). No NASA or Space Apps logos are used.</p>
-    </div>
-  </div>
-  <div class="cierre">
-    <div><b>Next steps.</b> Weekly alerts for any coordinates (today: countries and example regions) and the calendar filled up to today without a user key.</div>
-    <div><b>Demo</b> <a href="{{DEMO_URL}}">{{DEMO_TEXTO}}</a> &nbsp;<span class="pt">·</span>&nbsp; <b>Code</b> <a href="https://github.com/KevinPhill/data-masters">github.com/KevinPhill/data-masters</a><br>Data: NASA FIRMS <span class="pt">·</span> Project for NASA Space Apps Challenge 2026 Costa Rica. Not an official NASA product. Sources: The Lancet (2024), NASA Earthdata, NASA LAADS, El Observador (2026), World Bank (2025).</div>
-  </div>
-  <div class="pie"><span>Data Masters <span class="pt">·</span> NASA Space Apps Challenge 2026 Costa Rica</span><span>7 / 7</span></div>
-  <aside class="notas">Our use of AI, which the 2026 Space Apps guides call Super Intelligence or SI. Generative AI: we used Claude, from Anthropic, through Claude Code as a programming assistant. It wrote and refactored most of the Python code (the app, the data pipeline, the model training and validation scripts and the automated interface tests), the interface design and CSS, the English and Spanish interface text, and the README; it helped find and check the public sources; and this deck was drafted with it. The team chose the challenge and the idea, set priorities and design direction, made the decisions and reviewed and tested the results. Inside the product there is machine learning that is not generative: a LightGBM model trained on NASA FIRMS data, plus statistical models. There are no AI-generated images, video or audio: every chart and the globe are drawn from the data. Data: NASA FIRMS. This is a project for the NASA Space Apps Challenge 2026 Costa Rica and not an official NASA product.</aside>
+  <div class="cierre">Data: NASA FIRMS <span class="pt">·</span> Project for NASA Space Apps Challenge 2026 Costa Rica. Not an official NASA product. No NASA or Space Apps logos are used. Map outlines: public TopoJSON. Fonts: Fira Sans and Overpass (OFL).<br>Sources: The Lancet (2024), NASA Earthdata, NASA LAADS, El Observador (2026), World Bank (2025) <span class="pt">·</span> <a href="{{DEMO_URL}}">{{DEMO_TEXTO}}</a> <span class="pt">·</span> <a href="https://github.com/KevinPhill/data-masters">github.com/KevinPhill/data-masters</a></div>
+  <div class="n">7 / 7</div>
+  <aside class="notas">Our use of AI, which the 2026 Space Apps guides call Super Intelligence or SI. The team chose the challenge and the idea, set the priorities and the design direction, made the decisions, such as which model to use, the integral approach and the alert rule, and reviewed and tested the results. Generative AI was used as a programming assistant: Claude, from Anthropic, through Claude Code, wrote and refactored most of the Python code (the app, the data pipeline, the model training and validation scripts and the automated interface tests we ran during development), the interface design and CSS, the English and Spanish interface text and the README; it helped find and check the public sources; and this deck was written, laid out and redesigned with it. Inside the product there is machine learning that is not generative: a LightGBM model trained on NASA FIRMS data, plus statistical models; a ratio baseline and a small neural network were also compared. The maps and charts, in the app and in these slides, are drawn by our code from NASA FIRMS detections: they are data visualizations, not generated images, and the other pictures are screenshots of the app. There are no AI-generated images, video or audio. Data: NASA FIRMS. This is a project for the NASA Space Apps Challenge 2026 Costa Rica and not an official NASA product.</aside>
 </section>
 
 </body>

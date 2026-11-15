@@ -83,10 +83,10 @@ Las guías de Space Apps 2026 llaman a estas herramientas "Super Intelligence (S
   - Código: escribió y refactorizó la mayor parte del Python: la app, el flujo de datos, los scripts de entrenamiento y validación del modelo y las pruebas automáticas de la interfaz que corrimos durante el desarrollo.
   - Diseño y textos: el diseño de la interfaz y el CSS, los textos de la interfaz en español e inglés y sus traducciones, y este README.
   - Fuentes: ayudó a buscar y revisar las fuentes públicas que se citan.
-  - Presentación: las filminas de `docs/presentacion/` se redactaron con Claude y se dibujan desde HTML.
+  - Presentación: las filminas de `docs/presentacion/` se redactaron y diseñaron con Claude y se dibujan desde HTML.
 - **Aprendizaje automático dentro del producto (no generativo)**: LightGBM (gradient boosting), entrenado con datos de NASA FIRMS, estima las detecciones equivalentes a VIIRS a partir de MODIS para los fuegos de vegetación. Lo demás es estadística: un factor de corrección regional y una relación lineal por celda para las fuentes fijas. También se probaron y compararon un solo factor mundial, la razón por región y mes y, en el notebook del modelo, una red neuronal pequeña. En la app no corre ningún modelo de lenguaje ni de imágenes.
 - **Lo que hizo el equipo**: eligió el reto y la idea, definió las prioridades y la dirección del diseño, tomó las decisiones (qué modelo usar, el enfoque integral, la regla de alertas) y revisó y probó los resultados.
-- **Sin imágenes, video ni audio generados con IA**: las gráficas y el globo se dibujan con los datos, los contornos del mapa vienen de un TopoJSON público y las tipografías son Fira Sans y Overpass (OFL). Las imágenes de la presentación son capturas de la app.
+- **Sin imágenes, video ni audio generados con IA**: las gráficas y el globo se dibujan con los datos, los contornos del mapa vienen de un TopoJSON público y las tipografías son Fira Sans y Overpass (OFL). Las imágenes de la presentación son capturas de la app y mapas que dibuja `scripts/imagenes_presentacion.py` con las detecciones de NASA FIRMS (visualización de datos, no imágenes generadas).
 
 ## Correr la app
 ```bash
@@ -111,7 +111,7 @@ Con `pip install -r requirements-modelo.txt` (agrega LightGBM, scikit-learn, PyT
 8. `python scripts/evaluar_modelos.py` (~6 min): R², MSE, sobreajuste y países donde falla, para los cinco modelos → `data/app/evaluacion.*`.
 9. `python scripts/exportar_puntos.py`: puntos de calor de Centroamérica para correr sin la base completa.
 
-**Presentación**: `python scripts/presentacion.py` vuelve a generar `docs/presentacion/Data_Masters.pdf` y `.pptx` desde `docs/presentacion/fuente/` (HTML, CSS y capturas de la app). Necesita `pip install playwright python-pptx pypdf` y Google Chrome (o `playwright install chromium`). Con `--demo URL` cambia el enlace de la demo y con `--equipo "Nombres"` agrega a los integrantes en la portada.
+**Presentación**: `python scripts/presentacion.py` vuelve a generar `docs/presentacion/Data_Masters.pdf` y `.pptx` desde `docs/presentacion/fuente/` (HTML, CSS, capturas de la app e imágenes). Necesita `pip install playwright python-pptx pypdf` y Google Chrome (o `playwright install chromium`). Las imágenes del planeta, MODIS frente a VIIRS, Costa Rica y la línea de tiempo de los satélites se vuelven a dibujar con `python scripts/imagenes_presentacion.py` (usa `data/db_nasa.duckdb` en modo de solo lectura, DuckDB, NumPy y Pillow). Con `--demo URL` cambia el enlace de la demo y con `--equipo "Nombres"` agrega a los integrantes en la portada.
 
 ## Estructura
 ```
@@ -119,9 +119,9 @@ app/                 la app de Streamlit (streamlit_app.py, datos, gráficas, te
 app/static/          tipografías (OFL) y mapas servidos localmente
 data/app/            datos listos para la app
 data/modelo/         serie mundial armonizada (los Parquet del modelo se regeneran con el notebook 03 y scripts/modelo_integral.py)
-docs/presentacion/   presentación en PDF y PPTX; en fuente/ están el HTML, el CSS y las capturas con que se genera
+docs/presentacion/   presentación en PDF y PPTX; en fuente/ están el HTML, el CSS, las capturas y las imágenes con que se genera
 notebooks/           análisis exploratorio y modelo
-scripts/             consolidar, base de datos, modelo integral, preparar, semanas, validar, evaluar, exportar y presentación
+scripts/             consolidar, base de datos, modelo integral, preparar, semanas, validar, evaluar, exportar, presentación y sus imágenes
 ```
 
 Colores y tipografías siguen la guía de marca de NASA Space Apps: azules Electric, Neon, Blue Yonder y Deep Blue, Rocket Red y Martian Red para el fuego, Neon Yellow solo como acento; Fira Sans y Overpass. No se usa ningún logo de la NASA ni de Space Apps.

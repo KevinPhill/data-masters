@@ -1,0 +1,24 @@
+{
+ "portada_detecciones_viirs_2025": 18376493,
+ "modis_viirs": {
+  "region": "Central America and western Caribbean, 5–23° N, 77–93° W",
+  "periodo": "March–April 2024",
+  "modis": 30252,
+  "viirs": 139534,
+  "razon": 4.6
+ },
+ "costa_rica_viirs_2012_2025": 74570,
+ "costa_rica_volcan": 573,
+ "limites": {
+  "lon0": -89.05,
+  "lon1": -81.93888888888888,
+  "lat0": 7.55,
+  "lat1": 11.55
+ },
+ "serie_mundial": {
+  "mundo_tal_cual_antes": 391610,
+  "mundo_tal_cual_despues": 1862178,
+  "año_antes": 2011,
+  "año_despues": 2012
+ }
+}

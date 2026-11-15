@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1728 720" width="1728" height="720" class="tiempo">
+<line x1="250.0" y1="20" x2="250.0" y2="674" class="t-rejilla"/><text x="250.0" y="704" class="t-eje" text-anchor="middle">2000</text>
+<line x1="455.7" y1="20" x2="455.7" y2="674" class="t-rejilla"/><text x="455.7" y="704" class="t-eje" text-anchor="middle">2004</text>
+<line x1="661.4" y1="20" x2="661.4" y2="674" class="t-rejilla"/><text x="661.4" y="704" class="t-eje" text-anchor="middle">2008</text>
+<line x1="867.1" y1="20" x2="867.1" y2="674" class="t-rejilla"/><text x="867.1" y="704" class="t-eje" text-anchor="middle">2012</text>
+<line x1="1072.9" y1="20" x2="1072.9" y2="674" class="t-rejilla"/><text x="1072.9" y="704" class="t-eje" text-anchor="middle">2016</text>
+<line x1="1278.6" y1="20" x2="1278.6" y2="674" class="t-rejilla"/><text x="1278.6" y="704" class="t-eje" text-anchor="middle">2020</text>
+<line x1="1484.3" y1="20" x2="1484.3" y2="674" class="t-rejilla"/><text x="1484.3" y="704" class="t-eje" text-anchor="middle">2024</text>
+<line x1="1690.0" y1="20" x2="1690.0" y2="674" class="t-rejilla"/><text x="1690.0" y="704" class="t-eje" text-anchor="middle">2028</text>
+<text x="0" y="59" class="t-sat">Terra</text><text x="150" y="58" class="t-sensor">MODIS</text>
+<line x1="292.9" y1="52" x2="1632.1" y2="52" class="t-pista t-modis"/>
+<line x1="1632.1" y1="52" x2="1638.6" y2="52" class="t-pista t-modis t-futuro"/>
+<circle cx="292.9" cy="52" r="7" class="t-punto t-modis"/>
+<line x1="1638.6" y1="40" x2="1638.6" y2="64" class="t-fin"/>
+<text x="308.9" y="40" class="t-nota">data from Nov 2000</text>
+<text x="0" y="109" class="t-sat">Aqua</text><text x="150" y="108" class="t-sensor">MODIS</text>
+<line x1="378.6" y1="102" x2="1632.1" y2="102" class="t-pista t-modis"/>
+<line x1="1632.1" y1="102" x2="1638.6" y2="102" class="t-pista t-modis t-futuro"/>
+<circle cx="378.6" cy="102" r="7" class="t-punto t-modis"/>
+<line x1="1638.6" y1="90" x2="1638.6" y2="114" class="t-fin"/>
+<text x="394.6" y="90" class="t-nota">data from Jul 2002</text>
+<text x="0" y="159" class="t-sat">Suomi NPP</text><text x="150" y="158" class="t-sensor">VIIRS</text>
+<line x1="869.7" y1="152" x2="1630.0" y2="152" class="t-pista t-viirs"/>
+<circle cx="869.7" cy="152" r="7" class="t-punto t-viirs"/>
+<line x1="1630.0" y1="140" x2="1630.0" y2="164" class="t-fin"/>
+<text x="885.7" y="140" class="t-nota">Jan 2012 → 2 Nov 2026</text>
+<text x="0" y="209" class="t-sat">NOAA-20</text><text x="150" y="208" class="t-sensor">VIIRS</text>
+<line x1="1175.7" y1="202" x2="1632.1" y2="202" class="t-pista t-viirs"/>
+<line x1="1632.1" y1="202" x2="1690.0" y2="202" class="t-pista t-viirs t-futuro"/>
+<circle cx="1175.7" cy="202" r="7" class="t-punto t-viirs"/>
+<text x="1191.7" y="190" class="t-nota">from 2018</text>
+<text x="0" y="259" class="t-sat">NOAA-21</text><text x="150" y="258" class="t-sensor">VIIRS</text>
+<line x1="1424.3" y1="252" x2="1632.1" y2="252" class="t-pista t-viirs"/>
+<line x1="1632.1" y1="252" x2="1690.0" y2="252" class="t-pista t-viirs t-futuro"/>
+<circle cx="1424.3" cy="252" r="7" class="t-punto t-viirs"/>
+<text x="1440.3" y="240" class="t-nota">launched Nov 2022</text>
+<text x="1624.6" y="83" class="t-alerta" text-anchor="end">MODIS ends in 2027</text>
+<polygon points="481.4,345.7 532.9,348.1 584.3,382.2 635.7,349.0 687.1,366.9 738.6,386.0 790.0,368.7 841.4,370.0 892.9,378.1 892.9,388.3 841.4,429.1 790.0,427.2 738.6,442.1 687.1,425.2 635.7,409.6 584.3,440.1 532.9,412.4 481.4,411.9" class="t-banda"/>
+<polyline points="481.4,595.5 532.9,596.5 584.3,604.8 635.7,596.4 687.1,600.2 738.6,604.8 790.0,601.6 841.4,601.8 892.9,383.1 944.3,420.9 995.7,413.8 1047.1,395.7 1098.6,403.9 1150.0,408.2 1201.4,424.9 1252.9,403.0 1304.3,434.4 1355.7,419.2 1407.1,436.4 1458.6,391.6 1510.0,366.6 1561.4,432.3" class="t-talcual"/>
+<polyline points="481.4,376.4 532.9,378.4 584.3,410.4 635.7,378.6 687.1,395.2 738.6,413.0 790.0,397.2 841.4,398.3 892.9,383.1" class="t-armonizado"/>
+<circle cx="481.4" cy="595.5" r="5" class="t-ptc"/>
+<circle cx="532.9" cy="596.5" r="5" class="t-ptc"/>
+<circle cx="584.3" cy="604.8" r="5" class="t-ptc"/>
+<circle cx="635.7" cy="596.4" r="5" class="t-ptc"/>
+<circle cx="687.1" cy="600.2" r="5" class="t-ptc"/>
+<circle cx="738.6" cy="604.8" r="5" class="t-ptc"/>
+<circle cx="790.0" cy="601.6" r="5" class="t-ptc"/>
+<circle cx="841.4" cy="601.8" r="5" class="t-ptc"/>
+<circle cx="892.9" cy="383.1" r="5" class="t-ptc"/>
+<circle cx="944.3" cy="420.9" r="5" class="t-ptc"/>
+<circle cx="995.7" cy="413.8" r="5" class="t-ptc"/>
+<circle cx="1047.1" cy="395.7" r="5" class="t-ptc"/>
+<circle cx="1098.6" cy="403.9" r="5" class="t-ptc"/>
+<circle cx="1150.0" cy="408.2" r="5" class="t-ptc"/>
+<circle cx="1201.4" cy="424.9" r="5" class="t-ptc"/>
+<circle cx="1252.9" cy="403.0" r="5" class="t-ptc"/>
+<circle cx="1304.3" cy="434.4" r="5" class="t-ptc"/>
+<circle cx="1355.7" cy="419.2" r="5" class="t-ptc"/>
+<circle cx="1407.1" cy="436.4" r="5" class="t-ptc"/>
+<circle cx="1458.6" cy="391.6" r="5" class="t-ptc"/>
+<circle cx="1510.0" cy="366.6" r="5" class="t-ptc"/>
+<circle cx="1561.4" cy="432.3" r="5" class="t-ptc"/>
+<text x="827.4" y="645.8" class="t-rot t-azul" text-anchor="end">MODIS as it is</text>
+<text x="430.0" y="329.7" class="t-rot t-fuego">Harmonized, with its range</text>
+<text x="914.9" y="329.1" class="t-rot t-blanco">VIIRS observed</text>
+<line x1="867.1" y1="300" x2="867.1" y2="660" class="t-2012"/>
+<text x="0" y="495.0" class="t-sensor">World, detections</text><text x="0" y="523.0" class="t-sensor">per month</text>
+</svg>
