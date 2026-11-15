@@ -2,8 +2,9 @@
 
 NASA Space Apps Challenge 2026 · Costa Rica · Reto **Harmonization of MODIS and VIIRS Hot Spots**.
 
-- **Demo:** DEMO_URL
+- **Demo:** https://data-masters.streamlit.app
 - **Código:** https://github.com/KevinPhill/data-masters
+- **Presentación** (7 filminas, en inglés): [PDF](docs/presentacion/Data_Masters.pdf) · [PowerPoint](docs/presentacion/Data_Masters.pptx)
 
 MODIS (desde 2000) y VIIRS (desde 2012) cuentan el fuego de forma distinta: VIIRS ve unas 4.5 veces más detecciones. Si se unen tal cual, 2012 parece una ola de incendios que nunca existió. Data Masters los armoniza en una sola serie de 25 años, en detecciones equivalentes a VIIRS, para que brigadas forestales, gestores de alerta temprana y científicos sepan en segundos si **este mes es normal en su zona**.
 
@@ -75,6 +76,18 @@ El total mundial por mes se equivoca 1.3 % (un año fuera) y 1.5 % (2022–2025)
   - Con la razón simple fallan 31.
   - En Costa Rica funciona bien: 9.2 % de error típico por año (igual que la razón simple) y 15.0 % por mes.
 
+## Uso de inteligencia artificial
+Las guías de Space Apps 2026 llaman a estas herramientas "Super Intelligence (SI)". Aquí está todo lo que se usó y cómo.
+
+- **IA generativa, como asistente de programación**: Claude (Anthropic), usado a través de Claude Code.
+  - Código: escribió y refactorizó la mayor parte del Python: la app, el flujo de datos, los scripts de entrenamiento y validación del modelo y las pruebas automáticas de la interfaz.
+  - Diseño y textos: el diseño de la interfaz y el CSS, los textos de la interfaz en español e inglés y sus traducciones, y este README.
+  - Fuentes: ayudó a buscar y revisar las fuentes públicas que se citan.
+  - Presentación: las filminas de `docs/presentacion/` se redactaron con Claude y se dibujan desde HTML.
+- **Aprendizaje automático dentro del producto (no generativo)**: LightGBM (gradient boosting), entrenado con datos de NASA FIRMS, estima las detecciones equivalentes a VIIRS a partir de MODIS para los fuegos de vegetación. Lo demás es estadística: un factor de corrección regional y una relación lineal por celda para las fuentes fijas. También se probaron y compararon un solo factor mundial, la razón por región y mes y, en el notebook del modelo, una red neuronal pequeña. En la app no corre ningún modelo de lenguaje ni de imágenes.
+- **Lo que hizo el equipo**: eligió el reto y la idea, definió las prioridades y la dirección del diseño, tomó las decisiones (qué modelo usar, el enfoque integral, la regla de alertas) y revisó y probó los resultados.
+- **Sin imágenes, video ni audio generados con IA**: las gráficas y el globo se dibujan con los datos, los contornos del mapa vienen de un TopoJSON público y las tipografías son Fira Sans y Overpass (OFL). Las imágenes de la presentación son capturas de la app.
+
 ## Correr la app
 ```bash
 pip install -r requirements.txt
@@ -98,14 +111,17 @@ Con `pip install -r requirements-modelo.txt` (agrega LightGBM, scikit-learn, PyT
 8. `python scripts/evaluar_modelos.py` (~6 min): R², MSE, sobreajuste y países donde falla, para los cinco modelos → `data/app/evaluacion.*`.
 9. `python scripts/exportar_puntos.py`: puntos de calor de Centroamérica para correr sin la base completa.
 
+**Presentación**: `python scripts/presentacion.py` vuelve a generar `docs/presentacion/Data_Masters.pdf` y `.pptx` desde `docs/presentacion/fuente/` (HTML, CSS y capturas de la app). Necesita `pip install playwright python-pptx pypdf` y Google Chrome (o `playwright install chromium`). Con `--demo URL` cambia el enlace de la demo y con `--equipo "Nombres"` agrega a los integrantes en la portada.
+
 ## Estructura
 ```
 app/                 la app de Streamlit (streamlit_app.py, datos, gráficas, textos ES/EN, estilos)
 app/static/          tipografías (OFL) y mapas servidos localmente
 data/app/            datos listos para la app
 data/modelo/         serie mundial armonizada (los Parquet del modelo se regeneran con el notebook 03 y scripts/modelo_integral.py)
+docs/presentacion/   presentación en PDF y PPTX; en fuente/ están el HTML, el CSS y las capturas con que se genera
 notebooks/           análisis exploratorio y modelo
-scripts/             consolidar, base de datos, modelo integral, preparar, semanas, validar, evaluar y exportar
+scripts/             consolidar, base de datos, modelo integral, preparar, semanas, validar, evaluar, exportar y presentación
 ```
 
 Colores y tipografías siguen la guía de marca de NASA Space Apps: azules Electric, Neon, Blue Yonder y Deep Blue, Rocket Red y Martian Red para el fuego, Neon Yellow solo como acento; Fira Sans y Overpass. No se usa ningún logo de la NASA ni de Space Apps.

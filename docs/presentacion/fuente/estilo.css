@@ -1,0 +1,109 @@
+/* Data Masters · presentación. Colores y tipografías de la guía de marca de NASA Space Apps (los mismos de la app). */
+@font-face { font-family: "Fira Sans"; font-weight: 500; src: url("../../../app/static/fonts/firasans-latin-500.woff2") format("woff2"); }
+@font-face { font-family: "Fira Sans"; font-weight: 600; src: url("../../../app/static/fonts/firasans-latin-600.woff2") format("woff2"); }
+@font-face { font-family: "Fira Sans"; font-weight: 700; src: url("../../../app/static/fonts/firasans-latin-700.woff2") format("woff2"); }
+@font-face { font-family: "Fira Sans"; font-weight: 900; src: url("../../../app/static/fonts/firasans-latin-900.woff2") format("woff2"); }
+@font-face { font-family: "Overpass"; font-weight: 100 900; src: url("../../../app/static/fonts/overpass-latin-wght.woff2") format("woff2"); }
+@font-face { font-family: "Overpass"; font-weight: 100 900; font-style: italic; src: url("../../../app/static/fonts/overpass-latin-wght-italic.woff2") format("woff2"); }
+
+:root {
+  --electric: #0042A6; --neon: #0960E1; --yonder: #2E96F5; --deep: #07173F;
+  --rocket: #E43700; --martian: #8E1100; --yellow: #EAFE07;
+  --tinta: #07173F; --gris: #4A5878; --linea: #D5DBE7; --fondo: #F3F6FB;
+}
+@page { size: 1920px 1080px; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font-family: "Overpass", sans-serif; color: var(--tinta); font-size: 24px; line-height: 1.38; }
+
+.slide { position: relative; width: 1920px; height: 1080px; overflow: hidden; padding: 64px 96px 0; background: #fff;
+  page-break-after: always; break-after: page; }
+.slide:last-child { page-break-after: auto; break-after: auto; }
+
+.kicker { font-weight: 800; font-size: 19px; letter-spacing: .14em; text-transform: uppercase; color: var(--neon); }
+.kicker b { color: var(--rocket); font-weight: 800; margin-right: 14px; }
+h1 { font-family: "Fira Sans"; font-weight: 700; font-size: 54px; line-height: 1.12; letter-spacing: -.01em; margin-top: 14px; max-width: 1560px; }
+h3 { font-family: "Fira Sans"; font-weight: 700; font-size: 25px; line-height: 1.2; }
+.nota { font-size: 17px; color: var(--gris); line-height: 1.35; }
+.fuente { font-size: 15px; color: var(--gris); letter-spacing: .02em; margin-top: 6px; }
+b, strong { font-weight: 800; }
+
+.pie { position: absolute; left: 96px; right: 96px; bottom: 30px; display: flex; justify-content: space-between;
+  font-size: 15px; color: var(--gris); letter-spacing: .04em; border-top: 1px solid var(--linea); padding-top: 12px; }
+
+.cols { display: flex; gap: 56px; margin-top: 44px; }
+.pt { font-family: "Fira Sans"; font-weight: 700; }
+.captura { display: block; width: 100%; border: 1px solid var(--linea); border-radius: 10px; background: #fff; }
+.marco { border: 1px solid var(--linea); border-radius: 10px; padding: 18px 22px; background: #fff; }
+.marco img { display: block; width: 100%; }
+
+.cifra { font-family: "Fira Sans"; font-weight: 900; font-size: 68px; line-height: 1; color: var(--electric); letter-spacing: -.02em; }
+.cifra.fuego { color: var(--rocket); }
+.cifra small { font-size: .5em; font-weight: 700; letter-spacing: 0; }
+.dato { border-top: 3px solid var(--tinta); padding-top: 14px; }
+.dato p { margin-top: 10px; font-size: 22px; line-height: 1.32; }
+
+ul.lista { list-style: none; }
+ul.lista li { position: relative; padding: 0 0 0 26px; margin-top: 15px; font-size: 23px; line-height: 1.34; }
+ul.lista li::before { content: ""; position: absolute; left: 0; top: .52em; width: 12px; height: 3px; background: var(--rocket); }
+
+/* 1 · título */
+.portada { background: linear-gradient(45deg, var(--electric) 0%, var(--deep) 100%); color: #fff; padding: 0; }
+.portada .izq { position: absolute; left: 96px; top: 118px; width: 800px; }
+.portada .evento { font-weight: 800; font-size: 21px; letter-spacing: .16em; text-transform: uppercase; color: #CFE0FF; }
+.portada .marca { font-family: "Fira Sans"; font-weight: 900; font-size: 136px; line-height: .95; letter-spacing: -.01em; margin-top: 20px; }
+.portada .lema { font-family: "Fira Sans"; font-weight: 600; font-size: 40px; line-height: 1.15; margin-top: 22px; }
+.portada .reto { margin-top: 40px; font-size: 23px; color: #CFE0FF; }
+.portada .reto b { color: var(--yellow); font-weight: 700; }
+.portada .valor { margin-top: 12px; font-size: 27px; line-height: 1.36; color: #fff; }
+.portada .enlaces { margin-top: 46px; border-top: 1px solid rgba(255,255,255,.3); padding-top: 22px; font-size: 23px; }
+.portada .enlaces div { display: flex; margin-top: 7px; }
+.portada .enlaces span { width: 110px; color: #A9C4F5; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: 17px; padding-top: 5px; }
+.portada .enlaces a { color: #fff; text-decoration: none; font-weight: 700; }
+.portada .der { position: absolute; right: 80px; top: 150px; width: 880px; }
+.portada .der img { display: block; width: 100%; border-radius: 14px; border: 1px solid rgba(255,255,255,.22); box-shadow: 0 30px 70px rgba(3,10,32,.55); }
+.portada .der p { margin-top: 14px; font-size: 16px; color: #A9C4F5; }
+.portada .credito { position: absolute; left: 96px; right: 96px; bottom: 34px; font-size: 16px; color: #A9C4F5; letter-spacing: .03em;
+  border-top: 1px solid rgba(255,255,255,.22); padding-top: 14px; display: flex; justify-content: space-between; }
+
+/* 3 · impacto */
+.cifras4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 44px; margin-top: 48px; }
+table.quien { width: 100%; border-collapse: collapse; margin-top: 16px; }
+table.quien td { border-top: 1px solid var(--linea); padding: 19px 0; vertical-align: top; font-size: 25px; line-height: 1.3; }
+table.quien td:first-child { width: 520px; font-family: "Fira Sans"; font-weight: 700; padding-right: 30px; }
+table.quien td:last-child { width: 360px; padding-left: 30px; color: var(--gris); font-size: 21px; }
+.rotulo { font-weight: 800; font-size: 17px; letter-spacing: .12em; text-transform: uppercase; color: var(--gris); }
+
+/* 5 · método */
+.pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px; margin-top: 40px; }
+.paso { border-top: 3px solid var(--electric); padding-top: 12px; }
+.paso .n { font-family: "Fira Sans"; font-weight: 900; font-size: 20px; color: var(--neon); letter-spacing: .06em; }
+.paso h3 { margin-top: 2px; }
+.paso p { margin-top: 8px; font-size: 20px; line-height: 1.34; color: #1D2B52; }
+.barras { margin-top: 14px; }
+.barra { display: flex; align-items: center; margin-top: 11px; font-size: 20px; }
+.barra .n { width: 330px; }
+.barra .b { height: 24px; background: #9DB4DA; border-radius: 2px; }
+.barra .v { margin-left: 12px; font-family: "Fira Sans"; font-weight: 700; width: 90px; }
+.barra.app .n { font-weight: 800; }
+.barra.app .b { background: var(--electric); }
+
+/* 6 · resultados */
+.cifras2 { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 36px; }
+.cifras2 .cifra { font-size: 64px; }
+.cifras2 .dato p { font-size: 21px; margin-top: 8px; }
+.limites { margin-top: 34px; background: var(--fondo); border-left: 5px solid var(--rocket); border-radius: 0 10px 10px 0; padding: 18px 24px 20px; }
+.limites p { font-size: 21px; line-height: 1.36; margin-top: 10px; }
+.cita { font-family: "Fira Sans"; font-weight: 600; font-size: 27px; line-height: 1.28; margin-top: 20px; }
+.cita span { color: var(--rocket); }
+
+/* 7 · IA */
+.ia { display: grid; grid-template-columns: 1.22fr 1fr 1fr; gap: 48px; margin-top: 40px; }
+.ia h3 { font-size: 29px; min-height: 70px; }
+.ia .bloque { border-top: 3px solid var(--tinta); padding-top: 12px; }
+.ia .bloque.gen { border-top-color: var(--rocket); }
+.ia .bloque > p { margin-top: 14px; font-size: 23px; line-height: 1.36; }
+.ia ul.lista li { font-size: 23px; margin-top: 14px; line-height: 1.36; }
+.cierre { position: absolute; left: 96px; right: 96px; bottom: 84px; display: grid; grid-template-columns: 1.22fr 2fr; gap: 44px;
+  border-top: 1px solid var(--linea); padding-top: 14px; font-size: 19px; line-height: 1.36; }
+.cierre a { color: var(--electric); text-decoration: none; font-weight: 700; }
