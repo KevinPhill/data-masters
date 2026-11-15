@@ -80,6 +80,10 @@
 html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select { font-family: var(--dm-fuente); }
 .stApp, [data-testid="stAppViewContainer"] { background-color: var(--dm-fondo); color: var(--dm-tinta); }
 [data-testid="stHeader"] { background: transparent; }
+/* la cabecera de Streamlit es transparente y queda encima de la barra superior (idioma, presentación, modo, tour):
+   que deje pasar los clics, salvo en sus propios botones */
+[data-testid="stHeader"], [data-testid="stHeader"] [data-testid="stToolbar"] { pointer-events: none; }
+[data-testid="stHeader"] button, [data-testid="stHeader"] a { pointer-events: auto; }
 [data-testid="stMainBlockContainer"], .block-container { max-width: 1280px; padding-top: 1.6rem; padding-bottom: 3rem; }
 .stApp h1, .stApp h2, .stApp h3, .stApp h4 { font-family: var(--dm-titular); letter-spacing: 0; }
 .stApp :focus-visible { outline: 2px solid var(--dm-acento) !important; outline-offset: 2px; }
@@ -432,7 +436,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
   .dm-sensor-op { display: none; }
 }
 @media (max-width: 760px) {
-  [data-testid="stMainBlockContainer"], .block-container { padding-left: 16px; padding-right: 16px; }
+  [data-testid="stMainBlockContainer"], .block-container { padding-left: 16px; padding-right: 16px; padding-top: 3.4rem; }
   .st-key-banda { padding: 22px 16px 18px; margin-left: -4px; margin-right: -4px; }
   .dm-cab-lead { font-size: 1rem; }
   .dm-kpis-mini { grid-template-columns: 1fr 1fr; }
