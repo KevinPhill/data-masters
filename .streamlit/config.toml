@@ -1,0 +1,68 @@
+[theme]
+base = "light"
+primaryColor = "#0960E1"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F3F6FB"
+textColor = "#07173F"
+linkColor = "#0960E1"
+font = "Overpass, sans-serif"
+headingFont = "Fira Sans, sans-serif"
+codeFont = "monospace"
+baseRadius = "4px"
+buttonRadius = "4px"
+borderColor = "#C9D2E1"
+showWidgetBorder = true
+showSidebarBorder = true
+
+# Tipografías de la guía de marca de NASA Space Apps (OFL), servidas desde app/static/fonts: la app funciona sin internet
+[[theme.fontFaces]]
+family = "Overpass"
+url = "app/static/fonts/overpass-latin-wght.woff2"
+weight = "100 900"
+style = "normal"
+
+[[theme.fontFaces]]
+family = "Overpass"
+url = "app/static/fonts/overpass-latin-wght-italic.woff2"
+weight = "100 900"
+style = "italic"
+
+[[theme.fontFaces]]
+family = "Fira Sans"
+url = "app/static/fonts/firasans-latin-500.woff2"
+weight = "500"
+style = "normal"
+
+[[theme.fontFaces]]
+family = "Fira Sans"
+url = "app/static/fonts/firasans-latin-600.woff2"
+weight = "600"
+style = "normal"
+
+[[theme.fontFaces]]
+family = "Fira Sans"
+url = "app/static/fonts/firasans-latin-700.woff2"
+weight = "700"
+style = "normal"
+
+[[theme.fontFaces]]
+family = "Fira Sans"
+url = "app/static/fonts/firasans-latin-900.woff2"
+weight = "800 900"
+style = "normal"
+
+[theme.sidebar]
+backgroundColor = "#F3F6FB"
+
+[global]
+disableWidgetStateDuplicationWarning = true
+
+[server]
+headless = true
+enableStaticServing = true
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"

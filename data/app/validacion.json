@@ -1,0 +1,208 @@
+{
+  "modelo": "Integral: vegetación con LightGBM (28 entradas) + corrección regional; volcanes, industria y gas, y costa afuera con un modelo por celda",
+  "clave_modelo": "integral",
+  "calibracion": [
+    2012,
+    2021
+  ],
+  "fuera": [
+    2022,
+    2025
+  ],
+  "global_mensual": {
+    "fuera": {
+      "error_tipico": 1.5,
+      "error_modis_crudo": 78.8,
+      "dentro_del_rango": 100.0,
+      "sesgo": 0.1,
+      "n": 42
+    },
+    "loyo": {
+      "error_tipico": 1.3,
+      "error_modis_crudo": 78.2,
+      "dentro_del_rango": 100.0,
+      "sesgo": -0.1,
+      "n": 108
+    }
+  },
+  "pais_anual": {
+    "fuera": {
+      "error_tipico": 7.4,
+      "error_modis_crudo": 80.2,
+      "dentro_del_rango": 74.3,
+      "sesgo": 0.8,
+      "n": 556
+    },
+    "loyo": {
+      "error_tipico": 5.5,
+      "error_modis_crudo": 79.8,
+      "dentro_del_rango": 82.2,
+      "sesgo": 0.2,
+      "n": 1442
+    }
+  },
+  "pais_mensual": {
+    "fuera": {
+      "error_tipico": 14.5,
+      "error_modis_crudo": 82.0,
+      "dentro_del_rango": 56.7,
+      "sesgo": 1.9,
+      "n": 4990
+    },
+    "loyo": {
+      "error_tipico": 12.3,
+      "error_modis_crudo": 81.9,
+      "dentro_del_rango": 61.9,
+      "sesgo": 0.7,
+      "n": 13302
+    }
+  },
+  "paises": 160,
+  "factor_viirs_modis": 4.5,
+  "categorias": {
+    "veg": {
+      "global_mensual": {
+        "fuera": {
+          "error_tipico": 1.6,
+          "error_modis_crudo": 78.4,
+          "dentro_del_rango": 100.0,
+          "sesgo": -1.0,
+          "n": 42
+        },
+        "loyo": {
+          "error_tipico": 1.1,
+          "error_modis_crudo": 77.4,
+          "dentro_del_rango": 100.0,
+          "sesgo": -0.2,
+          "n": 108
+        }
+      },
+      "pais_anual": {
+        "fuera": {
+          "error_tipico": 8.9,
+          "error_modis_crudo": 79.9,
+          "dentro_del_rango": 68.5,
+          "sesgo": -0.8,
+          "n": 644
+        },
+        "loyo": {
+          "error_tipico": 7.2,
+          "error_modis_crudo": 78.5,
+          "dentro_del_rango": 74.4,
+          "sesgo": 0.2,
+          "n": 1630
+        }
+      },
+      "factor_viirs_modis": 4.35,
+      "parte_viirs": 93.09
+    },
+    "volcan": {
+      "global_mensual": {
+        "loyo": {
+          "error_tipico": 10.6,
+          "error_modis_crudo": 91.8,
+          "dentro_del_rango": 96.3,
+          "sesgo": -1.1,
+          "n": 108
+        },
+        "fuera": {
+          "error_tipico": 40.4,
+          "error_modis_crudo": 71.5,
+          "dentro_del_rango": 59.5,
+          "sesgo": 6.1,
+          "n": 42
+        }
+      },
+      "pais_anual": {
+        "fuera": {
+          "error_tipico": 36.1,
+          "error_modis_crudo": 78.3,
+          "dentro_del_rango": 58.8,
+          "sesgo": 11.9,
+          "n": 51
+        },
+        "loyo": {
+          "error_tipico": 22.1,
+          "error_modis_crudo": 93.7,
+          "dentro_del_rango": 80.3,
+          "sesgo": 0.3,
+          "n": 142
+        }
+      },
+      "factor_viirs_modis": 6.88,
+      "parte_viirs": 0.11
+    },
+    "industria": {
+      "global_mensual": {
+        "fuera": {
+          "error_tipico": 14.5,
+          "error_modis_crudo": 86.2,
+          "dentro_del_rango": 69.0,
+          "sesgo": 14.5,
+          "n": 42
+        },
+        "loyo": {
+          "error_tipico": 7.7,
+          "error_modis_crudo": 87.6,
+          "dentro_del_rango": 88.0,
+          "sesgo": 0.7,
+          "n": 108
+        }
+      },
+      "pais_anual": {
+        "fuera": {
+          "error_tipico": 17.4,
+          "error_modis_crudo": 89.6,
+          "dentro_del_rango": 57.0,
+          "sesgo": 6.3,
+          "n": 374
+        },
+        "loyo": {
+          "error_tipico": 10.9,
+          "error_modis_crudo": 94.5,
+          "dentro_del_rango": 68.4,
+          "sesgo": 0.2,
+          "n": 963
+        }
+      },
+      "factor_viirs_modis": 8.09,
+      "parte_viirs": 6.45
+    },
+    "mar": {
+      "global_mensual": {
+        "fuera": {
+          "error_tipico": 31.8,
+          "error_modis_crudo": 98.3,
+          "dentro_del_rango": 71.4,
+          "sesgo": 1.3,
+          "n": 42
+        },
+        "loyo": {
+          "error_tipico": 24.7,
+          "error_modis_crudo": 98.1,
+          "dentro_del_rango": 75.0,
+          "sesgo": 8.8,
+          "n": 108
+        }
+      },
+      "pais_anual": {
+        "fuera": {
+          "error_tipico": 29.2,
+          "error_modis_crudo": 99.5,
+          "dentro_del_rango": 77.5,
+          "sesgo": 2.2,
+          "n": 120
+        },
+        "loyo": {
+          "error_tipico": 21.4,
+          "error_modis_crudo": 99.6,
+          "dentro_del_rango": 77.4,
+          "sesgo": -5.9,
+          "n": 327
+        }
+      },
+      "factor_viirs_modis": 51.25,
+      "parte_viirs": 0.35
+    }
+  }
+}

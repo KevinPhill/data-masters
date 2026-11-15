@@ -1,0 +1,20 @@
+{
+  "metodo": "Integral: vegetación con LightGBM + corrección regional; volcanes, industria y gas, y costa afuera con un modelo por celda → detecciones VIIRS",
+  "integral": true,
+  "usa_modelo": true,
+  "años_calibracion": [
+    2012,
+    2021
+  ],
+  "generado": "2026-11-15 13:02",
+  "filas": 10350671,
+  "celdas": 55603,
+  "desde": 2000,
+  "hasta": 2025,
+  "meses_por_fuente": {
+    "M": 109,
+    "N": 90,
+    "S": 70,
+    "T": 23
+  }
+}

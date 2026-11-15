@@ -1,0 +1,829 @@
+{
+ "conjuntos": {
+  "entrenamiento": [
+   2012,
+   2013,
+   2014,
+   2015,
+   2016,
+   2018,
+   2019,
+   2020
+  ],
+  "prueba": [
+   2017,
+   2021
+  ],
+  "nunca_vistos": [
+   2022,
+   2023,
+   2024,
+   2025
+  ]
+ },
+ "modelos": {
+  "factor_global": {
+   "nombre": "Un solo factor mundial",
+   "parametros": 1,
+   "factor": 4.49
+  },
+  "razon": {
+   "nombre": "Razón VIIRS/MODIS por región y mes",
+   "parametros": 2581
+  },
+  "lightgbm": {
+   "nombre": "LightGBM (notebook 03)",
+   "parametros": 76200
+  },
+  "lightgbm_corregido": {
+   "nombre": "LightGBM + corrección regional",
+   "parametros": 4944
+  },
+  "integral": {
+   "nombre": "Integral: un modelo por tipo de fuente (la app)",
+   "parametros": 4944,
+   "celdas_fijas": 31332
+  }
+ },
+ "metricas": {
+  "factor_global": {
+   "entrenamiento": {
+    "celda_mes": {
+     "r2_log": 0.453,
+     "r2": 0.89,
+     "mse": 7735.1,
+     "rmse": 87.95,
+     "mae": 28.35,
+     "error_tipico": 41.4,
+     "sesgo": -0.0,
+     "n": 1849303
+    },
+    "pais_mes": {
+     "r2_log": 0.898,
+     "r2": 0.96,
+     "mse": 40563199.2,
+     "rmse": 6368.92,
+     "mae": 1411.62,
+     "error_tipico": 30.5,
+     "sesgo": 0.0,
+     "n": 19866
+    },
+    "pais_año": {
+     "r2_log": 0.935,
+     "r2": 0.974,
+     "mse": 1356616305.3,
+     "rmse": 36832.27,
+     "mae": 12500.66,
+     "error_tipico": 19.9,
+     "sesgo": 0.0,
+     "n": 1848
+    },
+    "mundo_mes": {
+     "r2_log": 0.898,
+     "r2": 0.917,
+     "mse": 18815270985.3,
+     "rmse": 137168.77,
+     "mae": 114386.75,
+     "error_tipico": 5.7,
+     "sesgo": -0.0,
+     "n": 86
+    }
+   },
+   "nunca_vistos": {
+    "celda_mes": {
+     "r2_log": 0.426,
+     "r2": 0.902,
+     "mse": 7458.7,
+     "rmse": 86.36,
+     "mae": 27.96,
+     "error_tipico": 42.5,
+     "sesgo": -4.4,
+     "n": 895450
+    },
+    "pais_mes": {
+     "r2_log": 0.901,
+     "r2": 0.968,
+     "mse": 33081568.1,
+     "rmse": 5751.66,
+     "mae": 1295.69,
+     "error_tipico": 29.3,
+     "sesgo": -4.4,
+     "n": 9702
+    },
+    "pais_año": {
+     "r2_log": 0.941,
+     "r2": 0.976,
+     "mse": 1146020907.2,
+     "rmse": 33852.93,
+     "mae": 11018.77,
+     "error_tipico": 19.2,
+     "sesgo": -4.4,
+     "n": 924
+    },
+    "mundo_mes": {
+     "r2_log": 0.898,
+     "r2": 0.944,
+     "mse": 17992301433.3,
+     "rmse": 134135.38,
+     "mae": 115619.43,
+     "error_tipico": 6.6,
+     "sesgo": -4.4,
+     "n": 42
+    }
+   },
+   "prueba": {
+    "celda_mes": {
+     "r2_log": 0.442,
+     "r2": 0.904,
+     "mse": 7607.0,
+     "rmse": 87.22,
+     "mae": 28.24,
+     "error_tipico": 42.1,
+     "sesgo": -0.4,
+     "n": 467437
+    },
+    "pais_mes": {
+     "r2_log": 0.896,
+     "r2": 0.961,
+     "mse": 40277738.5,
+     "rmse": 6346.47,
+     "mae": 1373.04,
+     "error_tipico": 30.2,
+     "sesgo": -0.4,
+     "n": 5082
+    },
+    "pais_año": {
+     "r2_log": 0.934,
+     "r2": 0.971,
+     "mse": 1441231144.8,
+     "rmse": 37963.55,
+     "mae": 12740.29,
+     "error_tipico": 19.8,
+     "sesgo": -0.4,
+     "n": 462
+    },
+    "mundo_mes": {
+     "r2_log": 0.921,
+     "r2": 0.938,
+     "mse": 21215699890.5,
+     "rmse": 145656.1,
+     "mae": 118484.03,
+     "error_tipico": 8.3,
+     "sesgo": -0.4,
+     "n": 22
+    }
+   }
+  },
+  "razon": {
+   "entrenamiento": {
+    "celda_mes": {
+     "r2_log": 0.455,
+     "r2": 0.923,
+     "mse": 5421.1,
+     "rmse": 73.63,
+     "mae": 24.6,
+     "error_tipico": 35.0,
+     "sesgo": -0.1,
+     "n": 1849303
+    },
+    "pais_mes": {
+     "r2_log": 0.918,
+     "r2": 0.997,
+     "mse": 3309010.8,
+     "rmse": 1819.07,
+     "mae": 510.76,
+     "error_tipico": 15.8,
+     "sesgo": -0.1,
+     "n": 19866
+    },
+    "pais_año": {
+     "r2_log": 0.949,
+     "r2": 0.999,
+     "mse": 76043546.0,
+     "rmse": 8720.3,
+     "mae": 3539.52,
+     "error_tipico": 8.9,
+     "sesgo": -0.1,
+     "n": 1848
+    },
+    "mundo_mes": {
+     "r2_log": 0.995,
+     "r2": 0.996,
+     "mse": 836856372.2,
+     "rmse": 28928.47,
+     "mae": 21476.65,
+     "error_tipico": 1.0,
+     "sesgo": -0.1,
+     "n": 86
+    }
+   },
+   "nunca_vistos": {
+    "celda_mes": {
+     "r2_log": 0.419,
+     "r2": 0.902,
+     "mse": 7433.8,
+     "rmse": 86.22,
+     "mae": 26.54,
+     "error_tipico": 37.8,
+     "sesgo": -2.8,
+     "n": 895450
+    },
+    "pais_mes": {
+     "r2_log": 0.92,
+     "r2": 0.99,
+     "mse": 10644823.0,
+     "rmse": 3262.64,
+     "mae": 764.3,
+     "error_tipico": 20.1,
+     "sesgo": -2.8,
+     "n": 9702
+    },
+    "pais_año": {
+     "r2_log": 0.955,
+     "r2": 0.992,
+     "mse": 365663826.8,
+     "rmse": 19122.34,
+     "mae": 5771.85,
+     "error_tipico": 11.3,
+     "sesgo": -2.8,
+     "n": 924
+    },
+    "mundo_mes": {
+     "r2_log": 0.973,
+     "r2": 0.985,
+     "mse": 4835262301.6,
+     "rmse": 69536.05,
+     "mae": 57158.68,
+     "error_tipico": 3.3,
+     "sesgo": -2.8,
+     "n": 42
+    }
+   },
+   "prueba": {
+    "celda_mes": {
+     "r2_log": 0.441,
+     "r2": 0.914,
+     "mse": 6757.1,
+     "rmse": 82.2,
+     "mae": 25.23,
+     "error_tipico": 36.0,
+     "sesgo": 0.8,
+     "n": 467437
+    },
+    "pais_mes": {
+     "r2_log": 0.916,
+     "r2": 0.995,
+     "mse": 5560029.2,
+     "rmse": 2357.97,
+     "mae": 596.06,
+     "error_tipico": 17.0,
+     "sesgo": 0.8,
+     "n": 5082
+    },
+    "pais_año": {
+     "r2_log": 0.948,
+     "r2": 0.998,
+     "mse": 111008609.6,
+     "rmse": 10536.06,
+     "mae": 4123.63,
+     "error_tipico": 10.0,
+     "sesgo": 0.8,
+     "n": 462
+    },
+    "mundo_mes": {
+     "r2_log": 0.991,
+     "r2": 0.994,
+     "mse": 2115334281.7,
+     "rmse": 45992.76,
+     "mae": 37030.88,
+     "error_tipico": 1.7,
+     "sesgo": 0.8,
+     "n": 22
+    }
+   }
+  },
+  "lightgbm": {
+   "entrenamiento": {
+    "celda_mes": {
+     "r2_log": 0.784,
+     "r2": 0.961,
+     "mse": 2723.8,
+     "rmse": 52.19,
+     "mae": 18.39,
+     "error_tipico": 26.8,
+     "sesgo": -1.3,
+     "n": 1849303
+    },
+    "pais_mes": {
+     "r2_log": 0.962,
+     "r2": 0.999,
+     "mse": 1339134.1,
+     "rmse": 1157.21,
+     "mae": 346.57,
+     "error_tipico": 11.8,
+     "sesgo": 0.0,
+     "n": 19866
+    },
+    "pais_año": {
+     "r2_log": 0.965,
+     "r2": 1.0,
+     "mse": 17649521.3,
+     "rmse": 4201.13,
+     "mae": 1839.91,
+     "error_tipico": 5.3,
+     "sesgo": 0.0,
+     "n": 1848
+    },
+    "mundo_mes": {
+     "r2_log": 0.998,
+     "r2": 0.998,
+     "mse": 451889529.8,
+     "rmse": 21257.69,
+     "mae": 16134.75,
+     "error_tipico": 0.7,
+     "sesgo": 0.0,
+     "n": 86
+    }
+   },
+   "nunca_vistos": {
+    "celda_mes": {
+     "r2_log": 0.758,
+     "r2": 0.917,
+     "mse": 6306.0,
+     "rmse": 79.41,
+     "mae": 21.59,
+     "error_tipico": 30.3,
+     "sesgo": -2.7,
+     "n": 895450
+    },
+    "pais_mes": {
+     "r2_log": 0.96,
+     "r2": 0.994,
+     "mse": 6058823.4,
+     "rmse": 2461.47,
+     "mae": 555.12,
+     "error_tipico": 14.4,
+     "sesgo": -1.3,
+     "n": 9702
+    },
+    "pais_año": {
+     "r2_log": 0.961,
+     "r2": 0.995,
+     "mse": 216699656.2,
+     "rmse": 14720.72,
+     "mae": 4138.37,
+     "error_tipico": 8.3,
+     "sesgo": -1.3,
+     "n": 924
+    },
+    "mundo_mes": {
+     "r2_log": 0.992,
+     "r2": 0.994,
+     "mse": 1896343280.1,
+     "rmse": 43547.02,
+     "mae": 34123.39,
+     "error_tipico": 1.8,
+     "sesgo": -1.3,
+     "n": 42
+    }
+   },
+   "prueba": {
+    "celda_mes": {
+     "r2_log": 0.773,
+     "r2": 0.948,
+     "mse": 4142.1,
+     "rmse": 64.36,
+     "mae": 19.49,
+     "error_tipico": 27.9,
+     "sesgo": -1.1,
+     "n": 467437
+    },
+    "pais_mes": {
+     "r2_log": 0.961,
+     "r2": 0.998,
+     "mse": 2235879.1,
+     "rmse": 1495.29,
+     "mae": 415.21,
+     "error_tipico": 12.9,
+     "sesgo": 0.2,
+     "n": 5082
+    },
+    "pais_año": {
+     "r2_log": 0.96,
+     "r2": 0.999,
+     "mse": 34743372.2,
+     "rmse": 5894.35,
+     "mae": 2460.57,
+     "error_tipico": 7.0,
+     "sesgo": 0.2,
+     "n": 462
+    },
+    "mundo_mes": {
+     "r2_log": 0.997,
+     "r2": 0.998,
+     "mse": 615563300.3,
+     "rmse": 24810.55,
+     "mae": 21529.68,
+     "error_tipico": 1.3,
+     "sesgo": 0.2,
+     "n": 22
+    }
+   }
+  },
+  "lightgbm_corregido": {
+   "entrenamiento": {
+    "celda_mes": {
+     "r2_log": 0.787,
+     "r2": 0.959,
+     "mse": 2871.1,
+     "rmse": 53.58,
+     "mae": 18.45,
+     "error_tipico": 26.8,
+     "sesgo": -1.4,
+     "n": 1849303
+    },
+    "pais_mes": {
+     "r2_log": 0.966,
+     "r2": 0.998,
+     "mse": 1566671.0,
+     "rmse": 1251.67,
+     "mae": 354.46,
+     "error_tipico": 11.3,
+     "sesgo": -0.2,
+     "n": 19866
+    },
+    "pais_año": {
+     "r2_log": 0.97,
+     "r2": 1.0,
+     "mse": 19672347.4,
+     "rmse": 4435.35,
+     "mae": 1811.72,
+     "error_tipico": 5.1,
+     "sesgo": -0.2,
+     "n": 1848
+    },
+    "mundo_mes": {
+     "r2_log": 0.997,
+     "r2": 0.997,
+     "mse": 582479593.5,
+     "rmse": 24134.61,
+     "mae": 18005.86,
+     "error_tipico": 0.8,
+     "sesgo": -0.2,
+     "n": 86
+    }
+   },
+   "nunca_vistos": {
+    "celda_mes": {
+     "r2_log": 0.762,
+     "r2": 0.914,
+     "mse": 6560.1,
+     "rmse": 80.99,
+     "mae": 21.63,
+     "error_tipico": 30.2,
+     "sesgo": -2.6,
+     "n": 895450
+    },
+    "pais_mes": {
+     "r2_log": 0.964,
+     "r2": 0.994,
+     "mse": 6476562.1,
+     "rmse": 2544.91,
+     "mae": 556.21,
+     "error_tipico": 13.7,
+     "sesgo": -1.3,
+     "n": 9702
+    },
+    "pais_año": {
+     "r2_log": 0.966,
+     "r2": 0.995,
+     "mse": 230866987.0,
+     "rmse": 15194.31,
+     "mae": 4115.1,
+     "error_tipico": 7.5,
+     "sesgo": -1.3,
+     "n": 924
+    },
+    "mundo_mes": {
+     "r2_log": 0.991,
+     "r2": 0.994,
+     "mse": 2001874696.4,
+     "rmse": 44742.31,
+     "mae": 35944.1,
+     "error_tipico": 1.8,
+     "sesgo": -1.3,
+     "n": 42
+    }
+   },
+   "prueba": {
+    "celda_mes": {
+     "r2_log": 0.775,
+     "r2": 0.943,
+     "mse": 4533.6,
+     "rmse": 67.33,
+     "mae": 19.63,
+     "error_tipico": 27.8,
+     "sesgo": -1.1,
+     "n": 467437
+    },
+    "pais_mes": {
+     "r2_log": 0.965,
+     "r2": 0.997,
+     "mse": 3183592.5,
+     "rmse": 1784.26,
+     "mae": 438.02,
+     "error_tipico": 12.7,
+     "sesgo": 0.2,
+     "n": 5082
+    },
+    "pais_año": {
+     "r2_log": 0.966,
+     "r2": 0.999,
+     "mse": 43331409.2,
+     "rmse": 6582.66,
+     "mae": 2636.9,
+     "error_tipico": 6.7,
+     "sesgo": 0.2,
+     "n": 462
+    },
+    "mundo_mes": {
+     "r2_log": 0.996,
+     "r2": 0.997,
+     "mse": 1005915807.3,
+     "rmse": 31716.18,
+     "mae": 28018.93,
+     "error_tipico": 1.8,
+     "sesgo": 0.2,
+     "n": 22
+    }
+   }
+  },
+  "integral": {
+   "entrenamiento": {
+    "celda_mes": {
+     "r2_log": 0.836,
+     "r2": 0.961,
+     "mse": 2745.0,
+     "rmse": 52.39,
+     "mae": 17.19,
+     "error_tipico": 24.6,
+     "sesgo": -0.8,
+     "n": 1849303
+    },
+    "pais_mes": {
+     "r2_log": 0.972,
+     "r2": 0.998,
+     "mse": 1680100.2,
+     "rmse": 1296.19,
+     "mae": 367.71,
+     "error_tipico": 11.3,
+     "sesgo": 0.1,
+     "n": 19866
+    },
+    "pais_año": {
+     "r2_log": 0.98,
+     "r2": 1.0,
+     "mse": 16773159.4,
+     "rmse": 4095.5,
+     "mae": 1690.76,
+     "error_tipico": 4.5,
+     "sesgo": 0.1,
+     "n": 1848
+    },
+    "mundo_mes": {
+     "r2_log": 0.996,
+     "r2": 0.996,
+     "mse": 798449062.5,
+     "rmse": 28256.84,
+     "mae": 20962.07,
+     "error_tipico": 1.1,
+     "sesgo": 0.1,
+     "n": 86
+    }
+   },
+   "nunca_vistos": {
+    "celda_mes": {
+     "r2_log": 0.794,
+     "r2": 0.88,
+     "mse": 9125.4,
+     "rmse": 95.53,
+     "mae": 21.76,
+     "error_tipico": 29.1,
+     "sesgo": -0.8,
+     "n": 895450
+    },
+    "pais_mes": {
+     "r2_log": 0.966,
+     "r2": 0.994,
+     "mse": 6175899.8,
+     "rmse": 2485.14,
+     "mae": 578.67,
+     "error_tipico": 14.8,
+     "sesgo": 0.1,
+     "n": 9702
+    },
+    "pais_año": {
+     "r2_log": 0.973,
+     "r2": 0.995,
+     "mse": 241166701.9,
+     "rmse": 15529.54,
+     "mae": 4232.91,
+     "error_tipico": 7.5,
+     "sesgo": 0.1,
+     "n": 924
+    },
+    "mundo_mes": {
+     "r2_log": 0.995,
+     "r2": 0.996,
+     "mse": 1131033286.4,
+     "rmse": 33630.84,
+     "mae": 26298.23,
+     "error_tipico": 1.5,
+     "sesgo": 0.1,
+     "n": 42
+    }
+   },
+   "prueba": {
+    "celda_mes": {
+     "r2_log": 0.817,
+     "r2": 0.941,
+     "mse": 4661.2,
+     "rmse": 68.27,
+     "mae": 18.89,
+     "error_tipico": 26.1,
+     "sesgo": -0.7,
+     "n": 467437
+    },
+    "pais_mes": {
+     "r2_log": 0.967,
+     "r2": 0.997,
+     "mse": 2891319.8,
+     "rmse": 1700.39,
+     "mae": 451.67,
+     "error_tipico": 13.2,
+     "sesgo": 0.3,
+     "n": 5082
+    },
+    "pais_año": {
+     "r2_log": 0.975,
+     "r2": 0.999,
+     "mse": 47729064.4,
+     "rmse": 6908.62,
+     "mae": 2846.69,
+     "error_tipico": 6.7,
+     "sesgo": 0.3,
+     "n": 462
+    },
+    "mundo_mes": {
+     "r2_log": 0.996,
+     "r2": 0.998,
+     "mse": 824339980.5,
+     "rmse": 28711.32,
+     "mae": 23198.54,
+     "error_tipico": 1.3,
+     "sesgo": 0.3,
+     "n": 22
+    }
+   }
+  }
+ },
+ "sobreajuste": {
+  "factor_global": {
+   "celda_mes": {
+    "r2_log_entrenamiento": 0.453,
+    "r2_log_prueba": 0.442,
+    "r2_log_nunca_vistos": 0.426,
+    "caida_r2": 0.011,
+    "error_entrenamiento": 41.4,
+    "error_prueba": 42.1,
+    "error_nunca_vistos": 42.5
+   },
+   "pais_año": {
+    "r2_log_entrenamiento": 0.935,
+    "r2_log_prueba": 0.934,
+    "r2_log_nunca_vistos": 0.941,
+    "caida_r2": 0.001,
+    "error_entrenamiento": 19.9,
+    "error_prueba": 19.8,
+    "error_nunca_vistos": 19.2
+   },
+   "veredicto": "sin_sobreajuste"
+  },
+  "razon": {
+   "celda_mes": {
+    "r2_log_entrenamiento": 0.455,
+    "r2_log_prueba": 0.441,
+    "r2_log_nunca_vistos": 0.419,
+    "caida_r2": 0.014,
+    "error_entrenamiento": 35.0,
+    "error_prueba": 36.0,
+    "error_nunca_vistos": 37.8
+   },
+   "pais_año": {
+    "r2_log_entrenamiento": 0.949,
+    "r2_log_prueba": 0.948,
+    "r2_log_nunca_vistos": 0.955,
+    "caida_r2": 0.001,
+    "error_entrenamiento": 8.9,
+    "error_prueba": 10.0,
+    "error_nunca_vistos": 11.3
+   },
+   "veredicto": "sin_sobreajuste"
+  },
+  "lightgbm": {
+   "celda_mes": {
+    "r2_log_entrenamiento": 0.784,
+    "r2_log_prueba": 0.773,
+    "r2_log_nunca_vistos": 0.758,
+    "caida_r2": 0.011,
+    "error_entrenamiento": 26.8,
+    "error_prueba": 27.9,
+    "error_nunca_vistos": 30.3
+   },
+   "pais_año": {
+    "r2_log_entrenamiento": 0.965,
+    "r2_log_prueba": 0.96,
+    "r2_log_nunca_vistos": 0.961,
+    "caida_r2": 0.005,
+    "error_entrenamiento": 5.3,
+    "error_prueba": 7.0,
+    "error_nunca_vistos": 8.3
+   },
+   "veredicto": "sin_sobreajuste"
+  },
+  "lightgbm_corregido": {
+   "celda_mes": {
+    "r2_log_entrenamiento": 0.787,
+    "r2_log_prueba": 0.775,
+    "r2_log_nunca_vistos": 0.762,
+    "caida_r2": 0.012,
+    "error_entrenamiento": 26.8,
+    "error_prueba": 27.8,
+    "error_nunca_vistos": 30.2
+   },
+   "pais_año": {
+    "r2_log_entrenamiento": 0.97,
+    "r2_log_prueba": 0.966,
+    "r2_log_nunca_vistos": 0.966,
+    "caida_r2": 0.004,
+    "error_entrenamiento": 5.1,
+    "error_prueba": 6.7,
+    "error_nunca_vistos": 7.5
+   },
+   "veredicto": "sin_sobreajuste"
+  },
+  "integral": {
+   "celda_mes": {
+    "r2_log_entrenamiento": 0.836,
+    "r2_log_prueba": 0.817,
+    "r2_log_nunca_vistos": 0.794,
+    "caida_r2": 0.019,
+    "error_entrenamiento": 24.6,
+    "error_prueba": 26.1,
+    "error_nunca_vistos": 29.1
+   },
+   "pais_año": {
+    "r2_log_entrenamiento": 0.98,
+    "r2_log_prueba": 0.975,
+    "r2_log_nunca_vistos": 0.973,
+    "caida_r2": 0.005,
+    "error_entrenamiento": 4.5,
+    "error_prueba": 6.7,
+    "error_nunca_vistos": 7.5
+   },
+   "veredicto": "sin_sobreajuste"
+  }
+ },
+ "modelo_app": "integral",
+ "paises": {
+  "umbrales": {
+   "minimo_viirs_año": 1000,
+   "mal": 25.0,
+   "regular": 15.0,
+   "mal_mes": 40.0,
+   "regular_mes": 25.0
+  },
+  "integral": {
+   "bien": 130,
+   "pocos datos": 82,
+   "regular": 13,
+   "no funciona bien": 6
+  },
+  "lightgbm_corregido": {
+   "bien": 117,
+   "pocos datos": 82,
+   "regular": 25,
+   "no funciona bien": 7
+  },
+  "razon": {
+   "bien": 92,
+   "pocos datos": 81,
+   "no funciona bien": 31,
+   "regular": 26
+  },
+  "fuentes_fijas_mediana": {
+   "no_funciona": 35.0,
+   "resto": 1.9
+  }
+ }
+}
