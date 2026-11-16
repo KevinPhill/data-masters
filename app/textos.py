@@ -52,10 +52,10 @@ METODOS_EN = {
 ES = {
     # ---------------------------------------------------------------- marca y encabezado
     "app_nombre": "Data Masters",
-    "pagina_titulo": "Data Masters · El calendario del fuego visto desde el espacio",
-    "app_lead": "MODIS (desde 2000) y VIIRS (desde 2012) cuentan el fuego de forma distinta. Los unimos en una "
-                "sola serie de 25 años, comparable en todo el mundo, para saber si este mes hubo más fuego de lo "
-                "normal.",
+    "pagina_titulo": "Data Masters · Todos los puntos de calor de la Tierra en un solo calendario",
+    "app_lead": "MODIS (desde 2000) y VIIRS (desde 2012) cuentan los puntos de calor de forma distinta. Los unimos "
+                "en una sola serie de 25 años para cualquier país (incendios, quema de gas e industria, volcanes y "
+                "costa afuera) y avisamos, casi en tiempo real, cuando una semana o un mes sale de lo normal.",
     "app_evento": "NASA Space Apps Challenge 2026 · Costa Rica",
     "app_reto": "Reto: {reto}",
     "chip_sin_area": "Elige un área",
@@ -126,13 +126,13 @@ ES = {
     "globo_sub": "Promedio anual {a0}–{a1}, en detecciones equivalentes a VIIRS.",
     "globo_hover": "detecciones / año",
     "globo_pista": "Toca un país para ver su historia · arrastra para girar el globo.",
-    "hist_sub": "Historia del fuego, {a0}–{a1}",
+    "hist_sub": "Historia de puntos de calor, {a0}–{a1}",
     "hist_reparto": "Qué se detecta:",
     "hist_sin_tipo": "Aquí no hay puntos de calor de {tipo} en el periodo.",
-    "hist_frase_mas": "En {a} hubo {p} % más fuego que en un año típico. Su peor año fue {pico}.",
-    "hist_frase_menos": "En {a} hubo {p} % menos fuego que en un año típico. Su peor año fue {pico}.",
+    "hist_frase_mas": "En {a} hubo {p} % más puntos de calor que en un año típico. Su peor año fue {pico}.",
+    "hist_frase_menos": "En {a} hubo {p} % menos puntos de calor que en un año típico. Su peor año fue {pico}.",
     "hist_frase_igual": "{a} fue un año típico. Su peor año fue {pico}.",
-    "hist_frase_pico": "{a} fue su peor año: {p} % más fuego que en un año típico.",
+    "hist_frase_pico": "{a} fue su peor año: {p} % más puntos de calor que en un año típico.",
     "hist_promedio": "Promedio anual",
     "hist_pico": "Año pico",
     "hist_ultimo": "En {a}",
@@ -163,7 +163,7 @@ ES = {
     "frase_muy_alto": "{mes} {año} está muy por encima de lo normal en esta zona.",
     "frase_alto": "{mes} {año} está por encima de lo normal.",
     "frase_normal": "{mes} {año} está dentro de lo normal.",
-    "frase_bajo": "{mes} {año} está por debajo de lo normal: hubo menos fuego que de costumbre.",
+    "frase_bajo": "{mes} {año} está por debajo de lo normal: hubo menos puntos de calor que de costumbre.",
     "frase_sin_historia": "Sin comparación todavía: hacen falta al menos 3 años anteriores de {mes}.",
     "tab_alertas": "Alertas",
     "al_titulo": "¿Hay alzas de fuego fuera de lo normal?",
@@ -246,7 +246,7 @@ ES = {
     "kpi_mediana": "Mediana histórica del mes",
     "kpi_mediana_nota": "{mes}, {a0}–{a1}",
     "kpi_percentil": "Percentil",
-    "kpi_percentil_nota": "% de años anteriores con menos fuego ese mes",
+    "kpi_percentil_nota": "% de años anteriores con menos puntos de calor ese mes",
     "kpi_z": "Anomalía (z robusto)",
     "kpi_z_nota": "desviaciones (MAD) respecto a la mediana",
     "kpi_det_viirs": "detecciones equivalentes a VIIRS",
@@ -314,7 +314,7 @@ ES = {
     "arm_modis": "MODIS · Terra y Aqua",
     "arm_modis_det": "Píxel de 1 km · desde nov-2000 · ve menos fuegos pequeños",
     "arm_viirs": "VIIRS · S-NPP, NOAA-20 y NOAA-21",
-    "arm_viirs_det": "Píxel de 375 m · desde 2012 · ve muchos más fuegos. S-NPP se apagó el 2-nov-2026; siguen "
+    "arm_viirs_det": "Píxel de 375 m · desde 2012 · ve muchos más puntos de calor. S-NPP se apagó el 2-nov-2026; siguen "
                      "NOAA-20 y NOAA-21",
     "arm_resultado": "Una sola serie",
     "arm_resultado_det": "Todo en detecciones equivalentes a VIIRS, con rango de incertidumbre",
@@ -431,7 +431,7 @@ ES = {
     "imp_n1_t": "muertes al año se asocian al humo de incendios de vegetación, más del 90 % en países de ingreso "
                 "bajo y medio",
     "imp_n1_f": "The Lancet, 2024",
-    "imp_n2_t": "más fuegos ve VIIRS que MODIS. Sin armonizar, 2012 parece una ola de incendios que nunca existió",
+    "imp_n2_t": "más puntos de calor ve VIIRS que MODIS. Sin armonizar, 2012 parece una ola de incendios que nunca existió",
     "imp_n2_f": "NASA FIRMS 2012–2021, cálculo propio",
     "imp_n3": "25 años",
     "imp_n3_t": "de historia del fuego en una sola serie, justo cuando MODIS se apaga (2027) y S-NPP ya dejó de "
@@ -765,9 +765,10 @@ ES = {
 
 EN = {
     "app_nombre": "Data Masters",
-    "pagina_titulo": "Data Masters · The fire calendar seen from space",
-    "app_lead": "MODIS (since 2000) and VIIRS (since 2012) count fire differently. We join them into a single "
-                "25-year series, comparable worldwide, to tell whether this month had more fire than usual.",
+    "pagina_titulo": "Data Masters · Every hot spot on Earth, on one calendar",
+    "app_lead": "MODIS (since 2000) and VIIRS (since 2012) count hot spots differently. We join them into one "
+                "25-year series for any country (wildfires, gas flares and industry, volcanoes and offshore) and "
+                "alert, in near real time, when a week or month runs above normal.",
     "app_evento": "NASA Space Apps Challenge 2026 · Costa Rica",
     "app_reto": "Challenge: {reto}",
     "chip_sin_area": "Choose an area",
@@ -834,13 +835,13 @@ EN = {
     "globo_sub": "Yearly average {a0}–{a1}, in VIIRS-equivalent detections.",
     "globo_hover": "detections / year",
     "globo_pista": "Tap a country to see its history · drag to spin the globe.",
-    "hist_sub": "Fire history, {a0}–{a1}",
+    "hist_sub": "Hot spot history, {a0}–{a1}",
     "hist_reparto": "What is detected:",
     "hist_sin_tipo": "No {tipo} hot spots here in this period.",
-    "hist_frase_mas": "{a} had {p} % more fire than a typical year. Its worst year was {pico}.",
-    "hist_frase_menos": "{a} had {p} % less fire than a typical year. Its worst year was {pico}.",
+    "hist_frase_mas": "{a} had {p} % more hot spots than a typical year. Its worst year was {pico}.",
+    "hist_frase_menos": "{a} had {p} % fewer hot spots than a typical year. Its worst year was {pico}.",
     "hist_frase_igual": "{a} was a typical year. Its worst year was {pico}.",
-    "hist_frase_pico": "{a} was its worst year: {p} % more fire than a typical year.",
+    "hist_frase_pico": "{a} was its worst year: {p} % more hot spots than a typical year.",
     "hist_promedio": "Yearly average",
     "hist_pico": "Peak year",
     "hist_ultimo": "In {a}",
@@ -870,7 +871,7 @@ EN = {
     "frase_muy_alto": "{mes} {año} is far above normal in this area.",
     "frase_alto": "{mes} {año} is above normal.",
     "frase_normal": "{mes} {año} is within normal.",
-    "frase_bajo": "{mes} {año} is below normal: there was less fire than usual.",
+    "frase_bajo": "{mes} {año} is below normal: fewer hot spots than usual.",
     "frase_sin_historia": "No comparison yet: at least 3 previous years of {mes} are needed.",
     "tab_alertas": "Alerts",
     "al_titulo": "Are there unusual rises in fire?",
@@ -951,7 +952,7 @@ EN = {
     "kpi_mediana": "Historical median for the month",
     "kpi_mediana_nota": "{mes}, {a0}–{a1}",
     "kpi_percentil": "Percentile",
-    "kpi_percentil_nota": "% of previous years with less fire that month",
+    "kpi_percentil_nota": "% of previous years with fewer hot spots that month",
     "kpi_z": "Anomaly (robust z)",
     "kpi_z_nota": "deviations (MAD) from the median",
     "kpi_det_viirs": "VIIRS-equivalent detections",
@@ -1014,7 +1015,7 @@ EN = {
     "arm_modis": "MODIS · Terra and Aqua",
     "arm_modis_det": "1 km pixel · since Nov 2000 · misses many small fires",
     "arm_viirs": "VIIRS · S-NPP, NOAA-20 and NOAA-21",
-    "arm_viirs_det": "375 m pixel · since 2012 · sees many more fires. S-NPP went dark on 2 Nov 2026; NOAA-20 and "
+    "arm_viirs_det": "375 m pixel · since 2012 · sees many more hot spots. S-NPP went dark on 2 Nov 2026; NOAA-20 and "
                      "NOAA-21 carry on",
     "arm_resultado": "One single series",
     "arm_resultado_det": "Everything in VIIRS-equivalent detections, with an uncertainty range",
@@ -1122,7 +1123,7 @@ EN = {
     "imp_franja_t": "Why it matters",
     "imp_n1_t": "deaths a year are linked to smoke from landscape fires, over 90 % in low- and middle-income countries",
     "imp_n1_f": "The Lancet, 2024",
-    "imp_n2_t": "more fires seen by VIIRS than MODIS. Without harmonizing, 2012 looks like a wave of fires that never "
+    "imp_n2_t": "more hot spots seen by VIIRS than MODIS. Without harmonizing, 2012 looks like a wave of fires that never "
                 "happened",
     "imp_n2_f": "NASA FIRMS 2012–2021, our calculation",
     "imp_n3": "25 years",

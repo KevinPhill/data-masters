@@ -1,4 +1,4 @@
-"""Data Masters — El calendario del fuego visto desde el espacio (MODIS + VIIRS armonizados).
+"""Data Masters — Todos los puntos de calor de la Tierra en un solo calendario (MODIS + VIIRS armonizados).
 
 NASA Space Apps Challenge 2026 · Costa Rica · Reto "Harmonization of MODIS and VIIRS Hot Spots".
 Datos en datos.py, gráficas en graficas.py, componentes visuales en ui.py y textos (ES/EN) en textos.py.
