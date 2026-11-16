@@ -13,7 +13,7 @@ It is not only about forests. FIRMS sees four kinds of heat, and the app harmoni
 
 Data: NASA FIRMS · Project for NASA Space Apps Challenge 2026 Costa Rica. Not an official NASA product.
 
-![Data Masters: the globe of countries and the fire history of Costa Rica](docs/inicio.jpg)
+![Data Masters: the globe of countries and the hot spot history of Costa Rica](docs/inicio.jpg)
 
 ## Why it matters worldwide
 ![Every VIIRS (NOAA-20) detection of 2024–2025, coloured by FIRMS type](docs/presentacion/fuente/img/mundo_tipos.jpg)

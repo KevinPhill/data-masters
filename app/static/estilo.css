@@ -1,10 +1,10 @@
 /* =====================================================================================
-   Data Masters · paleta y tipografías de la guía de marca de NASA Space Apps (junio 2026):
-   azules Electric #0042A6, Neon #0960E1, Blue Yonder #2E96F5 y Deep #07173F; Rocket Red #E43700 y
-   Martian Red #8E1100 para el fuego; Neon Yellow #EAFE07 solo como acento sobre azul. Fira Sans para títulos y
-   cifras, Overpass para el texto (las dos con licencia OFL, servidas desde app/static/fonts).
-   Arriba va la banda del globo con el degradado de 45° Electric Blue → Deep Blue; debajo, fondo blanco.
-   La primera pieza de la página lleva .dm-modo-noche / .dm-presentacion; se leen con :root:has(...).
+   Data Masters · palette and fonts from the NASA Space Apps brand guide (June 2026):
+   Electric #0042A6, Neon #0960E1, Blue Yonder #2E96F5 and Deep #07173F blues; Rocket Red #E43700 and
+   Martian Red #8E1100 for fire; Neon Yellow #EAFE07 only as an accent on blue. Fira Sans for titles and
+   figures, Overpass for text (both under the OFL license, served from app/static/fonts).
+   The globe band with the 45° Electric Blue → Deep Blue gradient goes on top; below it, a white background.
+   The first element of the page carries .dm-modo-noche / .dm-presentacion; they are read with :root:has(...).
    ===================================================================================== */
 
 @font-face {
@@ -17,7 +17,7 @@
   src: url("app/static/fonts/overpass-latin-wght-italic.woff2") format("woff2");
   font-weight: 100 900; font-style: italic; font-display: swap;
 }
-/* el punto medio (·) de Overpass queda pegado a la palabra siguiente: ese carácter sale de la fuente del sistema */
+/* Overpass's middle dot (·) sticks to the next word: that character comes from the system font */
 @font-face { font-family: "Overpass"; src: local("Helvetica Neue"), local("Segoe UI"), local("Arial"), local("Roboto");
   unicode-range: U+00B7; font-weight: 100 900; font-style: normal; }
 @font-face { font-family: "Fira Sans"; src: url("app/static/fonts/firasans-latin-500.woff2") format("woff2");
@@ -80,8 +80,8 @@
 html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select { font-family: var(--dm-fuente); }
 .stApp, [data-testid="stAppViewContainer"] { background-color: var(--dm-fondo); color: var(--dm-tinta); }
 [data-testid="stHeader"] { background: transparent; }
-/* la cabecera de Streamlit es transparente y queda encima de la barra superior (idioma, presentación, modo, tour):
-   que deje pasar los clics, salvo en sus propios botones */
+/* Streamlit's header is transparent and sits on top of the top bar (language, presentation, mode, tour):
+   let clicks through, except on its own buttons */
 [data-testid="stHeader"], [data-testid="stHeader"] [data-testid="stToolbar"] { pointer-events: none; }
 [data-testid="stHeader"] button, [data-testid="stHeader"] a { pointer-events: auto; }
 [data-testid="stMainBlockContainer"], .block-container { max-width: 1280px; padding-top: 1.6rem; padding-bottom: 3rem; }
@@ -91,10 +91,10 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 [data-testid="stElementContainer"]:has(.dm-marca-modo) { display: none; }
 .stApp b, .stApp strong { font-weight: 700; }
 
-/* ------------------------------------------------------------------ barra superior */
+/* ------------------------------------------------------------------ top bar */
 .st-key-barra { gap: 10px !important; margin-bottom: 4px; align-items: center; }
 
-/* ------------------------------------------------------------------ banda del globo (lo primero de la página) */
+/* ------------------------------------------------------------------ globe band (the first thing on the page) */
 .st-key-banda {
   --dm-tinta: #FFFFFF; --dm-tinta2: #C8D3E8; --dm-tenue: #A9B8D6; --dm-linea: rgba(255, 255, 255, .14);
   --dm-linea-fuerte: rgba(255, 255, 255, .24); --dm-acento-txt: #FF8A5C; --dm-azul-txt: #8EC3FF; --dm-rojo-txt: #FF9C80;
@@ -112,12 +112,12 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-cab-reto { margin: 0 0 6px !important; font-size: .9rem; color: var(--dm-tinta2); }
 .dm-cab-reto b { font-weight: 600; color: #EAFE07; }
 .dm-cab-lead { margin: 0 !important; font-size: 1.04rem; line-height: 1.5; color: var(--dm-tinta2); }
-/* el globo: transparente sobre el degradado, con un brillo azul de atmósfera */
+/* the globe: transparent over the gradient, with a blue atmosphere glow */
 .st-key-banda [data-testid="stPlotlyChart"] { background: transparent; }
 .st-key-banda .js-plotly-plot .geo .bg, .st-key-banda .js-plotly-plot .main-svg { background: transparent !important; }
 .st-key-banda [data-testid="stColumn"]:first-child .js-plotly-plot .geolayer { filter: drop-shadow(0 0 26px rgba(46, 150, 245, .38)); }
-/* el globo llena el ancho de su columna; en pantallas angostas se recorta el aire de arriba y abajo
-   (los márgenes en % se miden contra el ancho, así que el recorte sigue al tamaño de la esfera) */
+/* the globe fills the width of its column; on narrow screens the air above and below is trimmed
+   (margins in % are measured against the width, so the trim follows the size of the sphere) */
 .st-key-banda { --dm-globo-alto: 680px; }
 :root:has(.dm-presentacion) .st-key-banda { --dm-globo-alto: 830px; }
 .st-key-banda [data-testid="stColumn"]:first-child [data-testid="stElementContainer"]:has([data-testid="stPlotlyChart"]) {
@@ -127,7 +127,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-escala-fuego i { display: block; height: 8px; border-radius: 4px; }
 .dm-escala-fuego div { position: relative; height: 1.3em; margin-top: 4px; font-size: .75rem; color: var(--dm-tenue); }
 .dm-escala-fuego span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
-/* ficha del país */
+/* country panel */
 .dm-ficha { margin: 18px 0 0; color: var(--dm-tinta); }
 .dm-ficha h2 { margin: 0; padding: 0; font-family: var(--dm-titular); font-size: clamp(1.7rem, 2.4vw, 2.2rem); font-weight: 700;
   line-height: 1.1; color: #FFFFFF; }
@@ -137,18 +137,18 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-reparto::before { content: ""; display: inline-block; width: 8px; height: 8px; margin: 0 8px 1px 0; border-radius: 50%;
   background: #FF6A3D; }
 
-/* contexto del área analizada (una línea de metadatos) */
+/* context of the analysed area (one line of metadata) */
 .stApp .dm-contexto { display: flex; flex-wrap: wrap; gap: 4px 26px; margin: 0 0 14px; padding: 0; font-size: .9rem; }
 .dm-contexto div { display: flex; gap: 7px; min-width: 0; }
 .dm-contexto dt { color: var(--dm-tenue); }
 .dm-contexto dd { margin: 0; font-weight: 600; color: var(--dm-tinta); }
 
-/* ------------------------------------------------------------------ presentación: resumen en tres frases */
+/* ------------------------------------------------------------------ presentation: summary in three sentences */
 .dm-pitch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin: 0 0 30px; color: var(--dm-tinta2); }
 .dm-pitch p { font-size: 1.02rem; line-height: 1.55; }
 .dm-pitch b { display: block; margin-bottom: 4px; font-family: var(--dm-titular); font-weight: 700; color: var(--dm-tinta); }
 
-/* ------------------------------------------------------------------ secciones (sin cajas) */
+/* ------------------------------------------------------------------ sections (no boxes) */
 [class*="st-key-tarjeta"] { padding: 6px 0 0; margin-bottom: 26px; color: var(--dm-tinta); }
 .st-key-tarjeta_globo { padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--dm-linea); }
 .dm-seccion { margin: 0 0 10px; }
@@ -163,7 +163,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-pista { margin: -2px 0 0 !important; text-align: center; font-size: .88rem; line-height: 1.5; color: var(--dm-tenue); }
 .dm-pista b { display: block; font-weight: 600; color: var(--dm-tinta2); }
 
-/* ------------------------------------------------------------------ por qué importa (franja de cifras) */
+/* ------------------------------------------------------------------ why it matters (strip of figures) */
 .dm-importa { margin: 0 0 40px; color: var(--dm-tinta); }
 .dm-importa h2 { margin: 0 0 14px !important; padding: 0 !important; font-size: 1.25rem; font-weight: 700; color: var(--dm-tinta); }
 .stApp .dm-importa ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -174,7 +174,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-importa span { font-size: .95rem; line-height: 1.45; color: var(--dm-tinta2); }
 .dm-importa small { font-size: .78rem; color: var(--dm-tenue); }
 
-/* datos del área, listas y fuentes (pestaña Para qué sirve) */
+/* area facts, lists and sources (What it is for tab) */
 .dm-hechos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 28px; margin: 8px 0 6px; }
 .dm-hecho { padding: 16px 18px 18px; background: var(--dm-suave); border-radius: 8px; color: var(--dm-tinta); }
 .dm-hecho h4 { margin: 0 0 6px; padding: 0; font-size: 1.05rem; font-weight: 700; color: var(--dm-azul-txt); }
@@ -194,13 +194,13 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .stApp .dm-fuentes li { margin: 0 0 6px; font-size: .84rem; line-height: 1.45; }
 .dm-fuentes a { color: var(--dm-azul-txt); }
 
-/* ------------------------------------------------------------------ estado del mes */
+/* ------------------------------------------------------------------ month status */
 .dm-nivel-bajo { --nivel: var(--c-bajo); }
 .dm-nivel-normal { --nivel: var(--c-normal); }
 .dm-nivel-alto { --nivel: var(--c-alto); }
 .dm-nivel-muy_alto { --nivel: var(--c-muy-alto); }
 .dm-nivel-sin_historia { --nivel: var(--c-sin); }
-/* aviso de la pestaña Alertas: punto de color + frase (nunca solo color) */
+/* Alerts tab notice: colour dot + sentence (never colour alone) */
 .stApp .dm-aviso { display: flex; gap: 12px; align-items: flex-start; margin: 2px 0 12px; padding: 12px 16px;
   border-left: 5px solid var(--nivel); border-radius: 0 8px 8px 0; color: var(--dm-tinta);
   background: color-mix(in srgb, var(--nivel) 12%, var(--dm-fondo)); font-size: 1.06rem; font-weight: 600; line-height: 1.45; }
@@ -217,7 +217,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-alerta-detalle { max-width: 70ch; font-size: 1rem; line-height: 1.55; color: var(--dm-tinta2); }
 .dm-alerta-detalle b { color: var(--dm-tinta); }
 .dm-alerta-nivel { grid-area: nivel; align-self: end; }
-/* nivel del mes: punto de color + texto (nunca solo color) */
+/* month level: colour dot + text (never colour alone) */
 .dm-sello { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 14px !important; padding: 5px 14px 5px 11px;
   font-family: var(--dm-titular); font-size: 1.1rem; font-weight: 600; line-height: 1.3; white-space: nowrap; color: var(--dm-tinta);
   background: color-mix(in srgb, var(--nivel) 16%, var(--dm-fondo)); border: 1px solid color-mix(in srgb, var(--nivel) 55%, transparent);
@@ -232,7 +232,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-escala [data-nivel="muy_alto"] { --esc: var(--c-muy-alto); }
 .stApp .dm-escala li.activo { border-top-color: var(--esc); color: var(--dm-tinta); font-weight: 650; }
 
-/* cifras */
+/* figures */
 .dm-kpis { grid-area: kpis; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0 28px;
   padding-top: 16px; border-top: 1px solid var(--dm-linea-fuerte); }
 .dm-kpi { display: flex; flex-direction: column; min-width: 0; color: var(--dm-tinta); }
@@ -249,7 +249,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
   padding-top: 12px; border-top-color: var(--dm-linea-fuerte); }
 .dm-kpis-mini .dm-kpi-valor { font-size: 1.6rem; }
 
-/* medidor: barra por zonas + marca */
+/* gauge: bar with zones + marker */
 .dm-medidor { margin: 8px 0 0; }
 .dm-medidor-pista { position: relative; height: 4px; border-radius: 2px; }
 .dm-medidor-pct { background: linear-gradient(90deg, var(--c-normal) 0 75%, var(--c-alto) 75% 90%, var(--c-muy-alto) 90% 100%); }
@@ -259,7 +259,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
   background: var(--dm-tinta); box-shadow: 0 0 0 2px var(--dm-suave); }
 .dm-medidor-ejes { display: flex; justify-content: space-between; margin-top: 5px; font-size: .72rem; color: var(--dm-tenue); }
 
-/* ------------------------------------------------------------------ pestañas */
+/* ------------------------------------------------------------------ tabs */
 .stTabs [role="tablist"] { gap: 0; padding: 0; background: transparent; box-shadow: none !important; border: 0 !important;
   border-bottom: 1px solid var(--dm-linea-fuerte) !important; overflow-x: auto; margin-bottom: 22px; }
 .stTabs [role="tablist"]::before, .stTabs [role="tablist"]::after { display: none !important; }
@@ -273,7 +273,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .stTabs [data-testid="stTab"][aria-selected="true"] p { color: var(--dm-tinta); font-weight: 600; }
 .stTabs [role="tabpanel"] { padding-top: 0; }
 
-/* ------------------------------------------------------------------ piezas de contenido */
+/* ------------------------------------------------------------------ content pieces */
 .dm-leyenda { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 4px 0; font-size: .86rem; color: var(--dm-tinta2); }
 .dm-leyenda span { display: inline-flex; align-items: center; gap: 7px; }
 .dm-glifo { font-style: normal; font-size: .95rem; line-height: 1; }
@@ -281,7 +281,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-glifo-punto { color: var(--dm-tinta); font-size: .6rem; }
 .dm-glifo-cursor { color: var(--dm-tenue); }
 
-/* meses con más fuego */
+/* months with the most fire */
 .stApp .dm-ranking { list-style: none; margin: 6px 0 0; padding: 0; display: grid;
   grid-template-columns: 1.6rem minmax(0, 1fr) auto auto; column-gap: 14px; }
 .stApp .dm-ranking li { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: center; margin: 0;
@@ -293,7 +293,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-rank-valor { min-width: 4.5ch; text-align: right; font-weight: 650; font-variant-numeric: tabular-nums; }
 .dm-rank-fuente { font-size: .8rem; white-space: nowrap; color: var(--dm-tenue); }
 
-/* tablas */
+/* tables */
 .dm-tabla-caja { overflow: auto; border-top: 1px solid var(--dm-linea-fuerte); }
 .dm-tabla { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .88rem; color: var(--dm-tinta); }
 .dm-tabla th { position: sticky; top: 0; z-index: 1; padding: 8px 12px; text-align: left; white-space: nowrap;
@@ -305,7 +305,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-tabla-texto tbody tr:hover td { background: transparent; }
 .dm-tabla tbody tr:hover td { background: var(--dm-suave); }
 
-/* armonización: los dos sensores */
+/* harmonization: the two sensors */
 .dm-sensores { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: start; gap: 0 18px; margin: 20px 0 6px;
   color: var(--dm-tinta); }
 .dm-sensor { padding-top: 10px; border-top: 3px solid var(--sw); }
@@ -317,7 +317,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-sensor-final { --sw: var(--dm-acento); }
 .dm-sensor-op { padding-top: 14px; font-size: 1.3rem; color: var(--dm-tenue); }
 
-/* método */
+/* method */
 .stApp .dm-metodo { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px 36px; margin: 14px 0 18px;
   padding: 0; list-style: none; }
 .dm-metodo-paso { color: var(--dm-tinta); }
@@ -335,12 +335,12 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-tour-mirar b { color: var(--dm-tinta); }
 [data-testid="stDialog"] [role="dialog"] { background: var(--dm-fondo); color: var(--dm-tinta); border-radius: 8px; }
 
-/* pie */
+/* footer */
 .dm-pie { margin-top: 40px; padding: 16px 0 4px; border-top: 1px solid var(--dm-linea); color: var(--dm-tenue); }
 .dm-pie p { margin: 0; font-size: .84rem; line-height: 1.6; }
 .dm-pie-logo { height: 40px; width: auto; margin-top: 10px; }
 
-/* ------------------------------------------------------------------ barra lateral */
+/* ------------------------------------------------------------------ sidebar */
 [data-testid="stSidebar"] { background: var(--dm-lateral); }
 .dm-marca-lateral { padding-bottom: 14px; border-bottom: 1px solid var(--dm-linea-fuerte); }
 .dm-marca-lateral strong { display: block; font-family: var(--dm-titular); font-size: 1.2rem; font-weight: 900; letter-spacing: .05em;
@@ -349,7 +349,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .dm-paso { margin: 22px 0 2px !important; font-family: var(--dm-titular); font-size: 1rem; font-weight: 700; color: var(--dm-tinta); }
 [data-testid="stSidebar"] .dm-nota { font-size: .82rem; }
 
-/* ------------------------------------------------------------------ widgets nativos */
+/* ------------------------------------------------------------------ native widgets */
 :is(.stApp, [data-testid="stDialog"]) [data-testid^="stBaseButton"] { border-radius: 4px !important; box-shadow: none !important; }
 :is(.stApp, [data-testid="stDialog"]) [data-testid="stBaseButton-primary"] { background: var(--dm-boton) !important;
   border-color: var(--dm-boton) !important; color: var(--dm-boton-txt) !important; }
@@ -361,7 +361,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 .js-plotly-plot .hoverlayer .hovertext path { stroke-width: 1px !important; }
 .js-plotly-plot .scatterlayer .js-line { stroke-linecap: round; stroke-linejoin: round; }
 
-/* ------------------------------------------------------------------ modo noche: widgets nativos (el tema base es claro) */
+/* ------------------------------------------------------------------ night mode: native widgets (the base theme is light) */
 :root:has(.dm-modo-noche) [data-testid="stSidebar"] *:where(p, span, label, li, small),
 :root:has(.dm-modo-noche) [data-testid="stWidgetLabel"] *,
 :root:has(.dm-modo-noche) [data-testid="stMarkdownContainer"],
@@ -416,7 +416,7 @@ html, body, .stApp, .stApp button, .stApp input, .stApp textarea, .stApp select 
 :root:has(.dm-modo-noche) [data-testid="stDialog"] .dm-tour-mirar { color: var(--dm-tinta2); }
 :root:has(.dm-modo-noche) [data-testid="stSpinner"] * { color: var(--dm-tinta); }
 
-/* ------------------------------------------------------------------ modo presentación */
+/* ------------------------------------------------------------------ presentation mode */
 :root:has(.dm-presentacion) { font-size: 19px; }
 :root:has(.dm-presentacion) [data-testid="stSidebar"],
 :root:has(.dm-presentacion) [data-testid="stSidebarCollapsedControl"],

@@ -14,7 +14,7 @@ borderColor = "#C9D2E1"
 showWidgetBorder = true
 showSidebarBorder = true
 
-# Tipografías de la guía de marca de NASA Space Apps (OFL), servidas desde app/static/fonts: la app funciona sin internet
+# Fonts from the NASA Space Apps brand guide (OFL), served from app/static/fonts: the app works offline
 [[theme.fontFaces]]
 family = "Overpass"
 url = "app/static/fonts/overpass-latin-wght.woff2"

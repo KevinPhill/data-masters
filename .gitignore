@@ -3,7 +3,7 @@ __pycache__/
 .DS_Store
 .streamlit/secrets.toml
 
-# datos pesados: se regeneran con los scripts (ver README)
+# heavy data: rebuilt with the scripts (see README)
 data/raw/
 data/consolidado/
 data/db_nasa.duckdb
