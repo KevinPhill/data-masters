@@ -45,7 +45,7 @@ EQUIPO = "Kevin Alexander Delgado Phillips"  # integrantes en la portada
 TITULO = "Data Masters"
 ASUNTO = "NASA Space Apps Challenge 2026 Costa Rica · Harmonization of MODIS and VIIRS Hot Spots"
 NOTA_IA = ("Slides written and designed with AI assistance (Claude, Anthropic). Maps and charts are data visualizations "
-           "drawn by code from NASA FIRMS detections; no AI-generated images. See slide 7 for the full disclosure.")
+           "drawn by code from NASA FIRMS detections; no AI-generated images. Short note on slide 7; full disclosure in the README.")
 ANCHO, ALTO, MAXIMO = 1920, 1080, 7
 
 
@@ -123,7 +123,7 @@ def main():
         s.notes_slide.notes_text_frame.text = notas[i]
     c = prs.core_properties
     c.author = c.last_modified_by = c.title = TITULO
-    c.subject, c.keywords, c.comments, c.language = ASUNTO, "NASA FIRMS, MODIS, VIIRS, wildfire, Space Apps", NOTA_IA, "en-US"
+    c.subject, c.keywords, c.comments, c.language = ASUNTO, "NASA FIRMS, MODIS, VIIRS, hot spots, wildfire, gas flaring, volcanoes, Space Apps", NOTA_IA, "en-US"
     prs.save(SALIDA / "Data_Masters.pptx")
 
     if a.png:
