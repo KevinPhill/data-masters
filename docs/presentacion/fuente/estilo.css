@@ -147,7 +147,9 @@ aside.notas { display: none; }
 .s6 .modelos span { width: 330px; }
 .s6 .modelos i { height: 10px; background: var(--tenue); }
 .s6 .modelos b { margin-left: 12px; font-family: "Fira Sans"; font-weight: 700; color: #fff; }
-.s6 .modelos .app { color: #fff; } .s6 .modelos .app i { background: var(--yellow); }
+.s6 .modelos .app { color: #fff; }
+.s6 .ia { position: absolute; left: 1042px; top: 968px; width: 780px; border-left: 3px solid var(--yonder); padding-left: 14px; font-size: 15px; line-height: 1.45; color: var(--claro); }
+.s6 .ia b { font-family: "Fira Sans"; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--yonder); margin-right: 8px; } .s6 .modelos .app i { background: var(--yellow); }
 
 /* 7 · lo que está en juego: muertes por humo de incendios por región, y una nota corta de IA */
 .s7 { background: var(--papel); color: var(--tinta); }
@@ -164,10 +166,8 @@ aside.notas { display: none; }
 .s7 .fila.resto i { background: #B9B3A5; } .s7 .fila.resto b { color: #4A5878; }
 .s7 .nota { margin-top: 14px; width: 1080px; font-size: 16px; line-height: 1.45; color: #4A5878; }
 .s7 .ayuda { position: absolute; left: 1340px; top: 352px; width: 484px; }
-.s7 .punto { border-top: 1px solid #C9C3B4; padding: 16px 0 18px; font-size: 21px; line-height: 1.38; color: #2B3A5C; }
-.s7 .punto b { display: block; font-family: "Fira Sans"; font-weight: 700; font-size: 24px; color: var(--tinta); margin-bottom: 4px; }
-.s7 .ia { position: absolute; left: 96px; right: 96px; bottom: 112px; border-left: 3px solid var(--neon); padding: 4px 0 4px 16px; font-size: 16px; line-height: 1.45; color: #2B3A5C; }
-.s7 .ia b { font-family: "Fira Sans"; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--neon); margin-right: 10px; }
+.s7 .punto { border-top: 1px solid #C9C3B4; padding: 12px 0 14px; font-size: 20px; line-height: 1.38; color: #2B3A5C; }
+.s7 .punto b { display: block; font-family: "Fira Sans"; font-weight: 700; font-size: 22px; color: var(--tinta); margin-bottom: 4px; }
 .s7 .cierre { position: absolute; left: 96px; right: 150px; bottom: 34px; font-size: 15px; line-height: 1.5; color: #4A5878; }
 .s7 .cierre a { color: var(--electric); font-weight: 700; }
 .s7 .n { color: #4A5878; }

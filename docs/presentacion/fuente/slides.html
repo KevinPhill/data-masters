@@ -29,37 +29,33 @@
   <aside class="notas">Smoke from landscape fires is linked to about 1.53 million deaths a year, according to The Lancet in 2024, and fire is only one of the kinds of heat satellites see. Our project turns 25 years of NASA satellite hot spots into one comparable record, so every country can get an alert when hot spots run above normal. We are Data Masters, from the Costa Rica local event. Our challenge is Harmonization of MODIS and VIIRS Hot Spots. The picture is not a photograph and not a generated image: it is the planet drawn only with the 18.4 million fire detections that VIIRS on NOAA-20 reported in 2025, taken from NASA FIRMS and plotted by our own code. Our app joins MODIS, flying since 2000, and VIIRS, since 2012, into one comparable 25-year series for any country on Earth, and not only for wildfires: it also separates gas flares and industry, volcanoes and heat over water. So a firefighter, an early-warning manager, an energy regulator or a scientist, anywhere, can tell in seconds whether this week or month is abnormal in their area. The demo and the code are public at the links on the slide.</aside>
 </section>
 
-<!-- 2 · The challenge: the same region and months seen by each sensor -->
-<section class="slide s2">
-  <img class="fondo" src="img/modis_viirs.jpg" alt="Central America in March and April 2024: MODIS detections on the left, VIIRS detections on the right">
-  <div class="sensor" style="left: 572px; top: 236px;">
-    <div class="desde">Since 2000</div>
-    <div class="nombre">MODIS</div>
-    <div class="cuenta">30,252 <small>detections</small></div>
+<!-- 2 · What is at stake: deaths from landscape-fire smoke, by region -->
+<section class="slide s7">
+  <div class="eyebrow">What is at stake</div>
+  <h2>1.53 million deaths a year</h2>
+  <div class="sub">are linked to smoke from landscape fires, 2000–2019 average: 0.45 M cardiovascular, 0.22 M respiratory. <b>Over 90 % happen in low- and middle-income countries.</b></div>
+  <div class="grafica">
+    <h3>Deaths a year attributed to landscape-fire smoke, by region</h3>
+      <div class="fila"><span>Sub-Saharan Africa</span><i style="width: 820px;"></i><b>607 k</b></div>
+      <div class="fila"><span>Southeast Asia</span><i style="width: 279px;"></i><b>207 k</b></div>
+      <div class="fila"><span>South Asia</span><i style="width: 231px;"></i><b>171 k</b></div>
+      <div class="fila"><span>East Asia</span><i style="width: 199px;"></i><b>147 k</b></div>
+      <div class="fila resto"><span>Rest of the world</span><i style="width: 538px;"></i><b>≈ 398 k</b></div>
+    <div class="nota">PM2.5 and ozone from fires. Rest of the world = the global 1.53 M minus the four regions. 95 % interval of the total: 1.24–1.82 M. Source: Xu et al., The Lancet, 2024.</div>
   </div>
-  <div class="sensor" style="left: 1532px; top: 236px;">
-    <div class="desde">Since 2012</div>
-    <div class="nombre">VIIRS</div>
-    <div class="cuenta">139,534 <small>detections</small></div>
+  <div class="ayuda">
+    <h3>Who acts on an early “above normal”</h3>
+    <div class="punto"><b>Humanitarian aid, where it is needed.</b> Agencies can send masks, medical supplies and support to the countries running above normal.</div>
+    <div class="punto"><b>Health warnings, weeks earlier.</b> Clinics, schools and people with asthma can prepare before the smokiest weeks.</div>
+    <div class="punto"><b>Crews and closures, sooner.</b> Fire services and emergency committees move resources when a season runs high.</div>
+    <div class="punto"><b>The right alarm.</b> Gas flares and volcanoes are separated, so the alert points at fire and smoke.</div>
   </div>
-  <div class="frase" style="width: 470px;">Same place, same two months, <b>4.6 times more fire</b> on the right. Only the instrument changed.</div>
-  <div class="frase2" style="width: 470px;">Worldwide the gap is 4.5×. Join the two records as they are and the error is 80 % per country and year.</div>
-  <div class="pie">Central America, March–April 2024 <span class="pt">·</span> NASA FIRMS: MODIS (Terra + Aqua) and VIIRS (NOAA-20)</div>
+  <div class="cierre">Data: NASA FIRMS <span class="pt">·</span> Project for NASA Space Apps Challenge 2026 Costa Rica. Not an official NASA product. No NASA or Space Apps logos are used.<br>Sources: The Lancet (2024), World Bank (2025), NASA Earthdata, NASA LAADS, El Observador (2026) <span class="pt">·</span> <a href="{{DEMO_URL}}">{{DEMO_TEXTO}}</a> <span class="pt">·</span> <a href="https://github.com/KevinPhill/data-masters">github.com/KevinPhill/data-masters</a></div>
   <div class="n">2 / 7</div>
-  <aside class="notas">This is the problem in one picture. Both halves show Central America in March and April 2024, drawn from NASA FIRMS. On the left, what MODIS on Terra and Aqua detected: 30,252 hot spots. On the right, what VIIRS on NOAA-20 detected in the same place and the same weeks: 139,534, which is 4.6 times more. VIIRS is simply more sensitive. Worldwide, in the months when both flew between 2012 and 2021, VIIRS reports about 4.5 times more detections. So if you append the VIIRS record to the MODIS record as they are, the typical error per country and year is about 80 %, and fire seems to explode in 2012 although nothing changed on the ground. The challenge asks for one comparable series, a burn calendar from the early 2000s to today, the current month against its historical median, near-real-time alerts, and the method, validation and uncertainty in plain view.</aside>
+  <aside class="notas">What is at stake. The Lancet estimated in 2024 that about 1.53 million deaths a year, on average between 2000 and 2019, are linked to air pollution from landscape fires: 450 thousand cardiovascular and 220 thousand respiratory. More than 90 % happen in low- and middle-income countries: sub-Saharan Africa alone, about 607 thousand a year, then southeast Asia, south Asia and east Asia, the regions that glow on the world map in the next slide. Data Masters does not put out fires, but it tells, for any country, when a week or a month is running above normal, with 25 years of comparable history behind it. That is the moment when humanitarian agencies can send masks, medical supplies and support where they are needed, when health services can warn clinics, schools and people with asthma, and when fire services and emergency committees can bring crews and closures forward. And because gas flares and volcanoes are harmonized separately, the alert points at fire and smoke, not at a refinery. Data: NASA FIRMS. Project for the NASA Space Apps Challenge 2026 Costa Rica, not an official NASA product.</aside>
 </section>
 
-<!-- 3 · Why now: satellites as tracks, the world series below -->
-<section class="slide s3">
-  <h2>25 years, five satellites</h2>
-  <div class="lado">Joined as they are, world fire seems to jump from <b>392 k to 1.86 M</b> detections a month between 2011 and 2012.</div>
-  {{LINEA_TIEMPO}}
-  <div class="pie">Tracks: first data in NASA FIRMS; Suomi NPP end of delivery from NASA Earthdata; MODIS end from NASA LAADS <span class="pt">·</span> Series: monthly average of each year, world</div>
-  <div class="n">3 / 7</div>
-  <aside class="notas">Why this matters now. Each line is a satellite. MODIS flies on Terra, with fire data from November 2000, and on Aqua, from July 2002. VIIRS started on Suomi NPP, with data from January 2012, then NOAA-20, which we use from 2018, and NOAA-21, launched in November 2022. Suomi NPP stopped delivering data on 2 November 2026, and NASA plans to end MODIS in 2027. Below is the world series. The white line is what you get if you join the records as they are: the monthly average goes from about 392 thousand detections in 2011 to 1.86 million in 2012, only because the instrument changed. The dashed orange line is our harmonized series, with its uncertainty range, expressed as the detections VIIRS would have seen. Without that bridge, 25 years of record cannot be compared with what NOAA-20 and NOAA-21 will keep measuring.</aside>
-</section>
-
-<!-- 4 · Global value: the four kinds of heat FIRMS sees, worldwide -->
+<!-- 3 · Global value: the four kinds of heat FIRMS sees, worldwide -->
 <section class="slide s4">
   <img class="mapa" src="img/mundo_tipos.jpg" alt="World map of every VIIRS (NOAA-20) detection of 2024 and 2025, coloured by FIRMS type: vegetation fires, industry and gas, volcanoes, and heat over water">
   <div class="aro" style="left: 512px; top: 363px;"></div>
@@ -94,11 +90,41 @@
     </div>
   </div>
   <div class="pie">Every VIIRS (NOAA-20) detection of 2024–2025 in NASA FIRMS, coloured by FIRMS type and drawn by our code <span class="pt">·</span> counts are detections, not fires</div>
-  <div class="n">4 / 7</div>
+  <div class="n">3 / 7</div>
   <aside class="notas">The value is global. This map is every detection VIIRS on NOAA-20 made in 2024 and 2025, taken from NASA FIRMS and coloured by the type FIRMS assigns. In orange, vegetation fires: 38.1 million detections, from the African savannas to the Amazon, India and Australia. Smoke from landscape fires is linked to about 1.53 million deaths a year, according to The Lancet in 2024. In yellow, industry and gas: 2.5 million detections, from Iraq and the Gulf to Nigeria, Siberia and Texas. The World Bank counted 151 billion cubic metres of gas flared in 2024, about 389 million tonnes of CO2 equivalent. In white, volcanoes, from Kīlauea to Nyiragongo, Etna and the Indonesian arc: heat that must not set off a wildfire alert. And in blue, what FIRMS sees over water: offshore platforms, coastal plants and fires on the shores of lakes and rivers. A single correction factor would mix all of this; that is why the app is integral and harmonizes each type separately. The question is the same in every country: is this month normal here? Firefighters and emergency committees use the answer to bring crews and closures forward; public health to warn schools and clinics before the smokiest weeks; energy regulators and climate inventories to follow flaring; volcano observatories and civil protection to tell volcanic heat from fire. Costa Rica, where our team works, is one case: by May 2026 the fire service had counted 233 wildfires and 30,868 hectares burned, according to El Observador.</aside>
 </section>
 
-<!-- 5 · What we built: real screenshots -->
+<!-- 4 · The challenge: the same region and months seen by each sensor -->
+<section class="slide s2">
+  <img class="fondo" src="img/modis_viirs.jpg" alt="Central America in March and April 2024: MODIS detections on the left, VIIRS detections on the right">
+  <div class="sensor" style="left: 572px; top: 236px;">
+    <div class="desde">Since 2000</div>
+    <div class="nombre">MODIS</div>
+    <div class="cuenta">30,252 <small>detections</small></div>
+  </div>
+  <div class="sensor" style="left: 1532px; top: 236px;">
+    <div class="desde">Since 2012</div>
+    <div class="nombre">VIIRS</div>
+    <div class="cuenta">139,534 <small>detections</small></div>
+  </div>
+  <div class="frase" style="width: 470px;">Same place, same two months, <b>4.6 times more fire</b> on the right. Only the instrument changed.</div>
+  <div class="frase2" style="width: 470px;">Worldwide the gap is 4.5×. Join the two records as they are and the error is 80 % per country and year.</div>
+  <div class="pie">Central America, March–April 2024 <span class="pt">·</span> NASA FIRMS: MODIS (Terra + Aqua) and VIIRS (NOAA-20)</div>
+  <div class="n">4 / 7</div>
+  <aside class="notas">This is the problem in one picture. Both halves show Central America in March and April 2024, drawn from NASA FIRMS. On the left, what MODIS on Terra and Aqua detected: 30,252 hot spots. On the right, what VIIRS on NOAA-20 detected in the same place and the same weeks: 139,534, which is 4.6 times more. VIIRS is simply more sensitive. Worldwide, in the months when both flew between 2012 and 2021, VIIRS reports about 4.5 times more detections. So if you append the VIIRS record to the MODIS record as they are, the typical error per country and year is about 80 %, and fire seems to explode in 2012 although nothing changed on the ground. The challenge asks for one comparable series, a burn calendar from the early 2000s to today, the current month against its historical median, near-real-time alerts, and the method, validation and uncertainty in plain view.</aside>
+</section>
+
+<!-- 5 · Why now: satellites as tracks, the world series below -->
+<section class="slide s3">
+  <h2>25 years, five satellites</h2>
+  <div class="lado">Joined as they are, world fire seems to jump from <b>392 k to 1.86 M</b> detections a month between 2011 and 2012.</div>
+  {{LINEA_TIEMPO}}
+  <div class="pie">Tracks: first data in NASA FIRMS; Suomi NPP end of delivery from NASA Earthdata; MODIS end from NASA LAADS <span class="pt">·</span> Series: monthly average of each year, world</div>
+  <div class="n">5 / 7</div>
+  <aside class="notas">Why this matters now. Each line is a satellite. MODIS flies on Terra, with fire data from November 2000, and on Aqua, from July 2002. VIIRS started on Suomi NPP, with data from January 2012, then NOAA-20, which we use from 2018, and NOAA-21, launched in November 2022. Suomi NPP stopped delivering data on 2 November 2026, and NASA plans to end MODIS in 2027. Below is the world series. The white line is what you get if you join the records as they are: the monthly average goes from about 392 thousand detections in 2011 to 1.86 million in 2012, only because the instrument changed. The dashed orange line is our harmonized series, with its uncertainty range, expressed as the detections VIIRS would have seen. Without that bridge, 25 years of record cannot be compared with what NOAA-20 and NOAA-21 will keep measuring.</aside>
+</section>
+
+<!-- 6 · What we built: real screenshots -->
 <section class="slide s5">
   <h2>The app</h2>
   <div class="texto">
@@ -111,11 +137,11 @@
   <div class="cita" style="top: 706px;">“Alert: 7 weeks in a row above normal, since 17 Aug 2020. Overall, 4.1 times normal.”
     <span>United States, September 2020, as the Alerts tab shows it. Each week is compared with the same week in earlier years, from 2003.</span></div>
   <div class="pie">Screenshots of the app <span class="pt">·</span> Python, Streamlit, DuckDB, LightGBM, Plotly <span class="pt">·</span> {{DEMO_TEXTO}}</div>
-  <div class="n">5 / 7</div>
+  <div class="n">6 / 7</div>
   <aside class="notas">This is what we built: a web app, public at the demo link, that works for any country on Earth. You tap a country on the globe, choose an example region, or type coordinates with a radius. The app answers with the harmonized history of that place: one sentence, three figures and the series. The Alerts tab compares each week or month with the same period in earlier years and warns when there is a run of unusual rises: three high weeks or two high months in a row, or a single week that at least doubles the median. For the month you choose, it also ranks the countries of the world that are running above normal. The example on screen is the United States in September 2020: seven weeks in a row above normal since 17 August, overall 4.1 times normal. There is also a burn calendar from 2000 to today, trends, an anomaly map, a tab with near-real-time VIIRS detections from FIRMS for NOAA-20 and NOAA-21, a filter by hot spot type (vegetation, industry and gas, volcanoes, offshore), and downloads as an HTML report, CSV and PNG. It runs in English and Spanish, with a colour-blind-safe palette and a presentation mode. It is built with Python, Streamlit, DuckDB, LightGBM and Plotly on NASA FIRMS data: MODIS Collection 6.1 from Terra and Aqua, and VIIRS from Suomi NPP, NOAA-20 and NOAA-21.</aside>
 </section>
 
-<!-- 6 · How we harmonize, and how well -->
+<!-- 7 · How we harmonize, and how well -->
 <section class="slide s6">
   <div class="grande">5.5<small>%</small></div>
   <div class="que">typical error per country and year, when a year is hidden and predicted from MODIS.</div>
@@ -136,34 +162,9 @@
     <div><span>LightGBM + regional correction</span><i style="width: 100px;"></i><b>6.7 %</b></div>
     <div class="app"><span>Integral, the app's model</span><i style="width: 100px;"></i><b>6.7 %</b></div>
   </div>
-  <div class="n">6 / 7</div>
-  <aside class="notas">How we harmonize, and how well it works. We divide the world into half-degree cells, about 55 kilometres, and count MODIS and VIIRS detections per cell, month and FIRMS type. Vegetation is 93 % of what VIIRS sees: a LightGBM model with 600 trees and 28 inputs per cell and month (what Terra and Aqua saw by day and night, fire power, neighbouring cells and months, the position of the Sun, place and date) predicts the VIIRS count, and a correction per 10-degree region and month removes the remaining bias. Fixed sources, 31,332 cells of volcanoes, gas flares, industry and offshore platforms, get one relation per cell, learned separately before and after 2018, when VIIRS moved from Suomi NPP to NOAA-20. Where VIIRS exists we keep what it observed; before 2012 we use the prediction, with a range taken from the 5th and 95th percentiles of the validation error, and each month is split into weeks. Validation always uses predictions the model did not see. Hiding one year at a time from 2012 to 2021, the typical error per country and year is 5.5 %; in 2022 to 2025, never used, it is 7.4 %; on the world monthly total, 1.3 %. Joining the records as they are misses by about 80 %. We compared five models on test years 2017 and 2021: one worldwide factor 19.8 %, a ratio per region and month 10.0 %, LightGBM 7.0 %, LightGBM with regional correction 6.7 %, and the integral model of the app 6.7 % with the best R squared per cell, 0.817. It does not overfit: R squared in log scale per cell goes from 0.836 in training to 0.817 in test and 0.794 in never-seen years. And it fails somewhere: of 149 countries with at least 1,000 detections a year it works well in 130, fairly in 13 and not well in 6, mostly places where volcanoes erupt in some years or gas wells open and close. Volcanoes, 36.1 %, and offshore, 29.2 %, are the weakest types in 2022 to 2025. Costa Rica works well: 9.2 % per year. It counts heat detections, not burned hectares.</aside>
-</section>
-
-<!-- 7 · What is at stake: deaths from landscape-fire smoke, by region -->
-<section class="slide s7">
-  <div class="eyebrow">What is at stake</div>
-  <h2>1.53 million deaths a year</h2>
-  <div class="sub">are linked to smoke from landscape fires, 2000–2019 average: 0.45 M cardiovascular, 0.22 M respiratory. <b>Over 90 % happen in low- and middle-income countries</b>, the same regions that glow on the map.</div>
-  <div class="grafica">
-    <h3>Deaths a year attributed to landscape-fire smoke, by region</h3>
-      <div class="fila"><span>Sub-Saharan Africa</span><i style="width: 820px;"></i><b>607 k</b></div>
-      <div class="fila"><span>Southeast Asia</span><i style="width: 279px;"></i><b>207 k</b></div>
-      <div class="fila"><span>South Asia</span><i style="width: 231px;"></i><b>171 k</b></div>
-      <div class="fila"><span>East Asia</span><i style="width: 199px;"></i><b>147 k</b></div>
-      <div class="fila resto"><span>Rest of the world</span><i style="width: 538px;"></i><b>≈ 398 k</b></div>
-    <div class="nota">PM2.5 and ozone from fires. Rest of the world = the global 1.53 M minus the four regions. 95 % interval of the total: 1.24–1.82 M. Source: Xu et al., The Lancet, 2024.</div>
-  </div>
-  <div class="ayuda">
-    <h3>Where an early “above normal” helps</h3>
-    <div class="punto"><b>Health warnings, weeks earlier.</b> Clinics, schools and people with asthma can prepare before the smokiest weeks.</div>
-    <div class="punto"><b>Crews and closures, sooner.</b> Fire services and emergency committees move resources when a season starts running high.</div>
-    <div class="punto"><b>The right alarm.</b> Gas flares and volcanoes are separated, so an alert points at fire and smoke, not at a refinery.</div>
-  </div>
   <div class="ia"><b>AI use</b> The code, the text and these slides were made with Claude (Anthropic), directed and reviewed by the team. The app's model is LightGBM (machine learning, not generative). Maps and charts are drawn by our code from NASA FIRMS data: no generated images. Details in the README.</div>
-  <div class="cierre">Data: NASA FIRMS <span class="pt">·</span> Project for NASA Space Apps Challenge 2026 Costa Rica. Not an official NASA product. No NASA or Space Apps logos are used.<br>Sources: The Lancet (2024), World Bank (2025), NASA Earthdata, NASA LAADS, El Observador (2026) <span class="pt">·</span> <a href="{{DEMO_URL}}">{{DEMO_TEXTO}}</a> <span class="pt">·</span> <a href="https://github.com/KevinPhill/data-masters">github.com/KevinPhill/data-masters</a></div>
   <div class="n">7 / 7</div>
-  <aside class="notas">What is at stake. The Lancet estimated in 2024 that about 1.53 million deaths a year, on average between 2000 and 2019, are linked to air pollution from landscape fires: 450 thousand cardiovascular and 220 thousand respiratory. More than 90 % happen in low- and middle-income countries: sub-Saharan Africa alone, about 607 thousand a year, then southeast Asia, south Asia and east Asia, the same regions that glow on our map. Data Masters does not put out fires, but it tells, for any country, when a week or a month is running above normal, with 25 years of comparable history behind it. That is the moment when health services can warn clinics, schools and people with asthma, and when fire services and emergency committees can bring crews and closures forward. And because gas flares and volcanoes are harmonized separately, the alert points at fire and smoke, not at a refinery. A note on how we built it: the code, the text and these slides were made with Claude, from Anthropic, directed and reviewed by our team; the model inside the app is LightGBM, which is machine learning but not generative; and every map and chart is drawn by our code from NASA FIRMS data, with no generated images. The details are in the README. Data: NASA FIRMS. Project for the NASA Space Apps Challenge 2026 Costa Rica, not an official NASA product.</aside>
+  <aside class="notas">How we harmonize, and how well it works. We divide the world into half-degree cells, about 55 kilometres, and count MODIS and VIIRS detections per cell, month and FIRMS type. Vegetation is 93 % of what VIIRS sees: a LightGBM model with 600 trees and 28 inputs per cell and month (what Terra and Aqua saw by day and night, fire power, neighbouring cells and months, the position of the Sun, place and date) predicts the VIIRS count, and a correction per 10-degree region and month removes the remaining bias. Fixed sources, 31,332 cells of volcanoes, gas flares, industry and offshore platforms, get one relation per cell, learned separately before and after 2018, when VIIRS moved from Suomi NPP to NOAA-20. Where VIIRS exists we keep what it observed; before 2012 we use the prediction, with a range taken from the 5th and 95th percentiles of the validation error, and each month is split into weeks. Validation always uses predictions the model did not see. Hiding one year at a time from 2012 to 2021, the typical error per country and year is 5.5 %; in 2022 to 2025, never used, it is 7.4 %; on the world monthly total, 1.3 %. Joining the records as they are misses by about 80 %. We compared five models on test years 2017 and 2021: one worldwide factor 19.8 %, a ratio per region and month 10.0 %, LightGBM 7.0 %, LightGBM with regional correction 6.7 %, and the integral model of the app 6.7 % with the best R squared per cell, 0.817. It does not overfit: R squared in log scale per cell goes from 0.836 in training to 0.817 in test and 0.794 in never-seen years. And it fails somewhere: of 149 countries with at least 1,000 detections a year it works well in 130, fairly in 13 and not well in 6, mostly places where volcanoes erupt in some years or gas wells open and close. Volcanoes, 36.1 %, and offshore, 29.2 %, are the weakest types in 2022 to 2025. Costa Rica works well: 9.2 % per year. It counts heat detections, not burned hectares. A note on how we built it: the code, the text and these slides were made with Claude, from Anthropic, directed and reviewed by our team; the model inside the app is LightGBM, which is machine learning but not generative; and every map and chart is drawn by our code from NASA FIRMS data, with no generated images. The details are in the README.</aside>
 </section>
 
 </body>
