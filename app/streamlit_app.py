@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Data Masters — Todos los puntos de calor de la Tierra en un solo calendario (MODIS + VIIRS armonizados).
 
 NASA Space Apps Challenge 2026 · Costa Rica · Reto "Harmonization of MODIS and VIIRS Hot Spots".

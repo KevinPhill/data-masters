@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Gráficas Plotly de Data Masters.
 
 Plantillas "datamasters_claro", "datamasters_noche" y "datamasters_banda" (la franja azul del globo, igual en los

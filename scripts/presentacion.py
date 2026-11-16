@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Genera la presentación del proyecto (máximo 7 filminas) en PDF y PPTX.
 
 La fuente está en docs/presentacion/fuente/: slides.html (una <section class="slide"> por filmina, con sus notas del

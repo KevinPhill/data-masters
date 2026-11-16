@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Consolida los ZIP anuales de NASA FIRMS (data/raw) en una sola tabla Parquet.
 
 Entrada:  data/raw/<sensor>_<año>_all_countries.zip   (tal como se descargan, sin descomprimir)

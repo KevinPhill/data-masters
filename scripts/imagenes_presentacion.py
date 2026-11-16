@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Dibuja las imágenes de la presentación a partir de las detecciones de NASA FIRMS (no son imágenes generadas con IA).
 
 Cada imagen es un conteo de puntos de calor por píxel, en escala logarítmica, con una rampa de fuego sobre azul noche:

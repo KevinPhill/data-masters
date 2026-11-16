@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Alzas de fuego fuera de lo normal, semana a semana o mes a mes.
 
 Cada periodo se compara con el mismo periodo del año (la misma semana ISO, o el mismo mes) en los años anteriores

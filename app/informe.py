@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Informe descargable del área: analíticas y gráficas en un solo archivo HTML.
 
 Plotly va incluido una sola vez dentro del archivo, así que el informe se abre y se puede explorar sin internet.

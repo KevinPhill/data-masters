@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Valida el modelo de armonización que usa la app, siempre contra lo que VIIRS vio de verdad.
 
 Dos pruebas:

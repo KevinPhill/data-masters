@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Textos de la interfaz en español e inglés.
 
 Uso: t("clave", "es", **valores). Si una clave falta en un idioma se usa el español.

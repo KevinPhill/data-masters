@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Evalúa los modelos de armonización MODIS → VIIRS: qué tan bien predicen, si sobreajustan y en qué países fallan.
 
 Años (los mismos del notebook 03_modelo):

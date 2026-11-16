@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Lanzador de Data Masters: instala lo que falte, prepara los datos y abre la app en el navegador.
 
 En VS Code: abre este archivo y presiona ▷ (Run Python File).

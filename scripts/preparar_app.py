@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Prepara los datos que usa la app de Streamlit (data/app/).
 
 Entrada

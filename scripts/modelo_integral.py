@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Modelo integral: cada tipo de punto de calor se armoniza con su propio modelo.
 
 FIRMS clasifica cada detección en cuatro tipos:

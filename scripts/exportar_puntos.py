@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Exporta los puntos de calor originales de Centroamérica a un Parquet liviano.
 
 La app descarga puntos de calor desde data/db_nasa.duckdb (~6 GB, todo el mundo). Donde esa base no está,

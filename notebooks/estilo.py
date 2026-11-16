@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Estilo común de las gráficas de Data Masters: colores, tipografía y ayudas para los ejes.
 
 Al importarlo se aplica el estilo a matplotlib.

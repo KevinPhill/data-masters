@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Acceso a datos de la app: celdas armonizadas (data/app) y detecciones crudas (db_nasa.duckdb)."""
 
 from __future__ import annotations

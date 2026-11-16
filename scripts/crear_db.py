@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Crea data/db_nasa.duckdb: UNA base con todas las detecciones FIRMS (todos los países, sensores y años).
 
 Pasos (reanudable: si se corta, vuelve a correrlo y sigue donde quedó):

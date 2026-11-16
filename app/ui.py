@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Componentes visuales de Data Masters (HTML): estilos, encabezado, estado del mes, cifras y piezas de contenido.
 
 Las funciones devuelven HTML como texto; la app lo muestra con st.html. Todo texto dinámico pasa por esc().

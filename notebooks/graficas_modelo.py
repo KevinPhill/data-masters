@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Gráficas del notebook 03_modelo.
 
 Cada función recibe datos ya calculados en el notebook y solo dibuja.

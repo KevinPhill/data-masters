@@ -1,3 +1,4 @@
+# AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
 """Series semanales armonizadas por país y región de ejemplo, y serie mensual de cada país (alertas de la app).
 
 La armonización es mensual (celda × mes, scripts/preparar_app.py). Para ver semana a semana, cada mes armonizado se
