@@ -1,10 +1,10 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Gráficas Plotly de Data Masters.
+"""Plotly charts for Data Masters.
 
-Plantillas "datamasters_claro", "datamasters_noche" y "datamasters_banda" (la franja azul del globo, igual en los
-dos modos): mismo fondo que lo que hay detrás, rejilla tenue, Overpass en el texto y Fira Sans en los rótulos, y
-nombres directos sobre las líneas en lugar de leyendas. Colores de la paleta de NASA Space Apps (azules, Rocket Red,
-Martian Red, Neon Yellow). El calendario y el mapa usan Cividis (perceptualmente uniforme).
+Templates "datamasters_claro", "datamasters_noche" and "datamasters_banda" (the blue band of the globe, the same in both
+modes): same background as what is behind, faint grid, Overpass for text and Fira Sans for labels, and
+names directly on the lines instead of legends. Colours from the NASA Space Apps palette (blues, Rocket Red,
+Martian Red, Neon Yellow). The calendar and the map use Cividis (perceptually uniform).
 """
 
 from __future__ import annotations
@@ -22,9 +22,9 @@ from plotly.subplots import make_subplots
 import textos as X
 
 FUENTE = "'Overpass', system-ui, -apple-system, 'Segoe UI', sans-serif"
-TITULAR = "'Fira Sans', 'Overpass', system-ui, sans-serif"  # rótulos sobre la gráfica y títulos
+TITULAR = "'Fira Sans', 'Overpass', system-ui, sans-serif"  # labels on the chart and titles
 
-# paleta de NASA Space Apps: Electric Blue #0042A6, Neon Blue #0960E1, Blue Yonder #2E96F5, Deep Blue #07173F,
+# NASA Space Apps palette: Electric Blue #0042A6, Neon Blue #0960E1, Blue Yonder #2E96F5, Deep Blue #07173F,
 # Rocket Red #E43700, Martian Red #8E1100, Neon Yellow #EAFE07
 NARANJA, AMARILLO, AZUL, VERDE, ROJO, LILA = "#E43700", "#FFB31F", "#0960E1", "#2F9E72", "#8E1100", "#8C7BD6"
 
@@ -37,7 +37,7 @@ PALETA = {
                   linea="rgba(255,255,255,0.25)", tierra="#14275A", oceano="#050F2C", fronteras="#07173F",
                   banda=(255, 106, 61), acento="#FF6A3D", acento_txt="#FF7A45", azul="#2E96F5", azul_txt="#6FB1FF",
                   verde_txt="#5CC8A0"),
-    # franja azul del globo (degradado Electric Blue → Deep Blue): papel transparente para que se vea el degradado
+    # blue band of the globe (Electric Blue → Deep Blue gradient): transparent paper so the gradient shows
     "banda": dict(fondo="#062060", papel="rgba(0,0,0,0)", tinta="#FFFFFF", tinta2="#C8D3E8", tenue="#A9B8D6",
                   rejilla="rgba(255,255,255,0.08)", linea="rgba(255,255,255,0.3)", tierra="#1C2B55", oceano="#061338",
                   fronteras="#0A1A45", banda=(255, 106, 61), acento="#FF6A3D", acento_txt="#FF8A5C", azul="#6FB1FF",
@@ -45,21 +45,21 @@ PALETA = {
 }
 PLANTILLA = {"claro": "datamasters_claro", "noche": "datamasters_noche", "banda": "datamasters_banda"}
 
-# Compatibilidad con la versión anterior
+# Compatibility with the previous version
 SURFACE, INK, INK2, MUTED, GRID = (PALETA["claro"][k] for k in ("fondo", "tinta", "tinta2", "tenue", "rejilla"))
 COLOR_FUENTE = {"M": AZUL, "T": AMARILLO, "S": NARANJA, "N": VERDE, "R": LILA}
 NOMBRE_FUENTE = {"M": "MODIS → VIIRS", "T": "MODIS Terra → VIIRS", "S": "VIIRS S-NPP", "N": "VIIRS NOAA-20",
-                 "R": "VIIRS NOAA-20 · casi real"}  # R: meses traídos de la API de FIRMS (provisionales)
+                 "R": "VIIRS NOAA-20 · casi real"}  # R: months fetched from the FIRMS API (provisional)
 MESES = X.MESES_CORTO["es"]
 
-RAMPAS = {  # todas aptas para daltonismo y legibles en escala de grises
+RAMPAS = {  # all colour-blind safe and readable in greyscale
     "Cividis (recomendada)": "Cividis",
     "Viridis": "Viridis",
     "Inferno": "Inferno",
     "Magma": "Magma",
 }
-# rampas del globo (luminosidad monótona): en claro, más fuego = más oscuro; sobre azul oscuro, más fuego = más
-# brillante, de Martian Red a Rocket Red y de ahí a amarillo
+# globe ramps (monotonic lightness): on light, more fire = darker; on dark blue, more fire = more
+# luminous, from Martian Red to Rocket Red and on to yellow
 _FUEGO_OSCURO = [[0, "#8E1100"], [0.3, "#D42F00"], [0.55, "#FF6A1F"], [0.78, "#FFA92E"], [1, "#FFE45C"]]
 FUEGO = {"claro": [[0, "#FDE7D6"], [0.3, "#F9AE80"], [0.55, "#F06A35"], [0.8, "#C42F00"], [1, "#8E1100"]],
          "noche": _FUEGO_OSCURO, "banda": _FUEGO_OSCURO}
@@ -67,7 +67,7 @@ TOPOJSON = Path(__file__).resolve().parent / "static" / "topojson" / "world_110m
 DIVERGENTE = [[0, "#184f95"], [0.25, "#6da7ec"], [0.5, "#f0efec"], [0.75, "#ec8a89"], [1, "#b8302f"]]
 
 
-# =============================================================================== plantilla
+# =============================================================================== template
 def _plantilla(modo: str) -> go.layout.Template:
     p = PALETA[modo]
     eje = dict(automargin=True, gridcolor=p["rejilla"], gridwidth=1, zeroline=False, linecolor=p["linea"], linewidth=1,
@@ -109,10 +109,10 @@ def _colorbar(p: dict, **kw) -> dict:
                    title=dict(font=dict(family=FUENTE, size=11, color=p["tinta2"]))), **kw}
 
 
-# =============================================================================== calendario año × mes
+# =============================================================================== year × month calendar
 def calendario(s: pd.DataFrame, vista: str, rampa: str, escala_log: bool, ref: tuple[int, int] | None,
                idioma: str = "en", modo: str = "claro"):
-    """Mapa de calor año × mes. vista: 'armonizado' | 'sin_armonizar' | 'anomalia'."""
+    """Year × month heat map. vista: 'armonizado' | 'sin_armonizar' | 'anomalia'."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
     tabla = s.pivot(index="año", columns="mes", values="det" if vista != "sin_armonizar" else "sin_armonizar")
@@ -163,10 +163,10 @@ def calendario(s: pd.DataFrame, vista: str, rampa: str, escala_log: bool, ref: t
         colorscale=colorscale, zmid=zmid, zmin=zmin, zmax=zmax, xgap=2, ygap=2,
         hovertemplate=hover.replace("%{x}", "%{customdata[4]}"), colorbar=colorbar, hoverongaps=False,
     ))
-    # nombre del mes para el hover
+    # month name for the hover
     mes_txt = np.tile(np.array(meses, dtype=object), (len(años), 1))
     fig.data[0].customdata = np.dstack([custom, mes_txt])
-    # marcar meses calibrados desde MODIS (más incertidumbre)
+    # mark months calibrated from MODIS (more uncertainty)
     if vista != "sin_armonizar":
         pts = [(m, a) for a in años for m in range(1, 13) if fuente.loc[a, m] in ("M", "T")]
         if pts:
@@ -175,12 +175,12 @@ def calendario(s: pd.DataFrame, vista: str, rampa: str, escala_log: bool, ref: t
                                                  line=dict(width=0.8, color="#07173F")),
                                      hoverinfo="skip", showlegend=False))
         recientes = [(m, a) for a in años for m in range(1, 13) if fuente.loc[a, m] == "R"]
-        if recientes:  # meses en tiempo casi real: anillo
+        if recientes:  # near-real-time months: ring
             fig.add_trace(go.Scatter(x=[q[0] + 0.3 for q in recientes], y=[q[1] - 0.22 for q in recientes],
                                      mode="markers", marker=dict(symbol="circle-open", size=7, color=p["tinta"],
                                                                  line=dict(width=1.6)),
                                      hoverinfo="skip", showlegend=False))
-    # mes evaluado: marco doble (contrasta con cualquier color de la rampa) + estrella
+    # evaluated month: double frame (contrasts with any colour of the ramp) + star
     if ref and ref[0] in años:
         x0, y0 = ref[1], ref[0]
         fig.add_shape(type="rect", x0=x0 - 0.5, x1=x0 + 0.5, y0=y0 - 0.5, y1=y0 + 0.5, line=dict(color=p["tinta"], width=3))
@@ -198,7 +198,7 @@ def calendario(s: pd.DataFrame, vista: str, rampa: str, escala_log: bool, ref: t
     return fig
 
 
-# =============================================================================== tendencias
+# =============================================================================== trends
 def perfil_estacional(s: pd.DataFrame, año_ref: int, años_hist: tuple[int, int], idioma: str = "en",
                       modo: str = "claro"):
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
@@ -246,7 +246,7 @@ def anual(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", modo: str
             customdata=np.column_stack([sub.lo, sub.hi, sub.meses]),
             hovertemplate=f"<b>%{{x}}</b>: %{{y:,.0f}}<br>{t('g_rango')} %{{customdata[0]:,.0f}}–%{{customdata[1]:,.0f}}"
                           f"<br>%{{customdata[2]}} {t('g_meses_datos')}<extra></extra>"))
-    if len(completos) >= 5:  # tendencia lineal en años completos
+    if len(completos) >= 5:  # linear trend over complete years
         b, a = np.polyfit(completos.index, completos.det, 1)
         xs = np.array([completos.index.min(), completos.index.max()])
         fig.add_trace(go.Scatter(x=xs, y=a + b * xs, mode="lines", line=dict(color=p["tinta"], dash="dash", width=1.6),
@@ -256,19 +256,19 @@ def anual(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", modo: str
     return _layout(fig, alto=380, modo=modo)
 
 
-# =============================================================================== alertas por semana o por mes
+# =============================================================================== alerts by week or by month
 COLOR_NIVEL = {"muy_alto": "#E43700", "alto": "#FFA51F", "normal": "#3FA37F", "bajo": "#2E96F5"}
 
 
 def _fecha_corta(f: pd.Timestamp, idioma: str, dia: bool = True) -> str:
     m = X.MESES_CORTO.get(idioma, MESES)[f.month - 1]
-    m = m.lower() if idioma == "es" else m  # en español los meses van en minúscula dentro de la frase
+    m = m.lower() if idioma == "es" else m  # in Spanish, month names are lowercase inside a sentence
     return f"{f.day} {m} {f.year}" if dia else f"{m} {f.year}"
 
 
 def alertas(n: pd.DataFrame, periodo: str, año0: int, idioma: str = "en", modo: str = "claro"):
-    """Barras de cada semana (o mes) coloreadas por nivel, sobre el rango normal (percentiles 25–75 del mismo periodo
-    en años anteriores), la mediana y el umbral de alerta."""
+    """Bars for each week (or month) coloured by level, over the normal range (percentiles 25–75 of the same period
+    in previous years), the median and the alert threshold."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
     semana = periodo == "semana"
@@ -302,7 +302,7 @@ def alertas(n: pd.DataFrame, periodo: str, año0: int, idioma: str = "en", modo:
         fig.add_trace(go.Scatter(x=xh, y=h.umbral, mode="lines", line=dict(color=p["acento"], width=1.6, dash="dot",
                                                                            shape="hvh"),
                                  name=t("g_al_umbral"), hoverinfo="skip"))
-    for nv in ("muy_alto", "alto", "normal", "bajo"):  # leyenda de colores de las barras (texto, no solo color)
+    for nv in ("muy_alto", "alto", "normal", "bajo"):  # bar colour legend (text, not just colour)
         if (n.nivel == nv).any():
             fig.add_trace(go.Bar(x=[None], y=[None], marker_color=COLOR_NIVEL[nv], name=t(f"esc_{nv}"),
                                  hoverinfo="skip"))
@@ -319,13 +319,13 @@ def alertas(n: pd.DataFrame, periodo: str, año0: int, idioma: str = "en", modo:
     return _layout(fig, alto=400, modo=modo)
 
 
-# colores de los tipos de punto de calor: vegetación en el rojo del fuego, volcanes en amarillo, industria y costa
-# afuera en dos azules de distinta luminosidad
+# hot spot type colours: vegetation in fire red, volcanoes in yellow, industry and offshore
+# in two blues of different lightness
 COLOR_TIPO = {"veg": NARANJA, "industria": AZUL, "volcan": AMARILLO, "mar": "#2E96F5"}
 
 
 def composicion(c: pd.DataFrame, años: tuple[int, int], idioma: str = "en", modo: str = "claro"):
-    """Barras apiladas por año: cuánto de lo detectado es vegetación, industria y gas, volcanes o costa afuera."""
+    """Stacked bars per year: how much of what was detected is vegetation, industry and gas, volcanoes or offshore."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
     d = c[c.año.between(*años)]
@@ -349,26 +349,26 @@ def composicion(c: pd.DataFrame, años: tuple[int, int], idioma: str = "en", mod
     return _layout(fig, alto=380, modo=modo)
 
 
-# =============================================================================== armonización
+# =============================================================================== harmonization
 def factor_viirs_modis(s: pd.DataFrame) -> float:
-    """Cuántas veces más ve VIIRS que MODIS en los meses en que vuelan los dos."""
+    """How many times more VIIRS sees than MODIS in the months when both fly."""
     ambos = s[s.fuente.isin(["N", "S"]) & (s.modis_n > 0)]
     return float(ambos.viirs_n.sum() / ambos.modis_n.sum()) if len(ambos) else np.nan
 
 
 def viirs_puro(d: pd.DataFrame, minimo: int = 9) -> pd.Series:
-    """Promedio mensual de VIIRS observado, solo en años donde todos los meses válidos son VIIRS: si un año tiene
-    meses rellenados con MODIS (p. ej. 2012 o 2018) y uno de ellos es de temporada alta, promediar solo los meses VIIRS
-    lo hundiría."""
+    """Monthly average of observed VIIRS, only in years where every valid month is VIIRS: if a year has
+    months filled in with MODIS (e.g. 2012 or 2018) and one of them is in the high season, averaging only the VIIRS
+    months would drag it down."""
     g = d.groupby("año").agg(v=("viirs_n", "mean"), n=("mes", "count"),
                              nv=("fuente", lambda f: int(f.isin(["N", "S"]).sum())))
     return g.loc[(g.n == g.nv) & (g.n >= minimo), "v"]
 
 
 def antes_despues(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", modo: str = "claro"):
-    """Dos paneles con el mismo eje y los mismos colores: a la izquierda MODIS y VIIRS unidos tal cual (salto falso),
-    a la derecha MODIS armonizado (con su rango) junto a VIIRS. Lo único que se mueve es la línea azul.
-    Cada punto es el promedio mensual de un año con al menos 9 meses válidos (como en el notebook 03)."""
+    """Two panels with the same axis and the same colours: on the left MODIS and VIIRS joined as they are (false jump),
+    on the right harmonized MODIS (with its range) next to VIIRS. The only thing that moves is the blue line.
+    Each point is the monthly average of a year with at least 9 valid months (as in notebook 03)."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
     minimo = 9
@@ -399,7 +399,7 @@ def antes_despues(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", m
                  hovertemplate="<b>%{x}</b> · %{y:,.0f}<extra>%{fullData.name}</extra>")
     fig.add_trace(go.Scatter(x=rango, y=modis_crudo, name=t("g_modis_tal_cual"), line=dict(color=azul, width=2.4),
                              marker=dict(size=6, color=azul), **linea), row=1, col=1)
-    # VIIRS solo tiene puntos en años 100 % VIIRS; la línea los une (los puntos marcan los años reales)
+    # VIIRS only has points in 100 % VIIRS years; the line joins them (the points mark the real years)
     fig.add_trace(go.Scatter(x=rango, y=viirs, name=t("g_viirs_c"), line=dict(color=p["tinta"], width=2.4),
                              marker=dict(size=6, color=p["tinta"]), **{**linea, "connectgaps": True}), row=1, col=1)
     fig.add_trace(go.Scatter(x=rango, y=arm_modis.hi, mode="lines", line=dict(width=0), hoverinfo="skip",
@@ -413,7 +413,7 @@ def antes_despues(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", m
                              marker=dict(size=6, color=p["tinta"]), **linea), row=1, col=2)
 
     def etiqueta(serie, techo, texto, color, col):
-        """Nombre de la línea encima de su tramo (sin leyenda, como en el EDA)."""
+        """Line name above its segment (no legend, as in the EDA)."""
         v = serie.dropna()
         if v.empty:
             return
@@ -426,7 +426,7 @@ def antes_despues(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", m
     etiqueta(arm_modis.det, arm_modis.hi, t("g_modis_arm"), p["azul_txt"], 2)
     etiqueta(arm_viirs.det, arm_viirs.det, t("g_viirs_c"), p["tinta"], 2)
 
-    # el salto: flecha del último año MODIS al primero VIIRS, y el rótulo de cada panel
+    # the jump: arrow from the last MODIS year to the first VIIRS year, and each panel's label
     m, v = modis_crudo.dropna(), viirs.dropna()
     if len(m) and len(v):
         fig.add_annotation(x=int(v.index[0]), y=float(v.iloc[0]), ax=int(m.index[-1]), ay=float(m.iloc[-1]),
@@ -446,7 +446,7 @@ def antes_despues(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", m
     fig.update_yaxes(range=[0, techo * 1.34])
     fig.update_yaxes(title=t("g_det_mes_prom"), row=1, col=1)
     fig.update_xaxes(range=[años[0] - 0.7, años[1] + 0.7], tickformat="d", dtick=5 if años[1] - años[0] > 12 else 2)
-    for ann, eje in zip(fig.layout.annotations[:2], ("xaxis", "xaxis2")):  # títulos de panel alineados a la izquierda
+    for ann, eje in zip(fig.layout.annotations[:2], ("xaxis", "xaxis2")):  # panel titles aligned to the left
         ann.update(x=fig.layout[eje].domain[0], xanchor="left", yshift=6,
                    font=dict(family=TITULAR, size=15, color=p["tinta"], weight=700))
     fig = _layout(fig, alto=430, modo=modo)
@@ -454,10 +454,10 @@ def antes_despues(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", m
     return fig
 
 
-# =============================================================================== globo + historia del país
+# =============================================================================== globe + country history
 @lru_cache(maxsize=1)
 def centroides() -> dict[str, tuple[float, float]]:
-    """ISO3 → (lon, lat) del centro de cada país, sacado del mismo topojson que dibuja el globo."""
+    """ISO3 → (lon, lat) of the centre of each country, taken from the same topojson that draws the globe."""
     geoms = json.loads(TOPOJSON.read_text())["objects"]["countries"]["geometries"]
     return {g["id"]: tuple(g["properties"]["ct"]) for g in geoms if g.get("id") and "ct" in g.get("properties", {})}
 
@@ -467,7 +467,7 @@ def _etiqueta_log(v: int) -> str:
 
 
 def escala_globo(df: pd.DataFrame, modo: str = "banda") -> tuple[list, list[tuple[float, str]]]:
-    """Rampa del globo y sus marcas [(posición 0–1, texto)], para dibujar la escala fuera de la gráfica."""
+    """Globe ramp and its ticks [(position 0–1, text)], to draw the scale outside the chart."""
     maxv = max(float(df.por_año.max()), 10.0)
     tope = np.log10(maxv + 1)
     marcas = [(float(np.log10(v + 1) / tope), _etiqueta_log(v)) for v in (10, 100, 1_000, 10_000, 100_000, 1_000_000)
@@ -477,13 +477,13 @@ def escala_globo(df: pd.DataFrame, modo: str = "banda") -> tuple[list, list[tupl
 
 def globo(df: pd.DataFrame, seleccionado: str | None, idioma: str = "en", modo: str = "claro", alto: int = 560,
           barra: bool = True):
-    """Globo ortográfico con todos los países, color = detecciones armonizadas por año (escala log).
-    Se gira arrastrando; el país elegido queda al centro y con borde. customdata = [nombre FIRMS, valor, nombre].
-    barra=False: sin escala de color (la app la dibuja en HTML debajo, con escala_globo) y sin margen inferior."""
+    """Orthographic globe with every country, colour = harmonized detections per year (log scale).
+    It rotates by dragging; the chosen country stays centred and outlined. customdata = [FIRMS name, value, name].
+    barra=False: no colour bar (the app draws it in HTML below, with escala_globo) and no bottom margin."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
     d = df.assign(iso=df.pais.map(X.iso3), nombre=df.pais.map(lambda n: X.pais(n, idioma))).dropna(subset=["iso"])
-    d = d[d.iso != "ATA"]  # en la Antártida casi no hay fuego: sus puntos son volcanes y reflejos
+    d = d[d.iso != "ATA"]  # Antarctica has almost no fire: its points are volcanoes and reflections
     maxv = max(float(d.por_año.max()), 10.0)
     ticks = [v for v in (10, 100, 1_000, 10_000, 100_000, 1_000_000) if v <= maxv]
     hover = f"<b>%{{customdata[2]}}</b><br>%{{customdata[1]:,.0f}} {t('globo_hover')}<extra></extra>"
@@ -503,14 +503,14 @@ def globo(df: pd.DataFrame, seleccionado: str | None, idioma: str = "en", modo: 
                                       font=dict(family=FUENTE, size=12, color=p["tinta2"]))),
     ))
     elegido = d[d.pais == seleccionado]
-    if len(elegido):  # borde del país elegido: halo oscuro y encima el trazo claro, se lee sobre cualquier color
+    if len(elegido):  # border of the chosen country: dark halo with the light stroke on top, readable over any colour
         for color, ancho in ((p["oceano"], 5.0), (p.get("seleccion", p["tinta"]), 2.2)):
             fig.add_trace(go.Choropleth(
                 locations=elegido.iso, locationmode="ISO-3", z=[0],
                 colorscale=[[0, "rgba(0,0,0,0)"], [1, "rgba(0,0,0,0)"]], showscale=False, marker_line_color=color,
                 marker_line_width=ancho, customdata=datos(elegido), hovertemplate=hover, **sin_atenuar))
     lon, lat = centroides().get(elegido.iso.iloc[0] if len(elegido) else "", (-60.0, 5.0))
-    # grados enteros: con una inclinación decimal (p. ej. 9.97°) Plotly recorta el globo en una franja
+    # whole degrees: with a decimal tilt (e.g. 9.97°) Plotly clips the globe into a band
     reticula = dict(showgrid=True, gridcolor=p["rejilla"], gridwidth=1, dtick=15)
     fig.update_geos(
         projection_type="orthographic", projection_rotation=dict(lon=round(lon), lat=int(np.clip(round(lat), -35, 35)), roll=0),
@@ -528,8 +528,8 @@ def globo(df: pd.DataFrame, seleccionado: str | None, idioma: str = "en", modo: 
 
 
 def historia_pais(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", modo: str = "claro"):
-    """Historia anual del país, estilo EDA: la serie armonizada (punto lleno = año observado por VIIRS, hueco =
-    estimado desde MODIS, con su banda) contra MODIS tal cual. Nombres al final de cada línea, sin leyenda."""
+    """Yearly history of the country, EDA style: the harmonized series (filled dot = year observed by VIIRS, hollow =
+    estimated from MODIS, with its band) against MODIS as is. Names at the end of each line, no legend."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
     minimo = 9
@@ -561,7 +561,7 @@ def historia_pais(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", m
                        f"<br>{t('g_rango')}: %{{customdata[1]:,.0f}}–%{{customdata[2]:,.0f}}"
                        f"<extra>{t('hist_arm')}</extra>")))
 
-    # nombres al final de cada línea (separados si quedan encimados)
+    # names at the end of each line (spread apart if they overlap)
     finales = []
     for serie, texto, color in ((arm.det, t("hist_arm"), p["acento_txt"]), (modis, t("hist_modis"), p["azul_txt"])):
         v = serie.dropna()
@@ -589,8 +589,8 @@ def historia_pais(s: pd.DataFrame, años: tuple[int, int], idioma: str = "en", m
 
 
 def validacion(v: pd.DataFrame, idioma: str = "en", modo: str = "claro"):
-    """Validación por año en el área: VIIRS observado contra lo que se predijo desde MODIS sin haber visto ese año
-    (2012–2021 dejando un año fuera; 2022–2025 nunca usados para calibrar), y MODIS tal cual."""
+    """Validation per year in the area: observed VIIRS against what was predicted from MODIS without having seen that year
+    (2012–2021 leaving one year out; 2022–2025 never used for calibration), and MODIS as is."""
     t = lambda k, **kw: X.t(k, idioma, **kw)  # noqa: E731
     p = PALETA[modo]
     a = v.groupby("año").agg(viirs=("viirs", "sum"), modis=("modis", "sum"), pred=("pred", "sum"),
@@ -618,7 +618,7 @@ def validacion(v: pd.DataFrame, idioma: str = "en", modo: str = "claro"):
                       [float(a.pred.iloc[-1]), t("g_val_pred"), p["acento_txt"]],
                       [float(a.modis.iloc[-1]), t("g_modis_tal_cual"), p["azul_txt"]]], key=lambda f: -f[0])
     y_prev = None
-    for f in finales:  # nombres al final, separados si se enciman
+    for f in finales:  # names at the end, spread apart if they overlap
         y = f[0] if y_prev is None else min(f[0], y_prev - 0.08 * techo)
         fig.add_annotation(x=int(x[-1]), y=y, text=f[1], showarrow=False, xanchor="left", xshift=12,
                            font=dict(family=TITULAR, size=13, color=f[2], weight=600))
@@ -655,9 +655,9 @@ def serie_global(g: pd.DataFrame, idioma: str = "en", modo: str = "claro"):
     return _layout(fig, alto=400, modo=modo)
 
 
-# =============================================================================== mapa
+# =============================================================================== map
 def mapa(df: pd.DataFrame, columna: str, titulo_color: str, divergente=False, rampa="Cividis", modo: str = "claro"):
-    """Celdas de 0.5° sobre un mapa vectorial (funciona sin internet)."""
+    """0.5° cells on a vector map (works offline)."""
     p = PALETA[modo]
     v = df[columna].to_numpy(dtype=float)
     if divergente:
@@ -671,7 +671,7 @@ def mapa(df: pd.DataFrame, columna: str, titulo_color: str, divergente=False, ra
                       colorbar=_colorbar(p, tickvals=[np.log10(t + 1) for t in ticks], ticktext=[f"{t:,}" for t in ticks]))
     marker["colorbar"]["title"]["text"] = titulo_color
     extension = max(df.lat.max() - df.lat.min(), df.lon.max() - df.lon.min(), 1)
-    h = 0.25  # media celda
+    h = 0.25  # half a cell
     ids = [f"{a:.2f}_{o:.2f}" for a, o in zip(df.lat, df.lon)]
     geojson = {"type": "FeatureCollection", "features": [
         {"type": "Feature", "id": i, "properties": {},

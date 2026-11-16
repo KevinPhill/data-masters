@@ -1,7 +1,7 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Textos de la interfaz en español e inglés.
+"""Interface texts in Spanish and English.
 
-Uso: t("clave", "es", **valores). Si una clave falta en un idioma se usa el español.
+Usage: t("clave", "es", **valores). If a key is missing in one language, Spanish is used.
 """
 
 from __future__ import annotations
@@ -51,7 +51,7 @@ METODOS_EN = {
 }
 
 ES = {
-    # ---------------------------------------------------------------- marca y encabezado
+    # ---------------------------------------------------------------- brand and header
     "app_nombre": "Data Masters",
     "pagina_titulo": "Data Masters · Todos los puntos de calor de la Tierra en un solo calendario",
     "app_lead": "MODIS (desde 2000) y VIIRS (desde 2012) cuentan los puntos de calor de forma distinta. Los unimos "
@@ -70,7 +70,7 @@ ES = {
     "esc_alto": "Alto",
     "esc_muy_alto": "Muy alto",
     "escala_lbl": "Nivel: {nivel}",
-    # ---------------------------------------------------------------- barra superior
+    # ---------------------------------------------------------------- top bar
     "tour_boton": "Tour para jueces",
     "presentacion": "Modo presentación",
     "presentacion_ayuda": "Oculta la barra lateral, agranda textos y gráficas y muestra el pitch.",
@@ -89,7 +89,7 @@ ES = {
     "pitch_impacto": "Bomberos, salud pública y gestores de territorio saben en 5 segundos si este mes es normal "
                      "en su zona, cuándo prepararse y si la prevención funciona. El humo de estos fuegos se asocia a "
                      "1.5 millones de muertes al año en el mundo (The Lancet, 2024).",
-    # ---------------------------------------------------------------- barra lateral
+    # ---------------------------------------------------------------- sidebar
     "lateral_sub": "MODIS + VIIRS armonizados · NASA FIRMS",
     "area_titulo": "Área de interés",
     "area_como": "¿Cómo eliges el área?",
@@ -121,9 +121,9 @@ ES = {
     "escala_log_ayuda": "Hace visibles los meses con poco fuego junto a los picos.",
     "nota_armonizacion": "Armonización",
     "nota_datos": "Datos: NASA FIRMS · MODIS C6.1, VIIRS S-NPP y NOAA-20 · celdas de 0.5° · {a0}–{a1}",
-    # ---------------------------------------------------------------- área
+    # ---------------------------------------------------------------- area
     "area_circulo": "{r} km alrededor de {lat:.2f}, {lon:.2f}",
-    # ---------------------------------------------------------------- globo
+    # ---------------------------------------------------------------- globe
     "globo_sub": "Promedio anual {a0}–{a1}, en detecciones equivalentes a VIIRS.",
     "globo_hover": "detecciones / año",
     "globo_pista": "Toca un país para ver su historia · arrastra para girar el globo.",
@@ -155,7 +155,7 @@ ES = {
                     "(crea `data/modelo/celdas_0.5.parquet`).\n2. En la terminal: `python scripts/preparar_app.py`\n"
                     "3. Recarga esta página.",
     "calculando": "Calculando la serie del área…",
-    # ---------------------------------------------------------------- alerta
+    # ---------------------------------------------------------------- alert
     "nivel_muy_alto": "Muy por encima de lo normal",
     "nivel_alto": "Por encima de lo normal",
     "nivel_normal": "Dentro de lo normal",
@@ -251,7 +251,7 @@ ES = {
     "kpi_z": "Anomalía (z robusto)",
     "kpi_z_nota": "desviaciones (MAD) respecto a la mediana",
     "kpi_det_viirs": "detecciones equivalentes a VIIRS",
-    # ---------------------------------------------------------------- pestañas
+    # ---------------------------------------------------------------- tabs
     "tab_calendario": "Calendario",
     "tab_tendencias": "Tendencias",
     "tab_mapa": "Mapa",
@@ -259,7 +259,7 @@ ES = {
     "tab_nrt": "Últimos días",
     "tab_descargas": "Descargas",
     "tab_metodo": "Método",
-    # ---------------------------------------------------------------- calendario
+    # ---------------------------------------------------------------- calendar
     "cal_titulo": "El calendario del fuego",
     "cal_sub": "Cada casilla es un mes de {area}, {a0}–{a1}.",
     "vista": "Vista",
@@ -282,7 +282,7 @@ ES = {
     "col_mes": "mes",
     "col_detecciones": "detecciones",
     "col_fuente": "fuente",
-    # ---------------------------------------------------------------- tendencias
+    # ---------------------------------------------------------------- trends
     "perfil_titulo": "Perfil estacional",
     "perfil_sub": "{año} contra la historia del área",
     "anual_titulo": "Actividad anual",
@@ -293,7 +293,7 @@ ES = {
     "comp_nota": "Tipos de FIRMS. Cada uno se armoniza con su propio modelo, porque VIIRS no ve lo mismo de más en "
                  "todos: unas 4 veces más detecciones que MODIS en la vegetación, 7 en volcanes, 8 en industria y "
                  "gas, y 50 en las plataformas del mar.",
-    # ---------------------------------------------------------------- mapa
+    # ---------------------------------------------------------------- map
     "mapa_titulo": "Mapa de detecciones",
     "mapa_mostrar": "Mostrar",
     "capa_total": "Total {a0}–{a1}",
@@ -304,7 +304,7 @@ ES = {
     "mapa_vacio": "No hay detecciones para mostrar en este periodo.",
     "mapa_color_total": "detecciones",
     "mapa_color_anomalia": "diferencia vs.<br>mediana",
-    # ---------------------------------------------------------------- armonización
+    # ---------------------------------------------------------------- harmonization
     "arm_titulo": "Qué corrige la armonización",
     "arm_texto": "MODIS (1 km, desde 2000) ve muchos menos fuegos pequeños que VIIRS (375 m, desde 2012). Si se "
                  "unen los registros tal cual, aparece un <b>salto falso en 2012</b>: no hubo más fuego, solo "
@@ -326,7 +326,7 @@ ES = {
                    "armonizado con el modelo integral (con su rango) y lo que VIIRS observó. En 2012–2025 la "
                    "estimación es la de la validación: cada año se predijo sin verlo. El detalle está en “¿Cómo "
                    "armonizamos?”.",
-    # ---------------------------------------------------------------- tiempo casi real
+    # ---------------------------------------------------------------- near real time
     "nrt_titulo": "Alerta temprana: últimos días",
     "nrt_sub": "NASA FIRMS en tiempo casi real",
     "nrt_texto": "Compara las detecciones VIIRS de los últimos días en esta área con lo que es normal para este mes "
@@ -344,7 +344,7 @@ ES = {
     "nrt_csv": "CSV de detecciones recientes",
     "nrt_error": "No se pudo consultar FIRMS: {e}",
     "nrt_falta_key": "Ingresa tu MAP_KEY (o define la variable de entorno `FIRMS_MAP_KEY`).",
-    # ---------------------------------------------------------------- descargas
+    # ---------------------------------------------------------------- downloads
     "desc_titulo": "Descargas del área y periodo seleccionados",
     "desc_cal": "Calendario mensual armonizado",
     "desc_cal_sub": "Un registro por mes, con rango y conteos crudos",
@@ -362,7 +362,7 @@ ES = {
     "desc_puntos_boton": "CSV puntos de calor",
     "desc_sin_db": "No se encontró `data/db_nasa.duckdb`.",
     "desc_primeras": "Primeras 200 filas",
-    # ---------------------------------------------------------------- método
+    # ---------------------------------------------------------------- method
     "met_titulo": "Método",
     "met_1_t": "Datos",
     "met_1": "Todos los puntos de calor de NASA FIRMS desde noviembre de 2000: MODIS C6.1 (Terra y Aqua), "
@@ -424,10 +424,10 @@ ES = {
               "HTML, el resumen y los CSV.",
     "tour_4_m": "Prueba el modo presentación (arriba a la derecha) y cambia el área a “Amazonía brasileña” para ver "
                 "otra región del mundo.",
-    # ---------------------------------------------------------------- pie
+    # ---------------------------------------------------------------- footer
     "pie_credito": "Datos: NASA FIRMS · Proyecto para NASA Space Apps Challenge 2026 Costa Rica. No es un producto "
                    "oficial de la NASA. Sensores: MODIS C6.1 (Terra y Aqua), VIIRS S-NPP, NOAA-20 y NOAA-21.",
-    # ---------------------------------------------------------------- por qué importa
+    # ---------------------------------------------------------------- why it matters
     "imp_franja_t": "Por qué importa",
     "imp_n1_t": "muertes al año se asocian al humo de incendios de vegetación, más del 90 % en países de ingreso "
                 "bajo y medio",
@@ -509,7 +509,7 @@ ES = {
                  "{e:.0f} % (validación dejando un año fuera).",
     "imp_lim_4": "Los datos en tiempo casi real son provisionales hasta que la NASA publica el procesamiento estándar.",
     "imp_fuentes_t": "Fuentes",
-    # ---------------------------------------------------------------- validación
+    # ---------------------------------------------------------------- validation
     "val_titulo": "Validación: escondemos un año y lo predecimos",
     "val_sub": "Cada año de 2012 a 2021 se dejó fuera al calibrar y se predijo desde MODIS; 2022–2025 nunca se "
                "usaron para calibrar. Círculos: lo predicho, con su rango; línea negra: lo que VIIRS vio.",
@@ -527,7 +527,7 @@ ES = {
                   "región y el mes; no incluye el ruido local de cada celda, por eso cubre menos años de lo que su "
                   "nombre sugiere.",
     "val_sin_datos": "No hay suficientes detecciones en esta área para validar año por año.",
-    # ---------------------------------------------------------------- el modelo y su evaluación
+    # ---------------------------------------------------------------- the model and its evaluation
     "mod_titulo": "Cómo armonizamos: el modelo que usa la app",
     "mod_texto": "Es un modelo integral: cada tipo de punto de calor se armoniza con el modelo que le corresponde. "
                  "La vegetación, más del 90 % de lo que ve VIIRS, con LightGBM (600 árboles, unas {n:,} hojas) y "
@@ -656,7 +656,7 @@ ES = {
     "g_val_pred": "Predicho desde MODIS",
     "g_val_fuera": "nunca vistos →",
     "g_val_loyo": "← año escondido al calibrar",
-    # ---------------------------------------------------------------- tiempo casi real y meses recientes
+    # ---------------------------------------------------------------- near real time and recent months
     "nrt_boton_publico": "Consultar los últimos 7 días",
     "nrt_satelite": "Satélite: VIIRS {s} · tiempo casi real",
     "nrt_sin_tipo": "FIRMS en tiempo casi real no trae el tipo de fuente: esta comparación usa todos los puntos de "
@@ -670,7 +670,7 @@ ES = {
     "nrt_trayendo": "Consultando FIRMS…",
     "cal_leyenda_reciente": "mes en tiempo casi real (provisional)",
     "alerta_parcial": " Mes en curso: {d} de {n} días, comparado con lo esperado a la fecha.",
-    # ---------------------------------------------------------------- informe y descargas
+    # ---------------------------------------------------------------- report and downloads
     "desc_informe": "Informe del área",
     "desc_informe_sub": "Analíticas y gráficas en un solo archivo HTML que se abre sin internet",
     "desc_informe_boton": "Informe HTML",
@@ -689,7 +689,7 @@ ES = {
     "inf_temporada": "Temporada de fuego",
     "inf_tend_arm": "Cambio real (armonizado)",
     "inf_tend_ing": "Cambio aparente sin armonizar",
-    # ---------------------------------------------------------------- cobertura del reto
+    # ---------------------------------------------------------------- challenge coverage
     "cob_titulo": "Lo que pide el reto y dónde está",
     "cob_col_pide": "El reto pide",
     "cob_col_donde": "Dónde está en la app",
@@ -731,7 +731,7 @@ ES = {
               "del mundo están por encima de lo normal ese mes.",
     "tour_6_m": "Elige Estados Unidos y septiembre de 2020: 7 semanas seguidas por encima de lo normal. Las barras "
                 "rojas pasan el umbral de alerta (línea punteada); la banda es lo normal.",
-    # ---------------------------------------------------------------- gráficas
+    # ---------------------------------------------------------------- charts
     "g_sin_datos": "sin datos",
     "g_det_viirs": "detecciones (unidades VIIRS)",
     "g_det_crudas": "detecciones crudas",
@@ -1461,7 +1461,7 @@ _PAISES = json.loads((Path(__file__).resolve().parent / "paises_nombres.json").r
 
 
 def pais(nombre: str, idioma: str) -> str:
-    """Nombre del país (como viene en FIRMS) en el idioma de la interfaz."""
+    """Country name (as it comes in FIRMS) in the interface language."""
     return _PAISES.get(nombre, {}).get(idioma, nombre)
 
 
@@ -1482,7 +1482,7 @@ def pasos_tour(idioma: str) -> list[dict]:
                  mirar=t(f"tour_{i}_m", idioma)) for i in (0, 1, 6, 2, 3, 4, 5)]
 
 
-# Fuentes de la pestaña "Para qué sirve" (se citan tal cual, en su idioma original)
+# Sources for the "Para qué sirve" (What it is for) tab (quoted as they are, in their original language)
 FUENTES_IMPACTO = [
     ("Xu, R. et al. (2024). Global, regional, and national mortality burden attributable to air pollution from "
      "landscape fires: a health impact assessment study. The Lancet, 404, 2447–2459.",

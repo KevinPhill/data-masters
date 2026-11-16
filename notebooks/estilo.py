@@ -1,31 +1,31 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Estilo común de las gráficas de Data Masters: colores, tipografía y ayudas para los ejes.
+"""Shared chart style for Data Masters: colours, typography and axis helpers.
 
-Al importarlo se aplica el estilo a matplotlib.
+Importing it applies the style to matplotlib.
 """
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
-# Tinta y fondo
+# Ink and background
 SURFACE, INK, INK2, MUTED, GRID, EJE = "#fcfcfb", "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7"
 GRIS = "#c9c7bf"
 
-# Un color fijo por satélite (igual que en el EDA)
+# One fixed colour per satellite (same as in the EDA)
 NOMBRE_SAT = {"Terra": "MODIS Terra", "Aqua": "MODIS Aqua", "N": "VIIRS S-NPP", "N20": "VIIRS NOAA-20"}
 COLOR_SAT = {"Terra": "#eda100", "Aqua": "#2a78d6", "N": "#eb6834", "N20": "#1baf7a"}
 
-# Un color fijo por modelo y por grupo de entradas
-COLOR_MODELO = {"Referencia": MUTED, "LightGBM": "#2a78d6", "Red neuronal": "#eb6834"}
+# One fixed colour per model and per input group
+COLOR_MODELO = {"Baseline": MUTED, "LightGBM": "#2a78d6", "Neural network": "#eb6834"}
 COLOR_GRUPO = {
     "MODIS": "#2a78d6",
-    "intensidad": "#eb6834",
-    "vecindad y tiempo": "#1baf7a",
-    "sol": "#eda100",
-    "lugar y fecha": MUTED,
+    "intensity": "#eb6834",
+    "neighbourhood and time": "#1baf7a",
+    "sun": "#eda100",
+    "place and date": MUTED,
 }
 
-MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+MESES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 plt.rcParams.update({
     "figure.figsize": (11, 4),
@@ -86,12 +86,12 @@ def compacto(x):
 
 
 def _tick(x, d, s):
-    """Como _comp pero con hasta 2 decimales, para que 0.25M no se lea como 0.2M."""
+    """Like _comp but with up to 2 decimals, so 0.25M does not read as 0.2M."""
     return f"{x / d:,.2f}".rstrip("0").rstrip(".") + s
 
 
 def eje_numeros(ax, eje="y"):
-    """Ticks limpios: completos bajo 10,000; compactos (10K, 2M) si el eje llega más arriba."""
+    """Clean ticks: full numbers below 10,000; compact (10K, 2M) when the axis goes higher."""
     axis = ax.yaxis if eje == "y" else ax.xaxis
     tope = max(abs(v) for v in (ax.get_ylim() if eje == "y" else ax.get_xlim()))
     if tope >= 1e6:
@@ -104,13 +104,13 @@ def eje_numeros(ax, eje="y"):
 
 
 def eje_porcentaje(ax, signo=False):
-    """Ticks del eje y como porcentaje: 5% o, con signo, +5% / −5%."""
+    """Y-axis ticks as percentages: 5% or, signed, +5% / −5%."""
     formato = (lambda v, _: f"{v:+.0f}%" if v else "0") if signo else (lambda v, _: f"{v:g}%")
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(formato))
 
 
 def titulo(ax, texto, sub=None):
-    """Título a la izquierda y, opcional, un subtítulo gris debajo."""
+    """Left-aligned title and, optionally, a grey subtitle below."""
     ax.set_title(texto, pad=22 if sub else 10)
     if sub:
         ax.text(0, 1.015, sub, transform=ax.transAxes, color=INK2, fontsize=9.5, va="bottom")

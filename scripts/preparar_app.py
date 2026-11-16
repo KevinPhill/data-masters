@@ -1,36 +1,36 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Prepara los datos que usa la app de Streamlit (data/app/).
+"""Prepares the data the Streamlit app uses (data/app/).
 
-Entrada
-  data/modelo/celdas_0.5.parquet         tabla celda (0.5°) × mes del notebook 03_modelo
-  data/modelo/armonizado_celdas.parquet  (opcional) predicciones LightGBM por celda y mes
-  data/db_nasa.duckdb                    (opcional) para saber a qué país pertenece cada celda
+Input
+  data/modelo/celdas_0.5.parquet         cell (0.5°) × month table from notebook 03_modelo
+  data/modelo/armonizado_celdas.parquet  (optional) LightGBM predictions per cell and month
+  data/db_nasa.duckdb                    (optional) to know which country each cell belongs to
 
-Salida (data/app/)
-  celdas.parquet   celda × mes con detecciones armonizadas en unidades VIIRS, su rango y la fuente
-                   (con el modelo integral: solo vegetación)
-  celdas_fijas.parquet  (modelo integral) lo mismo para volcanes, industria y gas, y costa afuera
-  meses.parquet    qué fuente se usó en cada mes (y por lo tanto qué meses son válidos)
-  paises.parquet   país mayoritario de cada celda
-  meta.json        método usado y fecha
+Output (data/app/)
+  celdas.parquet   cell × month with harmonized detections in VIIRS units, their range and the source
+                   (with the integral model: vegetation only)
+  celdas_fijas.parquet  (integral model) the same for volcanoes, industry and gas, and offshore
+  meses.parquet    which source was used in each month (and therefore which months are valid)
+  paises.parquet   majority country of each cell
+  meta.json        method used and date
 
-Armonización (columna categoria: veg, volcan, industria, mar; "todos" si se armonizan juntos)
-  · modelo integral (si existen los archivos de scripts/modelo_integral.py): cada tipo FIRMS por separado
-        - vegetación: LightGBM de vegetación × corrección regional; solo Terra: Terra × razón VIIRS/Terra
-        - volcanes, industria y gas, costa afuera: modelo por celda de scripts/validar.py (modelo_fijas)
-  · si no, todos los tipos juntos:
-  · 2012 en adelante, meses con VIIRS completo  -> VIIRS observado (S-NPP o NOAA-20)
-  · meses solo con MODIS                       -> MODIS convertido a "unidades VIIRS":
-        - con el modelo LightGBM (notebook 03_modelo) si existe armonizado_celdas.parquet, multiplicado por su
-          corrección regional: Σ VIIRS ÷ Σ predicho en la validación, por región de 10° y mes (scripts/validar.py)
-        - si no, con el modelo Referencia: MODIS × razón VIIRS/MODIS de su región (10°) y mes,
-          aprendida en 2012–2021 (antes de la deriva de órbitas de Terra y Aqua)
-        - meses con solo Terra (2000–2002): Terra × razón VIIRS/Terra de la región y mes
-  · rango de incertidumbre (percentiles 5 y 95, año a año, en la región de 10° y el mes):
-        - LightGBM: de observado ÷ predicho en la validación dejando un año fuera (validacion_por_año.parquet)
-        - Referencia: de la razón VIIRS/MODIS
+Harmonization (categoria column: veg, volcan, industria, mar; "todos" if harmonized together)
+  · integral model (if the files from scripts/modelo_integral.py exist): each FIRMS type separately
+        - vegetation: vegetation LightGBM × regional correction; Terra only: Terra × VIIRS/Terra ratio
+        - volcanoes, industry and gas, offshore: per-cell model from scripts/validar.py (modelo_fijas)
+  · otherwise, all types together:
+  · 2012 onward, months with complete VIIRS  -> observed VIIRS (S-NPP or NOAA-20)
+  · months with MODIS only                    -> MODIS converted to "VIIRS units":
+        - with the LightGBM model (notebook 03_modelo) if armonizado_celdas.parquet exists, multiplied by its
+          regional correction: Σ VIIRS ÷ Σ predicted in the validation, per 10° region and month (scripts/validar.py)
+        - otherwise, with the Referencia model: MODIS × VIIRS/MODIS ratio of its region (10°) and month,
+          learned in 2012–2021 (before the Terra and Aqua orbit drift)
+        - Terra-only months (2000–2002): Terra × VIIRS/Terra ratio of the region and month
+  · uncertainty range (percentiles 5 and 95, year by year, in the 10° region and month):
+        - LightGBM: from observed ÷ predicted in the leave-one-year-out validation (validacion_por_año.parquet)
+        - Referencia: from the VIIRS/MODIS ratio
 
-Uso:  python scripts/preparar_app.py
+Usage:  python scripts/preparar_app.py
 """
 
 from __future__ import annotations
@@ -51,17 +51,17 @@ MODELO = ROOT / "data" / "modelo" / "armonizado_celdas.parquet"
 DB = ROOT / "data" / "db_nasa.duckdb"
 OUT = ROOT / "data" / "app"
 
-AÑOS_CALIBRACION = (2012, 2021)  # traslape MODIS–VIIRS con órbitas normales
+AÑOS_CALIBRACION = (2012, 2021)  # MODIS–VIIRS overlap with normal orbits
 
 
 def celdas_integral(con: duckdb.DuckDBPyConnection):
-    """Modelo integral: celdas.parquet (vegetación) y celdas_fijas.parquet (volcanes, industria y gas, costa afuera).
-    Necesita las tablas c y meses de main()."""
+    """Integral model: celdas.parquet (vegetation) and celdas_fijas.parquet (volcanoes, industry and gas, offshore).
+    Needs the tables c and meses from main()."""
     validar.conteos_tipo(con)
     validar.modelo_vegetacion(con)
     validar.modelo_fijas(con)
     a0, a1 = AÑOS_CALIBRACION
-    # razones VIIRS/MODIS y VIIRS/Terra de vegetación por región y mes: respaldo sin predicción y meses con solo Terra
+    # vegetation VIIRS/MODIS and VIIRS/Terra ratios per region and month: fallback without a prediction and Terra-only months
     for nombre, base in (("veg_m", "m"), ("veg_t", "t")):
         con.execute(f"""
         CREATE TABLE anual_{nombre} AS
@@ -159,7 +159,7 @@ def main():
     FROM read_parquet('{CELDAS.as_posix()}')
     """)
 
-    # ---- razones VIIRS/MODIS (modelo Referencia) por región y mes, año a año -------------
+    # ---- VIIRS/MODIS ratios (Referencia model) per region and month, year by year -------------
     a0, a1 = AÑOS_CALIBRACION
     con.execute(f"""
     CREATE TABLE anual AS
@@ -190,18 +190,18 @@ def main():
            coalesce(CASE WHEN r.años >= 3 THEN r.k_lo END, g.k_lo)       AS k_lo,
            coalesce(CASE WHEN r.años >= 3 THEN r.k_hi END, g.k_hi)       AS k_hi
     FROM glb g LEFT JOIN reg r USING (mes)
-    UNION ALL   -- respaldo global para regiones sin datos de calibración
+    UNION ALL   -- global fallback for regions without calibration data
     SELECT -1, mes, k, k_terra, k_lo, k_hi FROM glb
     """)
 
-    # ---- fuente por mes ----------------------------------------------------------------
+    # ---- source per month ----------------------------------------------------------------
     con.execute("""
     CREATE TABLE meses AS
     SELECT año, mes,
            CASE WHEN any_value(viirs_sat) = 'N20' THEN 'N'          -- VIIRS NOAA-20 observado
                 WHEN any_value(viirs_sat) = 'N'   THEN 'S'          -- VIIRS S-NPP observado
                 WHEN bool_or(terra_ok AND aqua_ok) THEN 'M'         -- MODIS Terra+Aqua -> VIIRS
-                WHEN bool_or(terra_ok)            THEN 'T'          -- solo Terra -> VIIRS
+                WHEN bool_or(terra_ok)            THEN 'T'          -- Terra only -> VIIRS
            END AS fuente
     FROM (SELECT DISTINCT año, mes, viirs_sat, terra_ok, aqua_ok FROM c)
     GROUP BY año, mes
@@ -220,7 +220,7 @@ def main():
             CREATE TABLE modelo AS
             SELECT fila, col, año, mes, detecciones AS det_modelo FROM read_parquet('{MODELO.as_posix()}')
             """)
-            rango_lightgbm(con, "f_lgbm")  # prueba = 0: con todos los años 2012–2021
+            rango_lightgbm(con, "f_lgbm")  # prueba = 0: with all the years 2012–2021
             con.execute(f"""CREATE TABLE rango AS
                             SELECT region, mes, least(greatest(k, {CORRECCION[0]}), {CORRECCION[1]}) AS q, k_lo AS q_lo, k_hi AS q_hi
                             FROM f_lgbm WHERE prueba = 0""")
@@ -228,7 +228,7 @@ def main():
             con.execute("CREATE TABLE modelo (fila INT, col INT, año BIGINT, mes BIGINT, det_modelo DOUBLE)")
             con.execute("CREATE TABLE rango (region INT, mes BIGINT, q DOUBLE, q_lo DOUBLE, q_hi DOUBLE)")
 
-        # ---- celda × mes armonizada ----------------------------------------------------------
+        # ---- harmonized cell × month ----------------------------------------------------------
         con.execute(f"""
         COPY (
           WITH x AS (
@@ -254,7 +254,7 @@ def main():
               END AS det
             FROM x
           )
-          -- con LightGBM el rango sale de su error en la validación; sin él (o con solo Terra), de la razón
+          -- with LightGBM the range comes from its validation error; without it (or with Terra only), from the ratio
           SELECT fila, col, lat, lon, CAST(año AS SMALLINT) año, CAST(mes AS TINYINT) mes, fuente, 'todos' AS categoria,
                  CAST(round(det, 1) AS FLOAT) det,
                  CAST(round(CASE WHEN fuente IN ('N','S') THEN det
@@ -271,9 +271,9 @@ def main():
         """)
     con.execute(f"COPY meses TO '{(OUT / 'meses.parquet').as_posix()}' (FORMAT parquet)")
 
-    # ---- país de cada celda --------------------------------------------------------------
+    # ---- country of each cell --------------------------------------------------------------
     if DB.exists():
-        print("Asignando país a cada celda (lee db_nasa.duckdb, ~1 min)…", flush=True)
+        print("Assigning a country to each cell (reads db_nasa.duckdb, ~1 min)…", flush=True)
         con.execute(f"ATTACH '{DB.as_posix()}' AS nasa (READ_ONLY)")
         con.execute(f"""
         COPY (
@@ -287,7 +287,7 @@ def main():
         ) TO '{(OUT / "paises.parquet").as_posix()}' (FORMAT parquet)
         """)
     else:
-        print("Aviso: no está data/db_nasa.duckdb; la app no tendrá selección por país.")
+        print("Warning: data/db_nasa.duckdb is missing; the app will not have country selection.")
 
     archivos = [f"'{p.as_posix()}'" for p in (OUT / "celdas.parquet", OUT / "celdas_fijas.parquet") if p.exists()]
     resumen = con.sql(f"""
@@ -308,7 +308,7 @@ def main():
     }
     (OUT / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
     print(json.dumps(meta, indent=2, ensure_ascii=False))
-    print(f"Listo en {time.time() - t0:.0f} s -> {OUT.relative_to(ROOT)}")
+    print(f"Done in {time.time() - t0:.0f} s -> {OUT.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

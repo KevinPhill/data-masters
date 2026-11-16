@@ -1,5 +1,5 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Acceso a datos de la app: celdas armonizadas (data/app) y detecciones crudas (db_nasa.duckdb)."""
+"""App data access: harmonized cells (data/app) and raw detections (db_nasa.duckdb)."""
 
 from __future__ import annotations
 
@@ -19,14 +19,14 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 APP = ROOT / "data" / "app"
 DB = ROOT / "data" / "db_nasa.duckdb"
-# sin la base completa (p. ej. en la demo en línea): puntos de Centroamérica (scripts/exportar_puntos.py)
+# without the full database (e.g. in the online demo): Central America points (scripts/exportar_puntos.py)
 PUNTOS = APP / "puntos_centroamerica.parquet"
-# total mundial por mes: el del modelo integral (scripts/validar.py) o, si no está, el del notebook 03_modelo
+# world total per month: from the integral model (scripts/validar.py) or, if missing, from notebook 03_modelo
 SERIE_GLOBAL = next((p for p in (APP / "serie_mundial.csv", ROOT / "data" / "modelo" / "serie_armonizada.csv")
                      if p.exists()), APP / "serie_mundial.csv")
 GRADO = 0.5
 
-# tipos de punto de calor de FIRMS (columna categoria; "todos" si los datos se armonizaron juntos)
+# FIRMS hot spot types (categoria column; "todos" if the data were harmonized together)
 CATEGORIAS = ["veg", "industria", "volcan", "mar"]
 
 FUENTES = {
@@ -36,7 +36,7 @@ FUENTES = {
     "T": "MODIS Terra → unidades VIIRS",
 }
 
-# Regiones de ejemplo: (lat_min, lat_max, lon_min, lon_max)
+# Example regions: (lat_min, lat_max, lon_min, lon_max)
 REGIONES = {
     "Guanacaste (Costa Rica)": (9.5, 11.2, -86.0, -84.7),
     "Zona Norte (Costa Rica)": (10.2, 11.2, -85.0, -83.6),
@@ -53,7 +53,7 @@ REGIONES = {
 }
 
 
-# ------------------------------------------------------------------------------- conexión
+# ------------------------------------------------------------------------------- connection
 @st.cache_resource
 def conexion() -> duckdb.DuckDBPyConnection:
     con = duckdb.connect()
@@ -73,7 +73,7 @@ def conexion() -> duckdb.DuckDBPyConnection:
 
 
 def _cat(cats: tuple[str, ...] | None, alias: str = "c") -> str:
-    """Filtro por tipo de punto de calor; None = todos."""
+    """Filter by hot spot type; None = all."""
     if not cats:
         return ""
     return f" AND {alias}.categoria IN ({', '.join(repr(str(c)) for c in cats)})"
@@ -112,7 +112,7 @@ def lista_paises() -> list[str]:
 
 @st.cache_data
 def resumen_paises(cats: tuple[str, ...] | None = None) -> pd.DataFrame:
-    """Un renglón por país para el globo: detecciones armonizadas por año (promedio de todo el periodo)."""
+    """One row per country for the globe: harmonized detections per year (average over the whole period)."""
     validos = lista_paises()
     if not validos:
         return pd.DataFrame(columns=["pais", "det", "por_año"])
@@ -130,15 +130,15 @@ def resumen_paises(cats: tuple[str, ...] | None = None) -> pd.DataFrame:
 
 @st.cache_data
 def todas_las_celdas() -> pd.DataFrame:
-    """fila, col, lat, lon de toda celda que alguna vez tuvo fuego."""
+    """fila, col, lat, lon of every cell that ever had fire."""
     return conexion().sql("SELECT DISTINCT fila, col, lat, lon FROM celdas").df()
 
 
-# ------------------------------------------------------------------------------- área de interés
+# ------------------------------------------------------------------------------- area of interest
 def celdas_pais(pais: str) -> pd.DataFrame:
     sel = conexion().sql(
         "SELECT fila, col FROM paises WHERE country = ? AND parte >= 0.5", params=[pais]).df()
-    if sel.empty:  # países pequeños: cualquier celda con detecciones del país
+    if sel.empty:  # small countries: any cell with detections from the country
         sel = conexion().sql("SELECT DISTINCT fila, col FROM paises WHERE country = ?", params=[pais]).df()
     return sel.merge(todas_las_celdas(), on=["fila", "col"])
 
@@ -153,7 +153,7 @@ def celdas_circulo(lat, lon, radio_km) -> pd.DataFrame:
     la1, lo1, la2, lo2 = map(np.radians, (lat, lon, c.lat.to_numpy(), c.lon.to_numpy()))
     h = np.sin((la2 - la1) / 2) ** 2 + np.cos(la1) * np.cos(la2) * np.sin((lo2 - lo1) / 2) ** 2
     dist = 2 * 6371 * np.arcsin(np.sqrt(h))
-    # incluye la celda si su centro cae dentro, o si el círculo es más chico que una celda
+    # includes the cell if its centre falls inside, or if the circle is smaller than a cell
     cerca = dist <= max(radio_km, 40)
     return c[cerca]
 
@@ -166,7 +166,7 @@ def _registrar(sel: pd.DataFrame):
 
 
 def serie_mensual(sel: pd.DataFrame, cats: tuple[str, ...] | None = None) -> pd.DataFrame:
-    """Serie mensual del área: armonizado (con rango) y crudos, con ceros en meses válidos sin fuego."""
+    """Monthly series of the area: harmonized (with range) and raw, with zeros in valid months without fire."""
     con = _registrar(sel)
     s = con.sql(f"""
         SELECT m.año, m.mes, m.fuente,
@@ -181,21 +181,21 @@ def serie_mensual(sel: pd.DataFrame, cats: tuple[str, ...] | None = None) -> pd.
     """).df()
     s.loc[s.fuente.isin(["N", "S"]) & s.viirs_n.isna(), "viirs_n"] = 0
     s["fecha"] = pd.to_datetime(dict(year=s.año, month=s.mes, day=1))
-    # "sin armonizar": MODIS tal cual hasta que hay VIIRS, después VIIRS (lo que pasa si se unen sin más)
+    # "sin armonizar" (not harmonized): MODIS as is until VIIRS exists, then VIIRS (what happens if they are simply joined)
     s["sin_armonizar"] = np.where(s.fuente.isin(["N", "S"]), s.viirs_n, s.modis_n)
     return s
 
 
 @st.cache_data
 def semanas_completas() -> pd.DatetimeIndex:
-    """Lunes de cada semana ISO con los siete días dentro de meses con datos."""
+    """Monday of each ISO week whose seven days fall inside months with data."""
     return pd.DatetimeIndex(conexion().sql("SELECT DISTINCT semana FROM semanas ORDER BY 1").df().semana)
 
 
 @st.cache_data(show_spinner=False)
 def serie_semanal(area: str, cats: tuple[str, ...] | None = None) -> pd.DataFrame | None:
-    """Detecciones armonizadas por semana de un país ("pais:<país>") o región de ejemplo ("region:<región>"), con
-    ceros en las semanas sin fuego. None si el área no tiene serie semanal (por coordenadas)."""
+    """Harmonized detections per week for a country ("pais:<country>") or example region ("region:<region>"), with
+    zeros in weeks without fire. None if the area has no weekly series (by coordinates)."""
     if not (APP / "semanas.parquet").exists() or not area.startswith(("pais:", "region:")):
         return None
     d = conexion().sql(f"SELECT semana, sum(det) det FROM semanas s WHERE s.area = ? {_cat(cats, 's')} GROUP BY 1",
@@ -210,7 +210,7 @@ def serie_semanal(area: str, cats: tuple[str, ...] | None = None) -> pd.DataFram
 
 @st.cache_data(show_spinner=False)
 def paises_mes(cats: tuple[str, ...] | None = None) -> pd.DataFrame:
-    """Detecciones armonizadas por país y mes (para ver qué países están fuera de lo normal)."""
+    """Harmonized detections per country and month (to see which countries are out of the ordinary)."""
     if not (APP / "paises_mes.parquet").exists():
         return pd.DataFrame(columns=["country", "año", "mes", "det"])
     return conexion().sql(f"SELECT country, año, mes, sum(det) det FROM paises_mes p WHERE TRUE {_cat(cats, 'p')} "
@@ -229,10 +229,10 @@ def mapa_celdas(sel: pd.DataFrame, año0: int, año1: int, cats: tuple[str, ...]
 
 def mapa_anomalia_mes(sel: pd.DataFrame, año: int, mes: int, año0: int,
                       cats: tuple[str, ...] | None = None) -> pd.DataFrame:
-    """Por celda: detecciones del mes elegido vs mediana del mismo mes en años anteriores."""
+    """Per cell: detections of the chosen month vs the median of the same month in previous years."""
     con = _registrar(sel)
     return con.sql(f"""
-        WITH a AS (  -- un valor por celda y año (suma de los tipos elegidos)
+        WITH a AS (  -- one value per cell and year (sum of the chosen types)
             SELECT c.fila, c.col, c.año, any_value(c.lat) lat, any_value(c.lon) lon, sum(c.det) det
             FROM celdas c JOIN sel USING (fila, col)
             WHERE c.mes = {int(mes)} {_cat(cats)}
@@ -250,7 +250,7 @@ def mapa_anomalia_mes(sel: pd.DataFrame, año: int, mes: int, año0: int,
 
 
 def composicion(sel: pd.DataFrame) -> pd.DataFrame:
-    """Detecciones armonizadas por año y tipo de punto de calor en el área."""
+    """Harmonized detections per year and hot spot type in the area."""
     con = _registrar(sel)
     return con.sql("""
         SELECT c.año, c.categoria, sum(c.det) det, count(DISTINCT c.mes) meses
@@ -266,17 +266,17 @@ def serie_global() -> pd.DataFrame | None:
     return s
 
 
-# ------------------------------------------------------------------------------- validación (scripts/validar.py)
+# ------------------------------------------------------------------------------- validation (scripts/validar.py)
 @st.cache_data
 def validacion_resumen() -> dict:
     p = APP / "validacion.json"
     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
 
 
-# ------------------------------------------------------------------------------- evaluación (scripts/evaluar_modelos.py)
+# ------------------------------------------------------------------------------- evaluation (scripts/evaluar_modelos.py)
 @st.cache_data
 def evaluacion() -> tuple[dict, pd.DataFrame]:
-    """Métricas de los tres modelos (R², MSE, error, sobreajuste) y el diagnóstico por país."""
+    """Metrics of the three models (R², MSE, error, overfitting) and the per-country diagnosis."""
     j, p = APP / "evaluacion.json", APP / "evaluacion_paises.parquet"
     if not (j.exists() and p.exists()):
         return {}, pd.DataFrame()
@@ -284,8 +284,8 @@ def evaluacion() -> tuple[dict, pd.DataFrame]:
 
 
 def validacion_area(sel: pd.DataFrame, cats: tuple[str, ...] | None = None) -> pd.DataFrame:
-    """Por mes (2012–2025): VIIRS observado, MODIS crudo y la predicción desde MODIS con el año escondido
-    (2012–2021) o con razones que nunca vieron ese año (2022–2025)."""
+    """Per month (2012–2025): observed VIIRS, raw MODIS and the prediction from MODIS with the year held out
+    (2012–2021) or with ratios that never saw that year (2022–2025)."""
     if not (APP / "validacion.parquet").exists():
         return pd.DataFrame()
     con = _registrar(sel)
@@ -302,7 +302,7 @@ def validacion_area(sel: pd.DataFrame, cats: tuple[str, ...] | None = None) -> p
 
 
 def errores_validacion(v: pd.DataFrame) -> dict:
-    """Error típico (mediana del |error|) por año y por mes, cobertura del rango y error de MODIS sin armonizar."""
+    """Typical error (median |error|) per year and per month, coverage of the range and error of non-harmonized MODIS."""
     if v.empty:
         return {}
     a = v.groupby("año").agg(viirs=("viirs", "sum"), modis=("modis", "sum"), pred=("pred", "sum"),
@@ -320,7 +320,7 @@ def errores_validacion(v: pd.DataFrame) -> dict:
     )
 
 
-# ------------------------------------------------------------------------------- detecciones crudas
+# ------------------------------------------------------------------------------- raw detections
 def db_disponible() -> bool:
     return DB.exists() or PUNTOS.exists()
 
@@ -330,7 +330,7 @@ def puntos_solo_centroamerica() -> bool:
 
 
 def detecciones_crudas(sel: pd.DataFrame, desde: date, hasta: date, limite: int = 1_000_000) -> pd.DataFrame:
-    """Puntos de calor originales (todos los sensores) dentro de las celdas del área, entre dos fechas."""
+    """Original hot spots (all sensors) inside the cells of the area, between two dates."""
     lat0, lat1 = sel.lat.min() - GRADO, sel.lat.max() + GRADO
     lon0, lon1 = sel.lon.min() - GRADO, sel.lon.max() + GRADO
     completa = DB.exists()
@@ -353,11 +353,11 @@ def detecciones_crudas(sel: pd.DataFrame, desde: date, hasta: date, limite: int 
         con.close()
 
 
-# ------------------------------------------------------------------------------- tiempo casi real
-FIRMS = os.environ.get("FIRMS_URL", "https://firms.modaps.eosdis.nasa.gov")  # FIRMS_URL: espejo o pruebas
+# ------------------------------------------------------------------------------- near real time
+FIRMS = os.environ.get("FIRMS_URL", "https://firms.modaps.eosdis.nasa.gov")  # FIRMS_URL: mirror or tests
 FIRMS_AREA = FIRMS + "/api/area/csv/{key}/{src}/{w},{s},{e},{n}/{dias}"
 FIRMS_DISPONIBLE = FIRMS + "/api/data_availability/csv/{key}/all"
-# archivos públicos de los últimos 7 días (no piden llave). S-NPP dejó de entregar datos el 2-nov-2026.
+# public files of the last 7 days (no key needed). S-NPP stopped delivering data on 2 Nov 2026.
 FIRMS_7D = {"NOAA-20": FIRMS + "/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_7d.csv",
             "NOAA-21": FIRMS + "/data/active_fire/noaa-21-viirs-c2/csv/J2_VIIRS_C2_Global_7d.csv"}
 COLUMNAS_NRT = ["latitude", "longitude", "acq_date", "acq_time", "satellite", "confidence", "frp", "daynight"]
@@ -386,14 +386,14 @@ def _leer_firms(txt: str) -> pd.DataFrame:
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def firms_7d_global(satelite: str) -> pd.DataFrame:
-    """Archivo global público de FIRMS con los últimos 7 días (se guarda una hora)."""
+    """Public global FIRMS file with the last 7 days (cached for one hour)."""
     r = requests.get(FIRMS_7D[satelite], timeout=180)
     r.raise_for_status()
     return _leer_firms(r.text)
 
 
 def firms_7d(sel: pd.DataFrame) -> tuple[pd.DataFrame, str]:
-    """Últimos 7 días en el área sin MAP_KEY: VIIRS NOAA-20 y, si no responde, NOAA-21."""
+    """Last 7 days in the area without a MAP_KEY: VIIRS NOAA-20 and, if it does not respond, NOAA-21."""
     error = None
     for satelite in FIRMS_7D:
         try:
@@ -405,7 +405,7 @@ def firms_7d(sel: pd.DataFrame) -> tuple[pd.DataFrame, str]:
 
 def firms_area(map_key: str, sel: pd.DataFrame, dias: int = 10, fuente: str = "VIIRS_NOAA20_NRT",
                desde: date | None = None) -> pd.DataFrame:
-    """API de área de FIRMS (pide MAP_KEY): hasta 10 días, los últimos o a partir de `desde`."""
+    """FIRMS area API (needs a MAP_KEY): up to 10 days, the latest ones or starting at `desde`."""
     w, s, e, n = _caja(sel)
     url = FIRMS_AREA.format(key=map_key.strip(), src=fuente, w=round(w, 3), s=round(s, 3),
                             e=round(e, 3), n=round(n, 3), dias=int(dias))
@@ -417,7 +417,7 @@ def firms_area(map_key: str, sel: pd.DataFrame, dias: int = 10, fuente: str = "V
 
 
 def firms_nrt(map_key: str, sel: pd.DataFrame, dias: int = 10) -> tuple[pd.DataFrame, str]:
-    """Últimos `dias` días con MAP_KEY: NOAA-20 y, si falla, NOAA-21."""
+    """Last `dias` days with a MAP_KEY: NOAA-20 and, if it fails, NOAA-21."""
     error = None
     for fuente, nombre in (("VIIRS_NOAA20_NRT", "NOAA-20"), ("VIIRS_NOAA21_NRT", "NOAA-21")):
         try:
@@ -437,16 +437,16 @@ def firms_disponibilidad(map_key: str) -> dict[str, tuple[date, date]]:
 
 def firms_meses_recientes(map_key: str, sel: pd.DataFrame, desde: date, hasta: date,
                           avance=None) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Detecciones VIIRS NOAA-20 por mes entre `desde` y `hasta` (ventanas de 10 días de la API de área).
-    Usa el procesamiento estándar (SP) donde ya existe y el de tiempo casi real (NRT) en lo más reciente,
-    para que los meses nuevos sean comparables con la historia (también NOAA-20 desde 2018).
-    Devuelve (meses, puntos): conteo por mes con los días cubiertos y las detecciones sueltas."""
+    """VIIRS NOAA-20 detections per month between `desde` and `hasta` (10-day windows of the area API).
+    Uses standard processing (SP) where it exists and near real time (NRT) for the most recent days,
+    so the new months are comparable with the history (also NOAA-20 since 2018).
+    Returns (months, points): count per month with the days covered, and the individual detections."""
     disp = firms_disponibilidad(map_key)
     fin_sp = disp.get("VIIRS_NOAA20_SP", (None, date.min))[1]
     ventanas, d = [], desde
     while d <= hasta:
         fin = min(d + timedelta(days=9), hasta)
-        if d <= fin_sp < fin:  # la ventana cruza el final del SP: se parte en dos
+        if d <= fin_sp < fin:  # the window crosses the end of SP: split it in two
             ventanas += [(d, fin_sp, "VIIRS_NOAA20_SP"), (fin_sp + timedelta(days=1), fin, "VIIRS_NOAA20_NRT")]
         else:
             ventanas.append((d, fin, "VIIRS_NOAA20_SP" if fin <= fin_sp else "VIIRS_NOAA20_NRT"))

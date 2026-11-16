@@ -1,43 +1,43 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Evalúa los modelos de armonización MODIS → VIIRS: qué tan bien predicen, si sobreajustan y en qué países fallan.
+"""Evaluates the MODIS → VIIRS harmonization models: how well they predict, whether they overfit and where they fail.
 
-Años (los mismos del notebook 03_modelo):
-  entrenamiento  2012–2016 y 2018–2020   el modelo aprende aquí
-  prueba         2017 (S-NPP) y 2021 (NOAA-20)   años completos que el modelo no vio
-  nunca vistos   2022–2025   tampoco se usan, y además las órbitas de Terra y Aqua ya están corridas
+Years (the same as in notebook 03_modelo):
+  training       2012–2016 and 2018–2020   the model learns here
+  test           2017 (S-NPP) and 2021 (NOAA-20)   complete years the model did not see
+  never seen     2022–2025   not used either, and the Terra and Aqua orbits have already drifted
 
-Modelos
-  factor_global  VIIRS = MODIS × un solo factor mundial
-  razon          VIIRS = MODIS × razón VIIRS/MODIS de su región de 10° y su mes del año
-  lightgbm       28 entradas (MODIS, intensidad, vecindad, Sol, lugar y fecha) → detecciones VIIRS, pérdida Poisson
-  lightgbm_corregido   LightGBM × corrección de su región de 10° y su mes: Σ VIIRS ÷ Σ predicho en la validación
-                 dejando un año fuera, siempre sin el año que se predice
-  integral       cada tipo FIRMS con su modelo (scripts/modelo_integral.py y validar.py): vegetación con LightGBM de
-                 vegetación (mismas 28 entradas y años) × corrección regional; volcanes, industria y gas, y costa
-                 afuera celda por celda, ajustado con los años de entrenamiento   ← el que usa la app
+Models
+  factor_global  VIIRS = MODIS × a single worldwide factor
+  razon          VIIRS = MODIS × VIIRS/MODIS ratio of its 10° region and its month of the year
+  lightgbm       28 inputs (MODIS, intensity, neighbourhood, Sun, place and date) → VIIRS detections, Poisson loss
+  lightgbm_corregido   LightGBM × correction of its 10° region and month: Σ VIIRS ÷ Σ predicted in the validation
+                 leaving one year out, always without the year being predicted
+  integral       each FIRMS type with its own model (scripts/modelo_integral.py and validar.py): vegetation with the
+                 vegetation LightGBM (same 28 inputs and years) × regional correction; volcanoes, industry and gas,
+                 and offshore cell by cell, fitted with the training years   ← the one the app uses
 
-Métricas en cuatro niveles (celda de 0.5° × mes, país × mes, país × año, mundo × mes)
-  R²            en escala log (log 1 + x): así cada celda o país pesa parecido sin importar su tamaño
-  MSE, RMSE     error cuadrático medio y su raíz, en detecciones
-  MAE           error absoluto medio, en detecciones
-  error típico  mediana del |error| en %, solo donde VIIRS vio lo suficiente para que el % tenga sentido
-  sesgo         cuánto se pasa (+) o se queda corto (−) el total
+Metrics at four levels (0.5° cell × month, country × month, country × year, world × month)
+  R²            on a log scale (log 1 + x): so each cell or country weighs about the same whatever its size
+  MSE, RMSE     mean squared error and its root, in detections
+  MAE           mean absolute error, in detections
+  typical error median |error| in %, only where VIIRS saw enough for the % to make sense
+  bias          how much the total overshoots (+) or falls short (−)
 
-Sobreajuste: se compara el error en entrenamiento con el de prueba y el de nunca vistos.
+Overfitting: the training error is compared with the test and never-seen errors.
 
-Países: con predicciones que el modelo no vio (un año fuera a la vez en 2012–2021 + 2022–2025) se mide cada
-país; "no funciona bien" si el error típico por año pasa de UMBRAL_MAL o el mensual de UMBRAL_MAL_MES.
-También se guarda qué parte de sus detecciones MODIS son fuentes fijas (quema de gas, industria, volcanes).
-  Las predicciones no vistas salen de scripts/validar.py (las mismas que muestra la app):
-  · razón: recalculada sin el año que se predice
-  · LightGBM + corrección: data/modelo/validacion_por_año.parquet (notebook 03) + armonizado_celdas.parquet en
-    2022–2025, con la corrección regional de validar.py
+Countries: each country is measured with predictions the model did not see (one year out at a time in 2012–2021
++ 2022–2025); "does not work well" if the typical error per year goes above UMBRAL_MAL or the monthly one above
+UMBRAL_MAL_MES. It also stores what share of its MODIS detections are fixed sources (gas flaring, industry, volcanoes).
+  The unseen predictions come from scripts/validar.py (the same ones the app shows):
+  · razon: recomputed without the year being predicted
+  · LightGBM + correction: data/modelo/validacion_por_año.parquet (notebook 03) + armonizado_celdas.parquet in
+    2022–2025, with the regional correction of validar.py
 
-Salida (data/app/)
-  evaluacion.json            métricas por modelo, conjunto y nivel; resumen de sobreajuste y de países
-  evaluacion_paises.parquet  una fila por país y modelo
+Output (data/app/)
+  evaluacion.json            metrics per model, set and level; overfitting and country summary
+  evaluacion_paises.parquet  one row per country and model
 
-Uso:  python scripts/evaluar_modelos.py          (~5 min: entrena LightGBM una vez)
+Usage:  python scripts/evaluar_modelos.py          (~5 min: trains LightGBM once)
 """
 
 from __future__ import annotations
@@ -62,11 +62,11 @@ ENTRENAMIENTO = [2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020]
 PRUEBA = [2017, 2021]
 NUNCA_VISTOS = [2022, 2023, 2024, 2025]
 
-# un país se evalúa si VIIRS ve en promedio al menos esto por año (con menos, los % son ruido)
+# a country is evaluated if VIIRS sees at least this many per year on average (with fewer, the % are noise)
 MINIMO_PAIS = 1000
-UMBRAL_MAL, UMBRAL_REGULAR = 25.0, 15.0          # error típico por año (%)
-UMBRAL_MAL_MES, UMBRAL_REGULAR_MES = 40.0, 25.0  # error típico por mes (%), meses con al menos 100 detecciones
-NIVELES = {"celda_mes": 20, "pais_mes": 100, "pais_año": 1000, "mundo_mes": 1}  # mínimo VIIRS para el error en %
+UMBRAL_MAL, UMBRAL_REGULAR = 25.0, 15.0          # typical error per year (%)
+UMBRAL_MAL_MES, UMBRAL_REGULAR_MES = 40.0, 25.0  # typical error per month (%), months with at least 100 detections
+NIVELES = {"celda_mes": 20, "pais_mes": 100, "pais_año": 1000, "mundo_mes": 1}  # minimum VIIRS for the error in %
 
 # ------------------------------------------------------------------------------------------- variables
 DIA_DEL_AÑO = np.array([15, 46, 74, 105, 135, 166, 196, 227, 258, 288, 319, 349])
@@ -84,7 +84,7 @@ ENTRADAS = [e for g in GRUPOS.values() for e in g]
 
 
 def variables(t: pd.DataFrame) -> pd.DataFrame:
-    """Las mismas variables calculadas del notebook 03 (sección 3)."""
+    """The same calculated variables as notebook 03 (section 3)."""
     dia = DIA_DEL_AÑO[t.mes.to_numpy() - 1]
     lat = np.radians(t.lat.to_numpy())
     declinacion = np.radians(23.44) * np.sin(2 * np.pi * (284 + dia) / 365)
@@ -109,7 +109,7 @@ def region_10(t: pd.DataFrame) -> np.ndarray:
     return ((t.lat.to_numpy() + 90) // 10 * 36 + (t.lon.to_numpy() + 180) // 10).astype(int)
 
 
-# ------------------------------------------------------------------------------------------- modelos
+# ------------------------------------------------------------------------------------------- models
 class FactorGlobal:
     nombre = "Un solo factor mundial"
 
@@ -122,8 +122,8 @@ class FactorGlobal:
 
 
 class Razon:
-    """Lo mismo que scripts/preparar_app.py: razón de la región (10°) y el mes si la región tuvo fuego en
-    al menos 3 años; si no, la razón mundial de ese mes."""
+    """Same as scripts/preparar_app.py: ratio of the region (10°) and month if the region had fire in
+    at least 3 years; otherwise, the world ratio for that month."""
     nombre = "Razón VIIRS/MODIS por región y mes"
 
     def entrenar(self, d):
@@ -161,13 +161,13 @@ class LightGBM:
 
 
 class Integral:
-    """Suma de los cuatro tipos FIRMS, cada uno con su modelo. Vegetación: LightGBM de vegetación entrenado con los
-    años de entrenamiento (data/modelo/veg_celdas.parquet) × corrección regional sin el año que se predice.
-    Fuentes fijas: modelo por celda de validar.modelo_fijas, con parámetros de los años de entrenamiento."""
+    """Sum of the four FIRMS types, each with its own model. Vegetation: vegetation LightGBM trained on the
+    training years (data/modelo/veg_celdas.parquet) × regional correction without the year being predicted.
+    Fixed sources: per-cell model from validar.modelo_fijas, with parameters from the training years."""
     nombre = "Integral: un modelo por tipo de fuente (la app)"
 
     def __init__(self, con: duckdb.DuckDBPyConnection):
-        # validar.validacion_integral ya dejó tt, nf, f_veg (corrección) y par_fijas en la conexión
+        # validar.validacion_integral already left tt, nf, f_veg (correction) and par_fijas in the connection
         con.execute("CREATE OR REPLACE TABLE pr_fit (prueba INT, año INT)")
         con.executemany("INSERT INTO pr_fit VALUES (?, ?)", [(-2, a) for a in ENTRENAMIENTO])
         validar.ajustar_fijas(con, "par_eval")
@@ -196,8 +196,8 @@ class Integral:
 
 
 class LightGBMCorregido:
-    """LightGBM × k de su región y mes; k sale de la validación dejando un año fuera (scripts/validar.py) y nunca
-    usa el año que se predice: en 2012–2021 se calcula sin ese año, en 2022–2025 con 2012–2021."""
+    """LightGBM × k of its region and month; k comes from the leave-one-year-out validation (scripts/validar.py) and
+    never uses the year being predicted: in 2012–2021 it is computed without that year, in 2022–2025 with 2012–2021."""
     nombre = "LightGBM + corrección regional"
 
     def __init__(self, con: duckdb.DuckDBPyConnection):
@@ -215,7 +215,7 @@ class LightGBMCorregido:
         return np.asarray(pred_lightgbm) * np.clip(k, *validar.CORRECCION)
 
 
-# ------------------------------------------------------------------------------------------- métricas
+# ------------------------------------------------------------------------------------------- metrics
 def metricas(obs: np.ndarray, pred: np.ndarray, minimo: float) -> dict:
     obs, pred = np.asarray(obs, float), np.clip(np.asarray(pred, float), 0, None)
     lo, lp = np.log1p(obs), np.log1p(pred)
@@ -230,7 +230,7 @@ def metricas(obs: np.ndarray, pred: np.ndarray, minimo: float) -> dict:
 
 
 def por_nivel(d: pd.DataFrame, col: str) -> dict:
-    """d: filas celda × mes con viirs_n, la predicción `col`, país, año y mes."""
+    """d: cell × month rows with viirs_n, the prediction `col`, country, year and month."""
     activas = d[(d.viirs_n > 0) | (d.modis_n > 0)]
     con_pais = d[d.country.notna()]
     grupos = {
@@ -242,9 +242,9 @@ def por_nivel(d: pd.DataFrame, col: str) -> dict:
     return {n: metricas(g.viirs_n, g[col], NIVELES[n]) for n, g in grupos.items()}
 
 
-# ------------------------------------------------------------------------------------------- países
+# ------------------------------------------------------------------------------------------- countries
 def tabla_paises(v: pd.DataFrame, modelo: str) -> pd.DataFrame:
-    """v: celda × mes no vistos con country, año, mes, viirs, pred (y opcional pred_bajo / pred_alto)."""
+    """v: unseen cell × month with country, year, month, viirs, pred (and optional pred_bajo / pred_alto)."""
     año = v.groupby(["country", "año"]).agg(viirs=("viirs", "sum"), pred=("pred", "sum"),
                                            bajo=("pred_bajo", "sum"), alto=("pred_alto", "sum"))
     mes = v.groupby(["country", "año", "mes"])[["viirs", "pred"]].sum()
@@ -272,7 +272,7 @@ def tabla_paises(v: pd.DataFrame, modelo: str) -> pd.DataFrame:
     return p
 
 
-# ------------------------------------------------------------------------------------------- principal
+# ------------------------------------------------------------------------------------------- main
 def main():
     t0 = time.time()
     con = duckdb.connect()
@@ -288,7 +288,7 @@ def main():
                        WHERE parte >= 0.5 GROUP BY ALL""").df()
     d = d.merge(pais, on=["fila", "col"], how="left")
     d["conjunto"] = np.select([d.año.isin(ENTRENAMIENTO), d.año.isin(PRUEBA)], ["entrenamiento", "prueba"], "nunca_vistos")
-    print(f"{len(d):,} celda-mes con MODIS y VIIRS · {time.time() - t0:.0f} s")
+    print(f"{len(d):,} cell-months with MODIS and VIIRS · {time.time() - t0:.0f} s")
 
     entrenamiento = d[d.conjunto == "entrenamiento"]
     modelos = {"factor_global": FactorGlobal(), "razon": Razon(), "lightgbm": LightGBM()}
@@ -296,18 +296,18 @@ def main():
         t1 = time.time()
         m.entrenar(entrenamiento)
         d[f"pred_{clave}"] = m.predecir(d).astype("float32")
-        print(f"{clave}: entrenado y aplicado en {time.time() - t1:.0f} s")
+        print(f"{clave}: trained and applied in {time.time() - t1:.0f} s")
     corregido = LightGBMCorregido(con)
     d["pred_lightgbm_corregido"] = corregido.predecir(d, d.pred_lightgbm).astype("float32")
     modelos["lightgbm_corregido"] = corregido
     pais_v = None
     if validar.hay_integral():
         t1 = time.time()
-        validar.validacion_integral(con, "v_int")  # predicciones no vistas por tipo (también para los países)
+        validar.validacion_integral(con, "v_int")  # unseen predictions per type (also for the countries)
         integral = Integral(con)
         llave = ["fila", "col", "año", "mes"]
         d = d.merge(integral.pred.rename(columns={"pred": "pred_integral"}), on=llave, how="left")
-        # celdas-mes sin ninguna detección donde el modelo de fuentes fijas predice algo: cuentan como error
+        # cell-months with no detection where the fixed-source model predicts something: they count as error
         fuera = integral.pred.merge(d[llave], on=llave, how="left", indicator=True)
         fuera = fuera[fuera._merge == "left_only"].drop(columns="_merge").rename(columns={"pred": "pred_integral"})
         fuera = fuera.merge(pais, on=["fila", "col"], how="left").assign(viirs_n=0.0, modis_n=0.0)
@@ -317,7 +317,7 @@ def main():
         preds = [c for c in d.columns if c.startswith("pred_")]
         d[preds] = d[preds].fillna(0).astype("float32")
         modelos["integral"] = integral
-        print(f"integral: {len(fuera):,} celda-mes extra sin detecciones · {time.time() - t1:.0f} s")
+        print(f"integral: {len(fuera):,} extra cell-months without detections · {time.time() - t1:.0f} s")
 
     resultado = {"conjuntos": {"entrenamiento": ENTRENAMIENTO, "prueba": PRUEBA, "nunca_vistos": NUNCA_VISTOS},
                  "modelos": {k: {"nombre": m.nombre} for k, m in modelos.items()}, "metricas": {}}
@@ -332,7 +332,7 @@ def main():
     for clave in modelos:
         resultado["metricas"][clave] = {c: por_nivel(g, f"pred_{clave}") for c, g in d.groupby("conjunto")}
 
-    # sobreajuste: cuánto empeora de entrenamiento a prueba (y a nunca vistos)
+    # overfitting: how much worse it gets from training to test (and to never seen)
     sobre = {}
     for clave in modelos:
         m = resultado["metricas"][clave]
@@ -349,7 +349,7 @@ def main():
                                      else "leve" if c["caida_r2"] <= 0.08 else "sobreajuste")
     resultado["sobreajuste"] = sobre
 
-    # países, con predicciones no vistas
+    # countries, with unseen predictions
     modelo_app = "integral" if validar.hay_integral() else "lightgbm_corregido" if validar.hay_lightgbm() else "razon"
     con.register("pais", pais)
     validar.validacion_razon(con, "v_razon")
@@ -380,21 +380,21 @@ def main():
                                                      "resto": round(float(evaluados.loc[~malos_r, "fuentes_fijas"].median()), 1)}
     (OUT / "evaluacion.json").write_text(json.dumps(resultado, indent=1, ensure_ascii=False))
 
-    # ------------------------------------------------------------------ resumen en pantalla
+    # ------------------------------------------------------------------ on-screen summary
     for nivel in NIVELES:
         print(f"\n{nivel}")
-        print(f"  {'modelo':14s} {'conjunto':13s} {'R² log':>7s} {'R²':>7s} {'MSE':>14s} {'RMSE':>10s} {'MAE':>9s} {'err típ':>8s} {'sesgo':>7s}")
+        print(f"  {'model':14s} {'set':13s} {'R² log':>7s} {'R²':>7s} {'MSE':>14s} {'RMSE':>10s} {'MAE':>9s} {'typ err':>8s} {'bias':>7s}")
         for clave in modelos:
             for c in ("entrenamiento", "prueba", "nunca_vistos"):
                 x = resultado["metricas"][clave][c][nivel]
                 print(f"  {clave:14s} {c:13s} {x['r2_log']:7.3f} {x['r2']:7.3f} {x['mse']:14,.0f} {x['rmse']:10,.1f} "
                       f"{x['mae']:9,.1f} {x['error_tipico'] or 0:7.1f}% {x['sesgo']:6.1f}%")
-    print("\nsobreajuste:", {k: v["veredicto"] for k, v in sobre.items()})
-    print("países:", resultado["paises"])
+    print("\noverfitting:", {k: v["veredicto"] for k, v in sobre.items()})
+    print("countries:", resultado["paises"])
     malos = paises[(paises.modelo == modelo_app) & (paises.estado == "no funciona bien")].sort_values("error_tipico", ascending=False)
     print(malos[["country", "viirs_año", "error_tipico", "error_mensual", "sesgo", "fuentes_fijas", "r2_mensual"]].to_string(index=False))
-    print("fuentes fijas (mediana %):", resultado["paises"]["fuentes_fijas_mediana"])
-    print(f"listo en {time.time() - t0:.0f} s")
+    print("fixed sources (median %):", resultado["paises"]["fuentes_fijas_mediana"])
+    print(f"done in {time.time() - t0:.0f} s")
 
 
 if __name__ == "__main__":

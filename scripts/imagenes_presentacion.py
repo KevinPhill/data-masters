@@ -1,19 +1,19 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Dibuja las imágenes de la presentación a partir de las detecciones de NASA FIRMS (no son imágenes generadas con IA).
+"""Draws the presentation images from NASA FIRMS detections (they are not AI-generated images).
 
-Cada imagen es un conteo de puntos de calor por píxel, en escala logarítmica, con una rampa de fuego sobre azul noche:
+Each image is a count of hot spots per pixel, on a log scale, with a fire ramp over night blue:
 
-  portada.jpg        el planeta en proyección ortográfica: todas las detecciones VIIRS (NOAA-20) de 2025
-  modis_viirs.jpg    la misma región y los mismos dos meses vistos por MODIS (izquierda) y por VIIRS (derecha)
-  mundo_tipos.jpg    el mundo con las detecciones VIIRS (NOAA-20) de 2024–2025, un color por tipo de FIRMS:
-                     vegetación (fuego), industria y gas (amarillo), volcanes (blanco) y sobre agua (azul)
-  linea_tiempo.svg   los satélites con sus fechas y la serie mundial tal cual y armonizada (data/app/serie_mundial.csv)
-  datos.json         las cifras que salen de estas consultas y que cita la presentación
+  portada.jpg        the planet in orthographic projection: every VIIRS (NOAA-20) detection of 2025
+  modis_viirs.jpg    the same region and the same two months seen by MODIS (left) and by VIIRS (right)
+  mundo_tipos.jpg    the world with the VIIRS (NOAA-20) detections of 2024–2025, one colour per FIRMS type:
+                     vegetation (fire), industry and gas (yellow), volcanoes (white) and over water (blue)
+  linea_tiempo.svg   the satellites with their dates and the world series as is and harmonized (data/app/serie_mundial.csv)
+  datos.json         the figures that come out of these queries and that the presentation quotes
 
-Necesita data/db_nasa.duckdb (scripts/crear_db.py), que se abre en modo de solo lectura, y los mapas de app/static.
-Los contornos vienen del TopoJSON público que usa la app.
+Needs data/db_nasa.duckdb (scripts/crear_db.py), opened read-only, and the maps in app/static.
+The outlines come from the public TopoJSON the app uses.
 
-Uso:  python scripts/imagenes_presentacion.py        (~1 min)   y después   python scripts/presentacion.py
+Usage:  python scripts/imagenes_presentacion.py        (~1 min)   and then   python scripts/presentacion.py
 """
 
 from __future__ import annotations
@@ -33,15 +33,15 @@ TOPO = ROOT / "app" / "static" / "topojson" / "world_50m.json"
 SERIE = ROOT / "data" / "app" / "serie_mundial.csv"
 OUT = ROOT / "docs" / "presentacion" / "fuente" / "img"
 
-ANCHO, ALTO = 3840, 2160                       # las filminas se dibujan a 1920 × 1080 con densidad 2
-NOCHE = np.array([3, 8, 24], dtype=float)      # fondo: casi negro, hacia Deep Blue
+ANCHO, ALTO = 3840, 2160                       # slides are drawn at 1920 × 1080 with density 2
+NOCHE = np.array([3, 8, 24], dtype=float)      # background: almost black, toward Deep Blue
 TIERRA = np.array([9, 24, 62], dtype=float)
-# rampa de fuego: Martian Red → Rocket Red → ámbar → amarillo cálido
+# fire ramp: Martian Red → Rocket Red → amber → warm yellow
 RAMPA_X = [0.0, 0.12, 0.45, 0.75, 1.0]
 RAMPA = np.array([[60, 6, 0], [142, 17, 0], [228, 55, 0], [255, 168, 40], [255, 240, 170]], dtype=float)
 
 
-# ---------- mapa base ----------
+# ---------- base map ----------
 def topo():
     t = json.loads(TOPO.read_text())
     sx, sy = t["transform"]["scale"]
@@ -59,7 +59,7 @@ def anillo(indices, arcos):
 
 
 def poligonos(obj, arcos):
-    """Lista de polígonos; cada uno es una lista de anillos (el primero es el borde, los demás son huecos)."""
+    """List of polygons; each one is a list of rings (the first is the outline, the others are holes)."""
     salida = []
     for g in obj["geometries"]:
         if g["type"] == "Polygon":
@@ -93,9 +93,9 @@ def bordes(pols, lon0, lon1, lat0, lat1, w, h, ancho):
     return np.asarray(im, dtype=float) / 255
 
 
-# ---------- detecciones ----------
+# ---------- detections ----------
 def conteo(con, donde, lon0, lon1, lat0, lat1, w, h):
-    """Detecciones por píxel de una rejilla w × h, agregadas en DuckDB."""
+    """Detections per pixel of a w × h grid, aggregated in DuckDB."""
     x, y, n = con.execute(f"""
         SELECT CAST(floor((longitude - {lon0}) / {(lon1 - lon0) / w}) AS INTEGER) AS x,
                CAST(floor(({lat1} - latitude) / {(lat1 - lat0) / h}) AS INTEGER) AS y, count(*) AS n
@@ -109,7 +109,7 @@ def conteo(con, donde, lon0, lon1, lat0, lat1, w, h):
 
 
 def brillo(g, radio, tope):
-    """De conteos a 0–1: escala logarítmica más un halo (el mismo conteo, desenfocado)."""
+    """From counts to 0–1: log scale plus a halo (the same count, blurred)."""
     v = np.log1p(g) / np.log1p(tope)
     halo = np.asarray(Image.fromarray((np.clip(v, 0, 1) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(radio)),
                       dtype=float) / 255
@@ -117,14 +117,14 @@ def brillo(g, radio, tope):
 
 
 def resplandor(g, sigma, tope):
-    """Para fuentes puntuales (un volcán ocupa uno o dos píxeles): el mismo núcleo logarítmico con un resplandor
-    gaussiano redondo, escalado para que un píxel aislado conserve su brillo en el centro."""
+    """For point sources (a volcano takes one or two pixels): the same log core with a round Gaussian
+    glow, scaled so an isolated pixel keeps its brightness at the centre."""
     v = np.clip(np.log1p(g) / np.log1p(tope), 0, 1)
     return np.clip(np.maximum(v, ndimage.gaussian_filter(v, sigma) * 2 * np.pi * sigma ** 2), 0, 1)
 
 
 def pintar(fondo, v, rampa=RAMPA):
-    """Mezcla la rampa de fuego sobre el fondo: la opacidad crece con el brillo."""
+    """Blends the fire ramp over the background: opacity grows with brightness."""
     color = np.stack([np.interp(v, RAMPA_X, rampa[:, k]) for k in range(3)], axis=-1)
     alfa = np.clip(v * 3.2, 0, 1)[..., None]
     return fondo * (1 - alfa) + color * alfa
@@ -135,15 +135,15 @@ def guardar(a, nombre, calidad=86):
     print(f"  {nombre}: {(OUT / nombre).stat().st_size / 1e6:.1f} MB")
 
 
-# ---------- 1 · portada: el planeta visto desde la órbita ----------
+# ---------- 1 · cover: the planet seen from orbit ----------
 def portada(con, tierra_pols):
-    gw, gh = 7200, 3600                                        # rejilla de 0.05°
+    gw, gh = 7200, 3600                                        # 0.05° grid
     g = conteo(con, "sensor = 'VIIRS_NOAA20' AND acq_date BETWEEN '2025-01-01' AND '2025-12-31'", -180, 180, -90, 90, gw, gh)
     total = int(g.sum())
     v = brillo(g, 1.2, np.percentile(g[g > 0], 99.7))
     m = mascara_tierra(tierra_pols, -180, 180, -90, 90, gw, gh)
 
-    radio, cx, cy = 1210, 2700, 1130                           # el globo se sale por la derecha
+    radio, cx, cy = 1210, 2700, 1130                           # the globe runs off the right edge
     lat_c, lon_c = np.radians(4.0), np.radians(-58.0)
     yy, xx = np.mgrid[0:ALTO, 0:ANCHO]
     X, Y = (xx - cx) / radio, (cy - yy) / radio
@@ -155,13 +155,13 @@ def portada(con, tierra_pols):
     col = ((np.degrees(lon) + 180) % 360 / 360 * gw).astype(int) % gw
     fil = np.clip(((90 - np.degrees(lat)) / 180 * gh).astype(int), 0, gh - 1)
 
-    sombra = (0.35 + 0.65 * Z)[..., None]                      # el borde del disco se oscurece, como una esfera
+    sombra = (0.35 + 0.65 * Z)[..., None]                      # the edge of the disc darkens, like a sphere
     base = NOCHE + (TIERRA - NOCHE) * m[fil, col][..., None] * 1.25
     oceano = np.array([5, 13, 36], dtype=float)
     disco = np.where(m[fil, col][..., None] > 0.5, base, oceano) * sombra
     disco = pintar(disco, v[fil, col])
     im = np.where(dentro[..., None], disco, NOCHE)
-    # limbo: una línea fina de atmósfera en el borde
+    # limb: a thin line of atmosphere at the edge
     d = np.sqrt(r2)
     limbo = np.exp(-((d - 1.004) / 0.006) ** 2)[..., None]
     im = im + limbo * np.array([46, 150, 245]) * 0.55
@@ -169,9 +169,9 @@ def portada(con, tierra_pols):
     return {"portada_detecciones_viirs_2025": total}
 
 
-# ---------- 2 · la misma región, dos sensores ----------
+# ---------- 2 · the same region, two sensors ----------
 def modis_viirs(con, tierra_pols, paises_pols):
-    lon0, lon1, lat0, lat1 = -93.0, -77.0, 5.0, 23.0           # Centroamérica y el Caribe occidental
+    lon0, lon1, lat0, lat1 = -93.0, -77.0, 5.0, 23.0           # Central America and the western Caribbean
     w, h = ANCHO // 2, ALTO
     fechas = "acq_date BETWEEN '2024-03-01' AND '2024-04-30'"
     m = mascara_tierra(tierra_pols, lon0, lon1, lat0, lat1, w, h)
@@ -183,16 +183,16 @@ def modis_viirs(con, tierra_pols, paises_pols):
         cifras[clave] = int(g.sum())
         mitades.append(pintar(fondo, brillo(g, 2.2, 6)))
     im = np.concatenate(mitades, axis=1)
-    im[:, w - 2:w + 2] = [234, 254, 7]                         # la costura entre los dos sensores
+    im[:, w - 2:w + 2] = [234, 254, 7]                         # the seam between the two sensors
     guardar(im, "modis_viirs.jpg")
     return {"region": "Central America and western Caribbean, 5–23° N, 77–93° W", "periodo": "March–April 2024",
             "modis": cifras["modis"], "viirs": cifras["viirs"], "razon": round(cifras["viirs"] / cifras["modis"], 1)}
 
 
-# ---------- 4 · el mundo, por tipo de punto de calor ----------
-MUNDO = (-180.0, 180.0, -56.0, 78.0)                           # sin la Antártida ni el Ártico alto
-TIPOS = [  # (clave, tipo FIRMS, rampa, sigma del resplandor o None para el fuego de vegetación, tope como percentil de
-           #  las celdas con puntos). Van en orden de dibujo: lo que cae sobre agua queda debajo de la vegetación.
+# ---------- 4 · the world, by hot spot type ----------
+MUNDO = (-180.0, 180.0, -56.0, 78.0)                           # without Antarctica or the high Arctic
+TIPOS = [  # (key, FIRMS type, ramp, glow sigma or None for vegetation fire, cap as a percentile of
+           #  the cells with points). In drawing order: what falls on water goes under vegetation.
     ("costa_afuera", 3, np.array([[20, 70, 160], [30, 105, 215], [46, 150, 245], [70, 170, 250], [110, 190, 255]], float),
      1.3, 95),
     ("vegetacion", 0, RAMPA, None, 99.9),
@@ -204,11 +204,11 @@ TIPOS = [  # (clave, tipo FIRMS, rampa, sigma del resplandor o None para el fueg
 
 
 def mascara_mundo(pols, lon0, lon1, lat0, lat1, w, h):
-    """Como mascara_tierra, con dos arreglos para el mapa del mundo entero:
-    - los anillos que cruzan el meridiano 180 se desenvuelven y se dibujan a los dos lados (si no, quedan franjas de
-      lado a lado);
-    - los huecos se resuelven por paridad dentro de cada polígono: en el TopoJSON el anillo de Afro-Eurasia viene
-      después del Caspio, como si fuera su hueco."""
+    """Like mascara_tierra, with two fixes for the whole-world map:
+    - rings that cross the 180° meridian are unwrapped and drawn on both sides (otherwise they leave bands
+      across the map);
+    - holes are resolved by parity inside each polygon: in the TopoJSON the Afro-Eurasia ring comes
+      after the Caspian, as if it were its hole."""
     def dibujar(d, r):
         lon = np.degrees(np.unwrap(np.radians(r[:, 0])))
         for dx in ((0.0, -360.0, 360.0) if np.abs(np.diff(r[:, 0])).max(initial=0) > 180 else (0.0,)):
@@ -240,18 +240,18 @@ def mundo_tipos(con, tierra_pols):
     im = NOCHE + (TIERRA - NOCHE) * m[..., None]
     cuentas = {}
     for clave, tipo, rampa, sigma, pct in TIPOS:
-        # tipo 3 es todo lo que FIRMS ve sobre agua: plataformas en el mar, pero también costas, bahías y lagos
+        # type 3 is everything FIRMS sees over water: offshore platforms, but also coasts, bays and lakes
         g = conteo(con, f"{fechas} AND type = {tipo}", lon0, lon1, lat0, lat1, w, h)
         cuentas[clave] = int(g.sum())
         tope = np.percentile(g[g > 0], pct)
-        # la vegetación cubre continentes: sin halo y con gamma, para que el centro de África no quede todo blanco
+        # vegetation covers continents: no halo and with gamma, so central Africa does not turn all white
         v = np.clip(np.log1p(g) / np.log1p(tope), 0, 1) ** 1.8 if sigma is None else resplandor(g, sigma, tope)
         im = pintar(im, v, rampa)
     guardar(im, "mundo_tipos.jpg")
     return {"periodo": "2024–2025", "sensor": "VIIRS NOAA-20", "alto_px": h, "limites": list(MUNDO), **cuentas}
 
 
-# ---------- 3 · línea de tiempo de los satélites y serie mundial ----------
+# ---------- 3 · satellite timeline and world series ----------
 def linea_tiempo():
     filas = list(csv.DictReader(SERIE.open()))
     años = {}
@@ -278,7 +278,7 @@ def linea_tiempo():
     for a in range(2000, 2029, 4):
         s.append(f'<line x1="{X(a):.1f}" y1="20" x2="{X(a):.1f}" y2="{H - 46}" class="t-rejilla"/>'
                  f'<text x="{X(a):.1f}" y="{H - 16}" class="t-eje" text-anchor="middle">{a}</text>')
-    # órbitas: una pista por satélite, de su primer dato a hoy; lo que sigue, punteado
+    # orbits: one track per satellite, from its first data to today; what follows, dotted
     pistas = [("Terra", "MODIS", 2000 + 10 / 12, 2027.0, "data from Nov 2000", "modis", True),
               ("Aqua", "MODIS", 2002 + 6 / 12, 2027.0, "data from Jul 2002", "modis", True),
               ("Suomi NPP", "VIIRS", 2012 + 0.6 / 12, 2026 + 10 / 12, "Jan 2012 → 2 Nov 2026", "viirs", True),
@@ -295,7 +295,7 @@ def linea_tiempo():
             s.append(f'<line x1="{X(fin):.1f}" y1="{y - 12}" x2="{X(fin):.1f}" y2="{y + 12}" class="t-fin"/>')
         s.append(f'<text x="{X(ini) + 16:.1f}" y="{y - 12}" class="t-nota">{nota}</text>')
     s.append(f'<text x="{X(2027.0) - 14:.1f}" y="{52 + 25 + 6}" class="t-alerta" text-anchor="end">MODIS ends in 2027</text>')
-    # serie mundial: promedio mensual de cada año
+    # world series: monthly average of each year
     y_base, y_tope = H - 60, 330
     vmax = max(d["hi"] for d in serie) * 1.05
     Y = lambda v: y_base - v / vmax * (y_base - y_tope)

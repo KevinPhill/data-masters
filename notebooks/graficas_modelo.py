@@ -1,7 +1,7 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Gráficas del notebook 03_modelo.
+"""Charts for notebook 03_modelo.
 
-Cada función recibe datos ya calculados en el notebook y solo dibuja.
+Each function receives data already computed in the notebook and only draws.
 """
 
 import matplotlib.pyplot as plt
@@ -13,78 +13,78 @@ from matplotlib.patches import Patch
 from estilo import (COLOR_GRUPO, COLOR_MODELO, COLOR_SAT, GRID, GRIS, INK, INK2, MESES, NOMBRE_SAT,
                     eje_numeros, eje_porcentaje, titulo, titulo_figura)
 
-NOMBRE_VARIABLE = {"detecciones": "Detecciones", "frp": "FRP total (MW)"}
+NOMBRE_VARIABLE = {"detecciones": "Detections", "frp": "Total FRP (MW)"}
 
-# azul = se queda corto · gris = acierta · rojo = se pasa
+# blue = falls short · grey = on target · red = overshoots
 DIVERGENTE = LinearSegmentedColormap.from_list("error", ["#184f95", "#6da7ec", "#f0efec", "#ec8a89", "#b8302f"])
-# más oscuro = más error
+# darker = more error
 SECUENCIAL = LinearSegmentedColormap.from_list("magnitud", ["#f6dcdb", "#ec8a89", "#d55a58", "#b8302f", "#7f2120"])
 
-# Nombre legible de cada entrada del modelo
+# Readable name of each model input
 ETIQUETA = {
-    "terra_dia": "Terra: detecciones de día",
-    "terra_noche": "Terra: detecciones de noche",
-    "aqua_dia": "Aqua: detecciones de día",
-    "aqua_noche": "Aqua: detecciones de noche",
-    "terra_frp": "Terra: FRP total",
-    "aqua_frp": "Aqua: FRP total",
-    "modis_frp_max": "FRP máximo",
-    "modis_area_px": "tamaño del píxel",
-    "modis_confianza": "confianza media",
-    "modis_frac_baja_conf": "% baja confianza",
-    "modis_dias": "días con fuego",
-    "modis_frac_fijas": "% fuentes fijas",
-    "frp_por_det_terra": "Terra: FRP por detección",
-    "frp_por_det_aqua": "Aqua: FRP por detección",
-    "razon_aqua_terra": "razón Aqua / Terra",
-    "frac_noche": "% de noche",
-    "modis_vecinos": "fuego en celdas vecinas",
-    "modis_mes_anterior": "fuego el mes anterior",
-    "modis_mes_siguiente": "fuego el mes siguiente",
-    "modis_historico": "promedio histórico del mes",
-    "hora_paso_terra": "hora de paso de Terra",
-    "hora_paso_aqua": "hora de paso de Aqua",
-    "cenit_terra": "ángulo del Sol (Terra)",
-    "cenit_aqua": "ángulo del Sol (Aqua)",
-    "horas_de_sol": "horas de luz",
-    "distancia_sol": "distancia Tierra–Sol",
-    "lat": "latitud",
-    "lon": "longitud",
-    "mes": "mes",
-    "noaa20": "¿NOAA-20 o S-NPP?",
+    "terra_dia": "Terra: daytime detections",
+    "terra_noche": "Terra: night-time detections",
+    "aqua_dia": "Aqua: daytime detections",
+    "aqua_noche": "Aqua: night-time detections",
+    "terra_frp": "Terra: total FRP",
+    "aqua_frp": "Aqua: total FRP",
+    "modis_frp_max": "maximum FRP",
+    "modis_area_px": "pixel size",
+    "modis_confianza": "mean confidence",
+    "modis_frac_baja_conf": "% low confidence",
+    "modis_dias": "days with fire",
+    "modis_frac_fijas": "% static sources",
+    "frp_por_det_terra": "Terra: FRP per detection",
+    "frp_por_det_aqua": "Aqua: FRP per detection",
+    "razon_aqua_terra": "Aqua / Terra ratio",
+    "frac_noche": "% at night",
+    "modis_vecinos": "fire in neighbouring cells",
+    "modis_mes_anterior": "fire in the previous month",
+    "modis_mes_siguiente": "fire in the next month",
+    "modis_historico": "historical average for the month",
+    "hora_paso_terra": "Terra overpass time",
+    "hora_paso_aqua": "Aqua overpass time",
+    "cenit_terra": "Sun angle (Terra)",
+    "cenit_aqua": "Sun angle (Aqua)",
+    "horas_de_sol": "daylight hours",
+    "distancia_sol": "Earth–Sun distance",
+    "lat": "latitude",
+    "lon": "longitude",
+    "mes": "month",
+    "noaa20": "NOAA-20 or S-NPP?",
 }
 
 
 def prueba(totales, satelites):
-    """Total global de cada mes en los años de prueba: lo observado (negro) contra cada modelo.
+    """Global total of each month in the test years: observed (black) against each model.
 
-    totales:   tabla de totales_mensuales()
-    satelites: {año: nombre del VIIRS de ese año}
+    totales:   table from totales_mensuales()
+    satelites: {year: name of that year's VIIRS}
     """
-    modelos = [m for m in totales["detecciones"].columns if m != "Observado"]
+    modelos = [m for m in totales["detecciones"].columns if m != "Observed"]
     fig, axs = plt.subplots(2, len(satelites), figsize=(13, 7.5), sharey="row")
     for fila, variable in enumerate(("detecciones", "frp")):
         for col, (año, satelite) in enumerate(satelites.items()):
             ax, datos = axs[fila, col], totales[variable].loc[año]
             for modelo in modelos:
                 ax.plot(datos.index, datos[modelo], color=COLOR_MODELO[modelo], label=modelo)
-            ax.plot(datos.index, datos["Observado"], color=INK, lw=2.5, marker="o", markersize=5,
-                    label="Observado (VIIRS)")
+            ax.plot(datos.index, datos["Observed"], color=INK, lw=2.5, marker="o", markersize=5,
+                    label="Observed (VIIRS)")
             ax.set_xticks(range(1, 13), MESES)
             titulo(ax, f"{NOMBRE_VARIABLE[variable]} · {año} ({satelite})")
         axs[fila, 0].set_ylim(bottom=0)
         eje_numeros(axs[fila, 0], "y")
     handles, labels = axs[0, 0].get_legend_handles_labels()
     fig.legend(handles[::-1], labels[::-1], loc="outside lower center", ncol=len(labels))
-    titulo_figura(fig, "¿Qué tan bien predice cada modelo lo que vio VIIRS? Años que ningún modelo vio al entrenar")
+    titulo_figura(fig, "How well does each model predict what VIIRS saw? Years no model saw in training")
     plt.show()
 
 
 def importancia(tabla, grupos):
-    """Barras: qué tanto usó LightGBM cada entrada, coloreadas por grupo.
+    """Bars: how much LightGBM used each input, coloured by group.
 
-    tabla:  % de importancia por entrada (columnas detecciones y FRP)
-    grupos: {grupo: [entradas]}
+    tabla:  % importance per input (columns detections and FRP)
+    grupos: {group: [inputs]}
     """
     grupo_de = {entrada: grupo for grupo, entradas in grupos.items() for entrada in entradas}
     fig, axs = plt.subplots(1, 2, figsize=(13, 8.5))
@@ -98,17 +98,17 @@ def importancia(tabla, grupos):
         ax.xaxis.set_major_formatter(lambda v, _: f"{v:g}%")
         ax.grid(axis="y", visible=False)
         ax.tick_params(axis="y", length=0, labelsize=8.5)
-        titulo(ax, f"Para predecir {columna}")
+        titulo(ax, f"To predict {columna}")
     fig.legend([Patch(color=COLOR_GRUPO[g]) for g in grupos], list(grupos), loc="outside lower center",
                ncol=len(grupos))
-    titulo_figura(fig, "¿Qué entradas usa LightGBM? (% de la mejora total que aporta cada una)")
+    titulo_figura(fig, "Which inputs does LightGBM use? (% of the total gain each one contributes)")
     plt.show()
 
 
 def deriva(errores, años_prueba):
-    """Error del total global de cada mes, 2012–2025, para cada modelo.
+    """Error of the global total of each month, 2012–2025, for each model.
 
-    errores: tabla de errores_mensuales() (índice = fecha, columnas = (variable, modelo))
+    errores: table from errores_mensuales() (index = date, columns = (variable, model))
     """
     fig, axs = plt.subplots(2, 1, figsize=(13, 7.5), sharex=True)
     for ax, variable in zip(axs, ("detecciones", "frp")):
@@ -119,22 +119,22 @@ def deriva(errores, años_prueba):
             ax.plot(serie.index, serie, color=COLOR_MODELO[modelo], lw=1.6, label=modelo)
         ax.axhline(0, color=INK2, lw=1)
         eje_porcentaje(ax, signo=True)
-        titulo(ax, f"{NOMBRE_VARIABLE[variable]}: error del total global de cada mes")
-    tope = axs[0].get_ylim()[1] + 4  # espacio para las etiquetas
+        titulo(ax, f"{NOMBRE_VARIABLE[variable]}: error of the global total of each month")
+    tope = axs[0].get_ylim()[1] + 4  # room for the labels
     axs[0].set_ylim(top=tope)
-    etiquetas = [(pd.Timestamp(año, 7, 1), "prueba") for año in años_prueba]
-    etiquetas.append((pd.Timestamp(2024, 1, 1), "órbitas MODIS corridas\n(no se usó para entrenar)"))
+    etiquetas = [(pd.Timestamp(año, 7, 1), "test") for año in años_prueba]
+    etiquetas.append((pd.Timestamp(2024, 1, 1), "drifting MODIS orbits\n(not used for training)"))
     for x, texto in etiquetas:
         axs[0].text(x, tope, texto, ha="center", va="top", fontsize=9, color=INK2)
     axs[0].legend(loc="lower left", ncol=len(errores["detecciones"].columns))
-    titulo_figura(fig, "¿Funciona el modelo cuando las órbitas de MODIS se corren? (+ = predice de más)")
+    titulo_figura(fig, "Does the model hold up when MODIS orbits drift? (+ = overpredicts)")
     plt.show()
 
 
 def mapa_error(bloques, grado):
-    """Dos mapas del error fuera de muestra (2012–2021) en bloques de grado × grado.
+    """Two maps of the out-of-sample error (2012–2021) in grado × grado blocks.
 
-    bloques: tabla de error_por_bloque()
+    bloques: table from error_por_bloque()
     """
     def rejilla(valores):
         mapa = np.full((int(180 / grado), int(360 / grado)), np.nan)
@@ -142,9 +142,9 @@ def mapa_error(bloques, grado):
         return mapa
 
     paneles = [
-        ("sesgo", "Sesgo: cuánto se pasa (+) o se queda corto (−) en el total de 2012–2021",
+        ("sesgo", "Bias: how much it overshoots (+) or falls short (−) in the 2012–2021 total",
          DIVERGENTE, TwoSlopeNorm(vcenter=0, vmin=-30, vmax=30), lambda v, _: f"{v:+.0f}%" if v else "0"),
-        ("error_mensual", "Error típico de un mes en ese bloque",
+        ("error_mensual", "Typical error of a month in that block",
          SECUENCIAL, Normalize(0, 60), lambda v, _: f"{v:.0f}%"),
     ]
     fig, axs = plt.subplots(2, 1, figsize=(13, 12))
@@ -162,15 +162,15 @@ def mapa_error(bloques, grado):
         barra.ax.yaxis.set_major_formatter(formato)
         barra.outline.set_visible(False)
         titulo(ax, texto)
-    titulo_figura(fig, f"¿Dónde se equivoca el modelo? Bloques de {grado}° · gris = muy poco fuego para medir")
+    titulo_figura(fig, f"Where does the model go wrong? {grado}° blocks · grey = too little fire to measure")
     plt.show()
 
 
 def antes_y_despues(anual, factor):
-    """Promedio mensual de cada año: unir MODIS y VIIRS tal cual (izquierda) contra armonizado (derecha).
+    """Monthly average of each year: MODIS and VIIRS joined as they are (left) against harmonized (right).
 
-    anual:  tabla de serie_armonizada() promediada por año
-    factor: {variable: cuántas veces más ve VIIRS que MODIS en los años en que coinciden}
+    anual:  table from serie_armonizada() averaged by year
+    factor: {variable: how many times more VIIRS sees than MODIS in the years they overlap}
     """
     antes, despues = anual.index <= 2011, anual.index >= 2012
     fig, axs = plt.subplots(2, 2, figsize=(13, 8), sharey="row", sharex=True)
@@ -178,54 +178,54 @@ def antes_y_despues(anual, factor):
         sin_armonizar, armonizado = axs[fila]
         observado = anual[f"{variable}_observado"][despues]
         for ax in (sin_armonizar, armonizado):
-            ax.plot(observado.index, observado, color=INK, marker="o", markersize=5, label="VIIRS observado")
+            ax.plot(observado.index, observado, color=INK, marker="o", markersize=5, label="Observed VIIRS")
             ax.axvline(2011.5, color=INK2, lw=1, ls=":")
         sin_armonizar.plot(anual.index[antes], anual[f"{variable}_modis"][antes], color=COLOR_SAT["Aqua"],
-                           marker="o", markersize=5, label="MODIS tal cual")
-        if abs(factor[variable] - 1) >= 0.2:  # solo se marca el salto si de verdad lo hay
-            sin_armonizar.annotate(f"salto falso:\nVIIRS ve {factor[variable]:.1f}× más", xy=(2011.5, observado.iloc[0]),
+                           marker="o", markersize=5, label="MODIS as is")
+        if abs(factor[variable] - 1) >= 0.2:  # the jump is only marked if there really is one
+            sin_armonizar.annotate(f"false jump:\nVIIRS sees {factor[variable]:.1f}× more", xy=(2011.5, observado.iloc[0]),
                                    xytext=(2004.5, observado.max()), fontsize=9.5, color=INK2,
                                    arrowprops=dict(arrowstyle="->", color=INK2, lw=1))
         else:
-            sin_armonizar.text(2004, observado.max() * 0.45, f"casi sin salto: aquí MODIS y VIIRS\nya miden parecido "
+            sin_armonizar.text(2004, observado.max() * 0.45, f"almost no jump: here MODIS and VIIRS\nalready measure alike "
                                f"({factor[variable]:.2f}×)", fontsize=9.5, color=INK2)
         armonizado.fill_between(anual.index[antes], anual[f"{variable}_min"][antes], anual[f"{variable}_max"][antes],
-                                color=COLOR_SAT["Aqua"], alpha=0.2, lw=0, label="rango del 90 %")
+                                color=COLOR_SAT["Aqua"], alpha=0.2, lw=0, label="90 % range")
         armonizado.plot(anual.index[antes], anual[f"{variable}_estimado"][antes], color=COLOR_SAT["Aqua"],
-                        marker="o", markersize=5, label="MODIS armonizado (unidades VIIRS)")
+                        marker="o", markersize=5, label="Harmonized MODIS (VIIRS units)")
         sin_armonizar.set_ylim(bottom=0)
         eje_numeros(sin_armonizar, "y")
-        titulo(sin_armonizar, f"{NOMBRE_VARIABLE[variable]} · sin armonizar")
-        titulo(armonizado, f"{NOMBRE_VARIABLE[variable]} · armonizado")
+        titulo(sin_armonizar, f"{NOMBRE_VARIABLE[variable]} · not harmonized")
+        titulo(armonizado, f"{NOMBRE_VARIABLE[variable]} · harmonized")
     for ax in axs[1]:
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles[::-1], labels[::-1], loc="lower left")
-    titulo_figura(fig, "Antes y después: promedio mensual de cada año en todo el mundo")
+    titulo_figura(fig, "Before and after: monthly average of each year, whole world")
     plt.show()
 
 
 def serie(serie, satelite="N20"):
-    """Serie armonizada: lo estimado desde MODIS (azul, con su rango del 90 %) y lo que VIIRS observó.
+    """Harmonized series: the estimate from MODIS (blue, with its 90 % range) and what VIIRS observed.
 
-    serie: tabla de serie_armonizada()
+    serie: table from serie_armonizada()
     """
-    serie = serie.sort_index().asfreq("MS")  # un renglón por mes: los meses que faltan cortan la línea
+    serie = serie.sort_index().asfreq("MS")  # one row per month: missing months break the line
     fig, axs = plt.subplots(2, 1, figsize=(13, 7.5), sharex=True)
     for ax, variable in zip(axs, ("detecciones", "frp")):
         ax.axvspan(serie.index.min(), pd.Timestamp(2012, 1, 1), color=GRID, alpha=0.5, lw=0)
         ax.fill_between(serie.index, serie[f"{variable}_min"], serie[f"{variable}_max"],
-                        color=COLOR_SAT["Aqua"], alpha=0.25, lw=0, label="rango del 90 %")
+                        color=COLOR_SAT["Aqua"], alpha=0.25, lw=0, label="90 % range")
         ax.plot(serie.index, serie[f"{variable}_estimado"], color=COLOR_SAT["Aqua"], lw=1.6,
-                label=f"Estimado desde MODIS (en unidades {NOMBRE_SAT[satelite]})")
+                label=f"Estimated from MODIS (in {NOMBRE_SAT[satelite]} units)")
         for sat in ("N", "N20"):
             observado = serie[f"{variable}_observado"].where(serie.satelite_observado == sat)
-            ax.plot(serie.index, observado, color=COLOR_SAT[sat], lw=1.6, label=f"Observado {NOMBRE_SAT[sat]}")
+            ax.plot(serie.index, observado, color=COLOR_SAT[sat], lw=1.6, label=f"Observed {NOMBRE_SAT[sat]}")
         ax.set_ylim(bottom=0)
         eje_numeros(ax, "y")
         titulo(ax, NOMBRE_VARIABLE[variable])
-    axs[0].text(pd.Timestamp(2007, 1, 1), axs[0].get_ylim()[1], "solo MODIS: aquí el modelo llena el hueco",
+    axs[0].text(pd.Timestamp(2007, 1, 1), axs[0].get_ylim()[1], "MODIS only: here the model fills the gap",
                 ha="center", va="top", fontsize=9, color=INK2)
     handles, labels = axs[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="outside lower center", ncol=4)
-    titulo_figura(fig, "Serie armonizada: lo que VIIRS habría visto desde 2002")
+    titulo_figura(fig, "Harmonized series: what VIIRS would have seen since 2002")
     plt.show()

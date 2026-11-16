@@ -1,7 +1,7 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Componentes visuales de Data Masters (HTML): estilos, encabezado, estado del mes, cifras y piezas de contenido.
+"""Visual components of Data Masters (HTML): styles, header, month status, figures and content pieces.
 
-Las funciones devuelven HTML como texto; la app lo muestra con st.html. Todo texto dinámico pasa por esc().
+The functions return HTML as text; the app shows it with st.html. All dynamic text goes through esc().
 """
 
 from __future__ import annotations
@@ -23,22 +23,22 @@ NIVELES = ("bajo", "normal", "alto", "muy_alto")
 esc = html.escape
 
 
-# =============================================================================== estilos
+# =============================================================================== styles
 @lru_cache(maxsize=4)
 def _css(_version: float) -> str:
     return (STATIC / "estilo.css").read_text(encoding="utf-8")
 
 
 def estilos(modo: str, presentacion: bool) -> None:
-    """Hoja de estilos global + marcas de modo (noche / presentación) que el CSS lee con :root:has(...).
-    Van en el primer elemento de la página para que el tema correcto se aplique desde el primer pintado."""
+    """Global style sheet + mode markers (night / presentation) that the CSS reads with :root:has(...).
+    They go in the first element of the page so the right theme applies from the first paint."""
     marcas = " ".join(c for c, activo in (("dm-modo-noche", modo == "noche"),
                                            ("dm-presentacion", presentacion)) if activo)
     st.html(f"<style>{_css((STATIC / 'estilo.css').stat().st_mtime)}</style>"
             f'<span class="dm-marca-modo {marcas}" aria-hidden="true"></span>')
 
 
-# =============================================================================== marca
+# =============================================================================== brand
 def space_apps_logo() -> str:
     for ext in ("svg", "png"):
         if (MARCA / f"space_apps.{ext}").exists():
@@ -47,9 +47,9 @@ def space_apps_logo() -> str:
     return ""
 
 
-# =============================================================================== encabezado
+# =============================================================================== header
 def encabezado(T) -> str:
-    """Evento, nombre del proyecto, reto y una frase de qué hace la app (lo primero de la banda del globo)."""
+    """Event, project name, challenge and one sentence on what the app does (the first thing in the globe band)."""
     return f"""
 <header class="dm-cab">
   <div class="dm-cab-nombre">
@@ -64,19 +64,19 @@ def encabezado(T) -> str:
 
 
 def contexto(T, datos: list[tuple[str, str]]) -> str:
-    """Una línea con el área que se está analizando (encima del estado del mes)."""
+    """One line with the area being analysed (above the month status)."""
     filas = "".join(f"<div><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>" for k, v in datos)
     return f'<dl class="dm-contexto" aria-label="{esc(T("tel_area"))}">{filas}</dl>'
 
 
 def ficha_pais(nombre: str, sub: str, frase: str) -> str:
-    """Cabeza del panel del país junto al globo: nombre, periodo y una frase en lenguaje llano."""
+    """Header of the country panel next to the globe: name, period and one sentence in plain language."""
     frase_html = f'<p class="dm-ficha-frase">{esc(frase)}</p>' if frase else ""
     return f'<div class="dm-ficha"><h2>{esc(nombre)}</h2><p class="dm-ficha-sub">{esc(sub)}</p>{frase_html}</div>'
 
 
 def escala_fuego(titulo: str, rampa: list, marcas: list[tuple[float, str]]) -> str:
-    """Escala de color del globo en HTML: barra con la rampa y marcas en su posición (0–1)."""
+    """Globe colour scale in HTML: bar with the ramp and ticks at their position (0–1)."""
     degradado = ", ".join(f"{c} {100 * float(x):.0f}%" for x, c in rampa)
     etiquetas = "".join(f'<span style="left:{100 * x:.1f}%">{esc(e)}</span>' for x, e in marcas)
     return (f'<figure class="dm-escala-fuego" aria-label="{esc(titulo)}"><figcaption>{esc(titulo)}</figcaption>'
@@ -84,7 +84,7 @@ def escala_fuego(titulo: str, rampa: list, marcas: list[tuple[float, str]]) -> s
 
 
 def por_que_importa(T, cifras: list[tuple[str, str, str]]) -> str:
-    """Franja de cuatro cifras bajo el encabezado: (valor, texto, fuente)."""
+    """Strip of four figures under the header: (value, text, source)."""
     items = "".join(
         f'<li><b class="dm-importa-n">{esc(v)}</b><span>{esc(txt)}</span>'
         + (f"<small>{esc(f)}</small>" if f else "") + "</li>"
@@ -94,7 +94,7 @@ def por_que_importa(T, cifras: list[tuple[str, str, str]]) -> str:
 
 
 def hechos(items: list[tuple[str, str]]) -> str:
-    """Tarjetas de texto (título, cuerpo en HTML ya escapado) para los datos del área."""
+    """Text cards (title, body in already-escaped HTML) for the area facts."""
     return '<div class="dm-hechos">' + "".join(
         f'<div class="dm-hecho"><h4>{esc(t)}</h4><p>{c}</p></div>' for t, c in items) + "</div>"
 
@@ -115,9 +115,9 @@ def pitch(T) -> str:
     return f'<section class="dm-pitch" aria-label="Pitch">{partes}</section>'
 
 
-# =============================================================================== panel de estado y cifras
+# =============================================================================== status panel and figures
 def kpi(etiqueta: str, valor: str, nota: str = "", clase: str = "", extra: str = "") -> str:
-    """Una cifra con su etiqueta; `extra` (p. ej. un medidor) va entre el valor y la nota."""
+    """A figure with its label; `extra` (e.g. a gauge) goes between the value and the note."""
     return (f'<div class="dm-kpi {clase}"><div class="dm-kpi-etq">{esc(etiqueta)}</div>'
             f'<div class="dm-kpi-valor">{esc(valor)}</div>{extra}<div class="dm-kpi-nota">{nota}</div></div>')
 
@@ -127,7 +127,7 @@ def kpis(tarjetas: list[str], clase: str = "") -> str:
 
 
 def delta(v: float, texto: str) -> str:
-    """Cambio con flecha + signo + texto, nunca solo color."""
+    """Change with arrow + sign + text, never colour alone."""
     if not np.isfinite(v):
         return ""
     clase, flecha = ("dm-delta-sube", "▲") if v > 0 else (("dm-delta-baja", "▼") if v < 0 else ("dm-delta-igual", "■"))
@@ -136,7 +136,7 @@ def delta(v: float, texto: str) -> str:
 
 def medidor(pos: float, tipo: str, etiquetas: tuple[str, ...], nombre: str, valor: float,
             vmin: float, vmax: float) -> str:
-    """Pista por zonas con una aguja (role="meter"). pos ∈ [0, 1]; tipo elige las zonas: 'pct' o 'z'."""
+    """Track with zones and a needle (role="meter"). pos ∈ [0, 1]; tipo chooses the zones: 'pct' or 'z'."""
     if not np.isfinite(pos):
         return ""
     izq = f"{100 * min(max(pos, 0.0), 1.0):.1f}%"
@@ -149,7 +149,7 @@ def medidor(pos: float, tipo: str, etiquetas: tuple[str, ...], nombre: str, valo
 
 
 def alerta(T, nivel: str, frase: str, titulo: str, detalle_html: str, tarjetas: list[str]) -> str:
-    """Estado del mes: frase, escala de 4 niveles (texto + color) y las cifras."""
+    """Month status: sentence, 4-level scale (text + colour) and the figures."""
     etiqueta = T("escala_lbl", nivel=T(f"nivel_{nivel}"))
     sello = T("escala_lbl", nivel=T(f"esc_{nivel}") if nivel in NIVELES else T(f"nivel_{nivel}"))
     actual = ' class="activo" aria-current="true"'
@@ -169,7 +169,7 @@ def alerta(T, nivel: str, frase: str, titulo: str, detalle_html: str, tarjetas: 
 </section>"""
 
 
-# =============================================================================== piezas de contenido
+# =============================================================================== content pieces
 def seccion(titulo: str, sub: str | None = None, nivel: int = 3) -> str:
     sub_html = f"<p>{esc(sub)}</p>" if sub else ""
     return f'<div class="dm-seccion"><h{nivel}>{esc(titulo)}</h{nivel}>{sub_html}</div>'
@@ -198,7 +198,7 @@ def leyenda(items: list[tuple[str, str]]) -> str:
 
 
 def tabla(df: pd.DataFrame, formatos: dict | None = None, alto: int | None = None, texto: bool = False) -> str:
-    """texto=True: celdas con saltos de línea (tablas de frases, no de cifras)."""
+    """texto=True: cells with line breaks (tables of sentences, not of figures)."""
     formatos = formatos or {}
     cab = "".join(f'<th scope="col">{esc(str(c))}</th>' for c in df.columns)
     filas = []
@@ -223,7 +223,7 @@ def tabla(df: pd.DataFrame, formatos: dict | None = None, alto: int | None = Non
 
 
 def ranking(filas: list[tuple]) -> str:
-    """filas = [(periodo, valor, fuente[, fracción del máximo])] ordenadas de mayor a menor."""
+    """filas = [(period, value, source[, fraction of the maximum])] sorted from largest to smallest."""
     items = []
     for i, (p, v, f, *resto) in enumerate(filas):
         barra = ""
@@ -250,7 +250,7 @@ def sensores(T) -> str:
 
 
 def metodo(pasos: list[tuple[str, str]], pie: str) -> str:
-    """pasos = [(título, cuerpo_html)]."""
+    """pasos = [(title, body_html)]."""
     items = "".join(f'<li class="dm-metodo-paso"><h4><span class="dm-metodo-n">{i + 1}.</span>{esc(t)}</h4><p>{c}</p></li>'
                     for i, (t, c) in enumerate(pasos))
     return f'<ol class="dm-metodo">{items}</ol><p class="dm-nota">{esc(pie)}</p>'

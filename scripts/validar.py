@@ -1,27 +1,27 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Valida el modelo de armonización que usa la app, siempre contra lo que VIIRS vio de verdad.
+"""Validates the harmonization model the app uses, always against what VIIRS really saw.
 
-Dos pruebas:
-  · dejando un año fuera (2012–2021): cada año Y se predice con un modelo que no vio Y.
-  · años nunca vistos (2022–2025): el modelo final no los usó, y las órbitas de Terra y Aqua ya están corridas.
+Two tests:
+  · leaving one year out (2012–2021): each year Y is predicted with a model that did not see Y.
+  · never-seen years (2022–2025): the final model did not use them, and the Terra and Aqua orbits have already drifted.
 
-Modelos
-  lightgbm  (el de la app) predicciones del notebook 03_modelo:
-              2012–2021  data/modelo/validacion_por_año.parquet   (un año fuera a la vez)
-              2022–2025  data/modelo/armonizado_celdas.parquet     (modelo entrenado sin esos años)
-            con corrección regional: cada predicción se multiplica por k = Σ VIIRS ÷ Σ predicho de su región
-            de 10° y su mes en la validación, sin el año que se predice (acotado a CORRECCION)
-  razon     MODIS × razón VIIRS/MODIS por región de 10° y mes, recalculada sin el año que se predice.
-            Se usa si faltan los archivos de LightGBM; scripts/evaluar_modelos.py la usa para comparar.
+Models
+  lightgbm  (the app's) predictions from notebook 03_modelo:
+              2012–2021  data/modelo/validacion_por_año.parquet   (one year out at a time)
+              2022–2025  data/modelo/armonizado_celdas.parquet     (model trained without those years)
+            with regional correction: each prediction is multiplied by k = Σ VIIRS ÷ Σ predicted of its 10°
+            region and month in the validation, without the year being predicted (capped at CORRECCION)
+  razon     MODIS × VIIRS/MODIS ratio per 10° region and month, recomputed without the year being predicted.
+            Used if the LightGBM files are missing; scripts/evaluar_modelos.py uses it for comparison.
 
-Rango de cada predicción: percentiles 5 y 95, año a año, de lo observado ÷ lo predicho en su región de 10° y
-su mes (sin el año que se predice). Si la región tiene menos de 3 años, el del mundo en ese mes.
+Range of each prediction: percentiles 5 and 95, year by year, of observed ÷ predicted in its 10° region and
+month (without the year being predicted). If the region has fewer than 3 years, the world's for that month.
 
-Salida (data/app/)
-  validacion.parquet  celda × mes: VIIRS observado, MODIS crudo, predicción y su rango (p5–p95)
-  validacion.json     métricas globales y por país
+Output (data/app/)
+  validacion.parquet  cell × month: observed VIIRS, raw MODIS, prediction and its range (p5–p95)
+  validacion.json     global and per-country metrics
 
-Uso:  python scripts/validar.py
+Usage:  python scripts/validar.py
 """
 
 from __future__ import annotations
@@ -41,20 +41,20 @@ OUT = ROOT / "data" / "app"
 CALIBRACION = (2012, 2021)
 FUERA = (2022, 2025)
 GRADO = 0.5
-CORRECCION = (0.5, 2.0)  # límites del factor de corrección regional de LightGBM
-MINIMO_FIJAS = 100        # fuentes fijas: el rango usa la región solo si predice al menos esto por año (si no, el mundo)
-TOPE_FIJAS = 3            # fuentes fijas: el rango va de un tercio al triple de lo estimado, como mucho
-ETAPA_NOAA20 = 2018       # fuentes fijas: en 2018 cambia el VIIRS de referencia y MODIS marca ~6 veces más volcanes
+CORRECCION = (0.5, 2.0)  # limits of the LightGBM regional correction factor
+MINIMO_FIJAS = 100        # fixed sources: the range uses the region only if it predicts at least this much per year (otherwise the world)
+TOPE_FIJAS = 3            # fixed sources: the range goes from a third to three times the estimate, at most
+ETAPA_NOAA20 = 2018       # fixed sources: in 2018 the reference VIIRS changes and MODIS flags ~6 times more volcanoes
 REGION = "CAST(floor((lat + 90) / 10) * 36 + floor((lon + 180) / 10) AS INT)"
-# modelo integral (scripts/modelo_integral.py): conteos por tipo FIRMS y LightGBM de vegetación
+# integral model (scripts/modelo_integral.py): counts per FIRMS type and vegetation LightGBM
 TIPOS = ROOT / "data" / "modelo" / "tipos_celdas.parquet"
 VEG_CELDAS = ROOT / "data" / "modelo" / "veg_celdas.parquet"
 VEG_LOYO = ROOT / "data" / "modelo" / "veg_loyo.parquet"
-CATEGORIAS = {0: "veg", 1: "volcan", 2: "industria", 3: "mar"}  # tipo FIRMS → categoría de la app
+CATEGORIAS = {0: "veg", 1: "volcan", 2: "industria", 3: "mar"}  # FIRMS type → app category
 
 
 def region_fc(t: str = "") -> str:
-    """Región de 10° a partir de fila y col (centro de la celda)."""
+    """10° region from fila and col (cell centre)."""
     p = f"{t}." if t else ""
     return (f"CAST(floor(({p}fila * {GRADO} + {GRADO / 2} + 90) / 10) * 36 + "
             f"floor(({p}col * {GRADO} + {GRADO / 2} + 180) / 10) AS INT)")
@@ -65,7 +65,7 @@ def hay_lightgbm() -> bool:
 
 
 def tabla_base(con: duckdb.DuckDBPyConnection):
-    """c: celda × mes con MODIS completo y VIIRS, 2012–2025."""
+    """c: cell × month with complete MODIS and VIIRS, 2012–2025."""
     con.execute(f"""
     CREATE OR REPLACE TABLE c AS
     SELECT fila, col, año, mes,
@@ -76,10 +76,10 @@ def tabla_base(con: duckdb.DuckDBPyConnection):
 
 
 def factores(con: duckdb.DuckDBPyConnection, anual: str, nombre: str, minimo: float = 0, minimo_año: float = 0):
-    """Para cada año escondido (prueba; 0 = todos los años) y región × mes: k = Σv / Σm y percentiles 5–95 de
-    v / m año a año, sin el año escondido. anual: tabla con region, mes, año, v (observado), m (base).
-    La región se usa si tiene al menos 3 años con m > 0 y un m medio ≥ minimo; si no, el mundo en ese mes.
-    Los percentiles solo usan años con m ≥ minimo_año (la razón entre dos números chicos no dice nada)."""
+    """For each held-out year (prueba; 0 = all years) and region × month: k = Σv / Σm and percentiles 5–95 of
+    v / m year by year, without the held-out year. anual: table with region, mes, año, v (observed), m (base).
+    The region is used if it has at least 3 years with m > 0 and a mean m ≥ minimo; otherwise, the world for that month.
+    The percentiles only use years with m ≥ minimo_año (the ratio between two small numbers says nothing)."""
     a0, a1 = CALIBRACION
     con.execute(f"""
     CREATE OR REPLACE TABLE {nombre} AS
@@ -110,7 +110,7 @@ def factores(con: duckdb.DuckDBPyConnection, anual: str, nombre: str, minimo: fl
 
 
 def _etapa(año: str = "n.año") -> str:
-    """1 = MODIS junto a S-NPP (hasta 2017, y hacia atrás); 2 = junto a NOAA-20 (desde 2018)."""
+    """1 = MODIS alongside S-NPP (until 2017, and backwards); 2 = alongside NOAA-20 (from 2018)."""
     return f"CASE WHEN {año} < {ETAPA_NOAA20} THEN 1 ELSE 2 END"
 
 
@@ -119,7 +119,7 @@ def _prueba(año: str = "c.año") -> str:
 
 
 def validacion_razon(con: duckdb.DuckDBPyConnection, nombre: str = "v_razon"):
-    """Modelo razón: la razón de cada año escondido se calcula sin ese año (mismas reglas que preparar_app)."""
+    """Ratio model: the ratio of each held-out year is computed without that year (same rules as preparar_app)."""
     tabla_base(con)
     a0, a1 = CALIBRACION
     con.execute(f"""CREATE OR REPLACE TABLE anual_razon AS
@@ -142,7 +142,7 @@ def validacion_razon(con: duckdb.DuckDBPyConnection, nombre: str = "v_razon"):
 
 
 def predicciones_lightgbm(con: duckdb.DuckDBPyConnection):
-    """p: predicción LightGBM no vista de cada celda × mes (un año fuera en 2012–2021; modelo final en 2022–2025)."""
+    """p: unseen LightGBM prediction for each cell × month (one year out in 2012–2021; final model in 2022–2025)."""
     con.execute(f"""
     CREATE OR REPLACE TABLE p AS
     SELECT CAST(floor(lat / {GRADO}) AS INT) fila, CAST(floor(lon / {GRADO}) AS INT) col, año, mes, detecciones pred
@@ -154,8 +154,8 @@ def predicciones_lightgbm(con: duckdb.DuckDBPyConnection):
 
 
 def rango_lightgbm(con: duckdb.DuckDBPyConnection, nombre: str = "f_lgbm"):
-    """Corrección regional de LightGBM: por región × mes y año escondido, k = Σ observado ÷ Σ predicho (un año fuera)
-    y percentiles 5–95 de observado ÷ predicho año a año, sin el año escondido."""
+    """LightGBM regional correction: per region × month and held-out year, k = Σ observed ÷ Σ predicted (one year
+    out) and percentiles 5–95 of observed ÷ predicted year by year, without the held-out year."""
     a0, a1 = CALIBRACION
     con.execute(f"""
     CREATE OR REPLACE TABLE anual_lgbm AS
@@ -188,7 +188,7 @@ def validacion_lightgbm(con: duckdb.DuckDBPyConnection, nombre: str = "v_lgbm"):
     """)
 
 
-# ===================================================================================== modelo integral
+# ===================================================================================== integral model
 def hay_integral() -> bool:
     return TIPOS.exists() and VEG_CELDAS.exists() and VEG_LOYO.exists()
 
@@ -198,8 +198,8 @@ def _categoria(tipo: str = "tipo") -> str:
 
 
 def conteos_tipo(con: duckdb.DuckDBPyConnection):
-    """meses_sat: qué satélites valen en cada mes. tt: detecciones por celda, mes y tipo FIRMS: m (Terra + Aqua),
-    t (Terra) y v (el VIIRS de ese mes, S-NPP o NOAA-20)."""
+    """meses_sat: which satellites count in each month. tt: detections per cell, month and FIRMS type: m (Terra + Aqua),
+    t (Terra) and v (that month's VIIRS, S-NPP or NOAA-20)."""
     con.execute(f"""CREATE OR REPLACE TABLE meses_sat AS
                     SELECT DISTINCT año, mes, terra_ok, aqua_ok, viirs_sat FROM read_parquet('{CELDAS.as_posix()}')""")
     con.execute(f"""
@@ -213,9 +213,9 @@ def conteos_tipo(con: duckdb.DuckDBPyConnection):
 
 
 def modelo_vegetacion(con: duckdb.DuckDBPyConnection):
-    """p_veg: LightGBM de vegetación sin ver el año (un año fuera en 2012–2021, modelo final después).
-    f_veg: su corrección regional (Σ VIIRS ÷ Σ predicho por región de 10° y mes, sin el año que se predice) y el
-    rango p5–p95. Necesita tt (conteos_tipo)."""
+    """p_veg: vegetation LightGBM without seeing the year (one year out in 2012–2021, final model afterwards).
+    f_veg: its regional correction (Σ VIIRS ÷ Σ predicted per 10° region and month, without the year being predicted)
+    and the p5–p95 range. Needs tt (conteos_tipo)."""
     a0, a1 = CALIBRACION
     con.execute(f"""
     CREATE OR REPLACE TABLE p_veg AS
@@ -230,31 +230,31 @@ def modelo_vegetacion(con: duckdb.DuckDBPyConnection):
     FULL JOIN (SELECT x.fila, x.col, x.año, x.mes, x.v FROM tt x JOIN meses_sat s USING (año, mes)
                WHERE x.tipo = 0 AND s.terra_ok AND s.aqua_ok AND s.viirs_sat IS NOT NULL
                  AND x.año BETWEEN {a0} AND {a1}) o
-         USING (fila, col, año, mes)  -- solo meses con MODIS completo y VIIRS: donde el modelo predice y se compara
+         USING (fila, col, año, mes)  -- only months with complete MODIS and VIIRS: where the model predicts and is compared
     WHERE año BETWEEN {a0} AND {a1} GROUP BY ALL
     """)
     factores(con, "anual_veg", "f_veg")
 
 
 def modelo_fijas(con: duckdb.DuckDBPyConnection):
-    """Fuentes fijas (tipos 1–3: volcanes, industria y gas, costa afuera), celda por celda.
+    """Fixed sources (types 1–3: volcanoes, industry and gas, offshore), cell by cell.
 
-    Son fuentes que no se mueven: la misma chimenea, el mismo pozo, el mismo volcán. Por eso cada celda tiene su
-    propia relación entre MODIS y VIIRS. Para una celda y un mes:
-        pred = MODIS × k_celda     + b_act    si MODIS no la vio ese mes pero sí otros meses del año
-                                   + b_inact  si MODIS no la vio en todo el año
-    k_celda = Σ VIIRS ÷ Σ MODIS en los meses en que MODIS la vio (con menos de 3 meses, el de su región de 10° o el
-    del mundo). b_act y b_inact = VIIRS promedio en esos meses: VIIRS ve fuentes chicas que MODIS no alcanza
-    (supuesto: esa base se mantiene hacia atrás en el tiempo). Con solo Terra, MODIS = Terra × (Σ MODIS ÷ Σ Terra).
-    Los parámetros van por etapa (_etapa): en 2018 la relación cambia de golpe (VIIRS pasa de S-NPP a NOAA-20 y
-    MODIS marca muchas más fuentes fijas, ~6 veces más volcanes), así que 2018–2025 usa lo aprendido desde 2018 y
-    2000–2017 lo aprendido con 2012–2017.
+    These sources do not move: the same stack, the same well, the same volcano. So each cell has its
+    own relation between MODIS and VIIRS. For a cell and a month:
+        pred = MODIS × k_celda     + b_act    if MODIS did not see it that month but did in other months of the year
+                                   + b_inact  if MODIS did not see it all year
+    k_celda = Σ VIIRS ÷ Σ MODIS in the months when MODIS saw it (with fewer than 3 months, that of its 10° region or
+    of the world). b_act and b_inact = average VIIRS in those months: VIIRS sees small sources MODIS cannot reach
+    (assumption: that base holds going back in time). With Terra only, MODIS = Terra × (Σ MODIS ÷ Σ Terra).
+    The parameters go by stage (_etapa): in 2018 the relation changes abruptly (VIIRS moves from S-NPP to NOAA-20 and
+    MODIS flags many more fixed sources, ~6 times more volcanoes), so 2018–2025 uses what was learned from 2018 on and
+    2000–2017 what was learned with 2012–2017.
 
-    nf        cada celda que alguna vez tuvo ese tipo × todos los meses (2000–2025)
-    par_fijas parámetros sin el año que se predice (prueba = año; 0 = con todos los años 2012–2021)
-    pf        predicción no vista 2012–2025 (un año fuera; 2022–2025 con todos)
-    f_fijas   rango p5–p95 de VIIRS ÷ predicho año a año, por región de 10° y tipo (sin el año que se predice)
-    Necesita tt (conteos_tipo)."""
+    nf        every cell that ever had that type × every month (2000–2025)
+    par_fijas parameters without the year being predicted (prueba = year; 0 = with all years 2012–2021)
+    pf        unseen prediction 2012–2025 (one year out; 2022–2025 with all)
+    f_fijas   p5–p95 range of VIIRS ÷ predicted year by year, per 10° region and type (without the year being predicted)
+    Needs tt (conteos_tipo)."""
     a0, a1 = CALIBRACION
     con.execute(f"""
     CREATE OR REPLACE TABLE nf AS
@@ -283,18 +283,18 @@ def modelo_fijas(con: duckdb.DuckDBPyConnection):
                                 AND p.fila = n.fila AND p.col = n.col
     WHERE n.v IS NOT NULL AND n.modis_ok AND n.año BETWEEN {a0} AND {FUERA[1]}
     """)
-    # el tipo va en la columna "mes" de factores(): así el respaldo mundial es por tipo
+    # the type goes in the "mes" column of factores(): that way the world fallback is per type
     con.execute(f"""CREATE OR REPLACE TABLE anual_fijas AS
                     SELECT region, tipo AS mes, año, sum(v) v, sum(pred) m FROM pf WHERE año <= {a1} GROUP BY ALL""")
     factores(con, "anual_fijas", "f_fijas", minimo=MINIMO_FIJAS, minimo_año=20)
-    # una fuente que MODIS nunca vio puede hacer que VIIRS vea cientos de veces lo predicho en un año: el rango se
-    # acota entre un tercio y el triple de lo estimado
+    # a source MODIS never saw can make VIIRS see hundreds of times the prediction in a year: the range is
+    # capped between a third and three times the estimate
     con.execute(f"""UPDATE f_fijas SET k_lo = greatest(coalesce(k_lo, k), k / {TOPE_FIJAS}),
                                        k_hi = least(coalesce(k_hi, k), k * {TOPE_FIJAS})""")
 
 
 def ajustar_fijas(con: duckdb.DuckDBPyConnection, nombre: str = "par_fijas"):
-    """Parámetros por celda y tipo para cada prueba de pr_fit (prueba, año con que se ajusta)."""
+    """Parameters per cell and type for each test in pr_fit (test, year used for fitting)."""
     con.execute(f"""
     CREATE OR REPLACE TABLE {nombre} AS
     WITH par AS (
@@ -317,8 +317,8 @@ def _pred_fijas(n: str = "n", p: str = "p") -> str:
 
 
 def validacion_integral(con: duckdb.DuckDBPyConnection, nombre: str = "v_integral"):
-    """Celda × mes × categoría, 2012–2025, con predicciones que no vieron el año: vegetación (LightGBM + corrección)
-    y las tres fuentes fijas (modelo por celda)."""
+    """Cell × month × category, 2012–2025, with predictions that did not see the year: vegetation (LightGBM +
+    correction) and the three fixed sources (per-cell model)."""
     tabla_base(con)
     conteos_tipo(con)
     modelo_vegetacion(con)
@@ -350,14 +350,14 @@ def validacion_integral(con: duckdb.DuckDBPyConnection, nombre: str = "v_integra
            CAST(viirs AS INT) viirs, CAST(modis AS INT) modis, CAST(pred AS FLOAT) pred,
            CAST(pred_bajo AS FLOAT) pred_bajo, CAST(pred_alto AS FLOAT) pred_alto
     FROM (SELECT * FROM veg UNION ALL SELECT * FROM fijas)
-    WHERE viirs > 0 OR modis > 0 OR pred >= 0.05  -- el mismo umbral que data/app: las fuentes fijas suman muchos valores chicos
+    WHERE viirs > 0 OR modis > 0 OR pred >= 0.05  -- the same threshold as data/app: fixed sources add up many small values
     """)
 
 
 def serie_mundial(con: duckdb.DuckDBPyConnection):
-    """data/app/serie_mundial.csv: total mundial de cada mes. MODIS tal cual; lo estimado desde MODIS (2002–2011 de
-    data/app, 2012–2025 la predicción no vista de la validación) con su rango; y lo que VIIRS observó.
-    Necesita v (validación) y tt, y que preparar_app.py ya haya escrito data/app."""
+    """data/app/serie_mundial.csv: world total of each month. MODIS as is; the estimate from MODIS (2002–2011 from
+    data/app, 2012–2025 the unseen prediction from the validation) with its range; and what VIIRS observed.
+    Needs v (validation) and tt, and preparar_app.py must already have written data/app."""
     archivos = ", ".join(f"'{p.as_posix()}'" for p in (OUT / "celdas.parquet", OUT / "celdas_fijas.parquet") if p.exists())
     con.execute(f"""
     COPY (
@@ -384,18 +384,18 @@ def main():
     modelo = "integral" if hay_integral() else "lightgbm" if hay_lightgbm() else "razon"
     if modelo == "integral":
         validacion_integral(con, "v")
-    else:  # un solo modelo para todos los tipos
+    else:  # a single model for all types
         (validacion_lightgbm if modelo == "lightgbm" else validacion_razon)(con, "v0")
         con.execute("CREATE TABLE v AS SELECT fila, col, año, mes, 'todos' AS categoria, * EXCLUDE (fila, col, año, mes) FROM v0")
-    # una décima de detección basta y deja el archivo en la mitad
+    # a tenth of a detection is enough and halves the file size
     con.execute(f"""COPY (SELECT * REPLACE (CAST(round(pred, 1) AS FLOAT) AS pred, CAST(round(pred_bajo, 1) AS FLOAT) AS pred_bajo,
                                             CAST(round(pred_alto, 1) AS FLOAT) AS pred_alto)
                           FROM v ORDER BY fila, col, año, mes)
                     TO '{(OUT / 'validacion.parquet').as_posix()}' (FORMAT parquet, COMPRESSION zstd, ROW_GROUP_SIZE 100000)""")
 
-    # ---------------------------------------------------------------- métricas
+    # ---------------------------------------------------------------- metrics
     def mediana_error(tabla: str, minimo: int) -> dict:
-        """Error típico (mediana del |error| %) de la predicción y de MODIS crudo, y cobertura del rango."""
+        """Typical error (median |error| %) of the prediction and of raw MODIS, and coverage of the range."""
         fila = con.sql(f"""
             SELECT prueba,
                    median(abs(pred / viirs - 1)) * 100,
@@ -413,7 +413,7 @@ def main():
     SELECT fila, col, arg_max(country, parte) country FROM read_parquet('{PAISES.as_posix()}')
     WHERE parte >= 0.5 GROUP BY ALL
     """)
-    # con categoría; el total es la suma de las categorías
+    # with category; the total is the sum of the categories
     con.execute("""
     CREATE TABLE global_mes_c AS
     SELECT prueba, categoria, año, mes, sum(viirs) viirs, sum(modis) modis, sum(pred) pred, sum(pred_bajo) pred_bajo,
@@ -442,7 +442,7 @@ def main():
         "pais_anual": mediana_error("pais_año", 1000),
         "pais_mensual": mediana_error("pais_mes", 100),
         "paises": con.sql("SELECT count(DISTINCT country) FROM pais_año WHERE viirs >= 1000").fetchall()[0][0],
-        # cuántas veces más fuegos ve VIIRS que MODIS en el mundo cuando vuelan los dos (2012–2021)
+        # how many times more fires VIIRS sees than MODIS worldwide when both fly (2012–2021)
         "factor_viirs_modis": round(con.sql("SELECT sum(viirs) / sum(modis) FROM v WHERE prueba = 'loyo'")
                                     .fetchall()[0][0], 2),
     }
@@ -453,7 +453,7 @@ def main():
                 con.execute(f"CREATE OR REPLACE VIEW {nivel}_x AS SELECT * FROM {nivel}_c WHERE categoria = '{cat}'")
             viirs, modis = con.sql(f"SELECT sum(viirs), sum(modis) FROM v WHERE prueba = 'loyo' AND categoria = '{cat}'").fetchall()[0]
             cats[cat] = {"global_mensual": mediana_error("global_mes_x", 1),
-                         "pais_anual": mediana_error("pais_año_x", 200),  # fuentes fijas: países con ≥ 200 al año
+                         "pais_anual": mediana_error("pais_año_x", 200),  # fixed sources: countries with ≥ 200 per year
                          "factor_viirs_modis": round(viirs / modis, 2),
                          "parte_viirs": round(100 * viirs / total, 2)}
         resumen["categorias"] = cats
@@ -461,7 +461,7 @@ def main():
     (OUT / "validacion.json").write_text(json.dumps(resumen, indent=2, ensure_ascii=False))
     print(json.dumps(resumen, indent=2, ensure_ascii=False))
     n = con.sql(f"SELECT count(*) FROM '{(OUT / 'validacion.parquet').as_posix()}'").fetchall()[0][0]
-    print(f"{n:,} celda-mes · listo en {time.time() - t0:.0f} s")
+    print(f"{n:,} cell-months · done in {time.time() - t0:.0f} s")
 
 
 if __name__ == "__main__":

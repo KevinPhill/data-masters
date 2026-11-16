@@ -1,29 +1,29 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Consolida los ZIP anuales de NASA FIRMS (data/raw) en una sola tabla Parquet.
+"""Consolidates the yearly NASA FIRMS ZIPs (data/raw) into a single Parquet table.
 
-Entrada:  data/raw/<sensor>_<año>_all_countries.zip   (tal como se descargan, sin descomprimir)
-Salida:   data/consolidado/<SENSOR>/<SENSOR>_<AÑO>.parquet
+Input:   data/raw/<sensor>_<year>_all_countries.zip   (as downloaded, not unzipped)
+Output:  data/consolidado/<SENSOR>/<SENSOR>_<YEAR>.parquet
 
-Todas las filas quedan con las mismas columnas, sin importar el sensor:
+Every row ends up with the same columns, whatever the sensor:
     sensor, satellite, country, latitude, longitude, acq_date, acq_time,
     confidence, bright_mir, bright_tir, scan, track, frp, daynight, type, version
 
     bright_mir = MODIS `brightness` / VIIRS `bright_ti4`
     bright_tir = MODIS `bright_t31` / VIIRS `bright_ti5`
 
-No filtra ni modifica datos: solo une archivos y unifica columnas.
+It does not filter or modify data: it only joins files and unifies columns.
 
-Uso:
-    python scripts/consolidar.py                  # todo, en paralelo, reanudable
+Usage:
+    python scripts/consolidar.py                  # everything, in parallel, resumable
     python scripts/consolidar.py --workers 6
     python scripts/consolidar.py --paises "Costa Rica" Nicaragua Panama
-    python scripts/consolidar.py --force          # rehacer aunque ya exista
+    python scripts/consolidar.py --force          # redo even if it already exists
 
-Leer el resultado:
+Reading the result:
     import pandas as pd
     df = pd.read_parquet("data/consolidado", filters=[("country", "==", "Costa Rica")])
-    df = pd.read_parquet("data/consolidado/MODIS")          # un solo sensor
-    # o con DuckDB:  SELECT * FROM 'data/consolidado/**/*.parquet'
+    df = pd.read_parquet("data/consolidado/MODIS")          # a single sensor
+    # or with DuckDB:  SELECT * FROM 'data/consolidado/**/*.parquet'
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "data" / "raw"
 OUT = ROOT / "data" / "consolidado"
 
-SENSORS = {  # prefijo del archivo -> nombre del sensor
+SENSORS = {  # file prefix -> sensor name
     "modis": "MODIS",
     "viirs-snpp": "VIIRS_SNPP",
     "viirs-jpss1": "VIIRS_NOAA20",
@@ -129,7 +129,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 1))
     ap.add_argument("--paises", nargs="*", help='solo estos países, p. ej. "Costa Rica" Nicaragua')
-    ap.add_argument("--force", action="store_true", help="rehacer aunque ya exista la salida")
+    ap.add_argument("--force", action="store_true", help="redo even if the output already exists")
     ap.add_argument("--raw", type=Path, default=RAW)
     args = ap.parse_args()
 
@@ -137,7 +137,7 @@ def main():
     if not zips:
         raise SystemExit(f"No hay ZIP de FIRMS en {args.raw}")
     todo = [p for p in zips if args.force or not out_path(*parse_name(p)).exists()]
-    print(f"{len(zips)} ZIP encontrados, {len(todo)} por consolidar, {args.workers} procesos -> {OUT}")
+    print(f"{len(zips)} ZIPs found, {len(todo)} to consolidate, {args.workers} processes -> {OUT}")
 
     t0, total = time.time(), 0
     with ProcessPoolExecutor(max_workers=args.workers) as ex:
@@ -146,10 +146,10 @@ def main():
             try:
                 r = fut.result()
                 total += r["filas"]
-                print(f"  [{i}/{len(todo)}] {r['archivo']}: {r['filas']:,} filas, {r['paises']} países ({r['seg']} s)")
+                print(f"  [{i}/{len(todo)}] {r['archivo']}: {r['filas']:,} rows, {r['paises']} countries ({r['seg']} s)")
             except Exception as e:
                 print(f"  [{i}/{len(todo)}] ERROR {futs[fut].name}: {e}")
-    print(f"Listo: {total:,} filas nuevas en {time.time() - t0:.0f} s")
+    print(f"Done: {total:,} new rows in {time.time() - t0:.0f} s")
 
 
 if __name__ == "__main__":

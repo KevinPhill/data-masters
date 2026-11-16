@@ -1,12 +1,12 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Exporta los puntos de calor originales de Centroamérica a un Parquet liviano.
+"""Exports the original Central America hot spots to a light Parquet file.
 
-La app descarga puntos de calor desde data/db_nasa.duckdb (~6 GB, todo el mundo). Donde esa base no está,
-como en la demo en línea, usa este archivo: todos los sensores, 2000–2025, siete países.
+The app downloads hot spots from data/db_nasa.duckdb (~6 GB, the whole world). Where that database is missing,
+as in the online demo, it uses this file: every sensor, 2000–2025, seven countries.
 
-Salida: data/app/puntos_centroamerica.parquet (~22 MB)
+Output: data/app/puntos_centroamerica.parquet (~22 MB)
 
-Uso:  python scripts/exportar_puntos.py
+Usage:  python scripts/exportar_puntos.py
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ def main():
     ) TO '{SALIDA.as_posix()}' (FORMAT parquet, COMPRESSION zstd, COMPRESSION_LEVEL 19, ROW_GROUP_SIZE 200000)
     """)
     n = con.sql(f"SELECT count(*) FROM '{SALIDA.as_posix()}'").fetchall()[0][0]
-    print(f"{n:,} puntos · {SALIDA.stat().st_size / 1e6:.1f} MB · {time.time() - t0:.0f} s")
+    print(f"{n:,} points · {SALIDA.stat().st_size / 1e6:.1f} MB · {time.time() - t0:.0f} s")
 
 
 if __name__ == "__main__":

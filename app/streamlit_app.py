@@ -1,8 +1,8 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Data Masters — Todos los puntos de calor de la Tierra en un solo calendario (MODIS + VIIRS armonizados).
+"""Data Masters — Every hot spot on Earth, on one calendar (MODIS + VIIRS harmonized).
 
-NASA Space Apps Challenge 2026 · Costa Rica · Reto "Harmonization of MODIS and VIIRS Hot Spots".
-Datos en datos.py, gráficas en graficas.py, componentes visuales en ui.py y textos (ES/EN) en textos.py.
+NASA Space Apps Challenge 2026 · Costa Rica · Challenge "Harmonization of MODIS and VIIRS Hot Spots".
+Data in datos.py, charts in graficas.py, visual components in ui.py and texts (ES/EN) in textos.py.
 
     streamlit run app/streamlit_app.py
 """
@@ -28,7 +28,7 @@ import informe as INF  # noqa: E402
 import textos as X  # noqa: E402
 import ui  # noqa: E402
 
-# =============================================================================== estado de la interfaz
+# =============================================================================== interface state
 ss = st.session_state
 for _clave, _valor in {"idioma": "en", "modo": "claro", "presentacion": False, "vista": "armonizado",
                        "capa": "total", "tour_paso": 0}.items():
@@ -40,8 +40,8 @@ MESES_LARGO = X.MESES_LARGO[IDI]
 esc = html.escape
 st.set_page_config(page_title=X.t("pagina_titulo", IDI), page_icon="🔥", layout="wide", initial_sidebar_state="auto")
 
-# clic en el globo: se aplica antes de crear los widgets de la barra lateral (después ya no se pueden cambiar).
-# La clave del globo cambia tras cada clic para que la selección se vacíe y el mismo país se pueda volver a elegir.
+# click on the globe: applied before the sidebar widgets are created (afterwards they can no longer change).
+# The globe key changes after each click so the selection clears and the same country can be chosen again.
 ss.setdefault("globo_n", 0)
 _puntos = ((ss.get(f"globo_{ss.globo_n}") or {}).get("selection") or {}).get("points") or []
 if _puntos:
@@ -59,7 +59,7 @@ def T(clave: str, **kw) -> str:
 
 
 def ir_a_pais() -> None:
-    """Elegir un país de la lista de alertas: se aplica antes de crear la barra lateral, como el clic en el globo."""
+    """Choose a country from the alerts list: applied before the sidebar is created, like the click on the globe."""
     nombre = ss.get("al_ver")
     if nombre:
         ss.modo_area = "pais"
@@ -74,8 +74,8 @@ def mes_nombre(m: int, mayuscula: bool = True) -> str:
 
 
 def clave_idioma(base: str) -> str:
-    """Clave de widget por idioma: los combobox no re-traducen su texto visible al cambiar de idioma,
-    así que cada idioma tiene su propio widget y hereda la opción elegida en el otro."""
+    """Widget key per language: comboboxes do not re-translate their visible text when the language changes,
+    so each language has its own widget and inherits the option chosen in the other."""
     clave = f"{base}_{IDI}"
     if clave not in ss:
         for otro in X.IDIOMAS:
@@ -99,7 +99,7 @@ SUPERINDICE = str.maketrans("0123456789-", "⁰¹²³⁴⁵⁶⁷⁸⁹⁻")
 
 
 def cientifica(v: float) -> str:
-    """Números muy grandes (MSE) como 5.6 × 10⁶; los chicos con separador de miles."""
+    """Very large numbers (MSE) as 5.6 × 10⁶; small ones with thousands separators."""
     if not np.isfinite(v):
         return "—"
     if v < 1e5:
@@ -119,7 +119,7 @@ def compacto(v: float) -> str:
 
 
 def grafica(fig, **config) -> None:
-    """Muestra una figura con la plantilla propia (no la de Streamlit); más grande en modo presentación."""
+    """Shows a figure with our own template (not Streamlit's); larger in presentation mode."""
     if PRES:
         fig.update_layout(height=int((fig.layout.height or 380) * 1.3), font_size=16, legend_font_size=16)
     st.plotly_chart(fig, theme=None, width="stretch",
@@ -129,7 +129,7 @@ def grafica(fig, **config) -> None:
 ui.estilos(MODO, PRES)
 
 
-# =============================================================================== tour para jueces
+# =============================================================================== tour for judges
 def _ir_paso(n: int) -> None:
     ss.tour_paso = n
 
@@ -152,7 +152,7 @@ def tour() -> None:
     st.dialog(T("tour_titulo"), width="large")(cuerpo)()
 
 
-# =============================================================================== barra superior
+# =============================================================================== top bar
 with st.container(horizontal=True, horizontal_alignment="right", vertical_alignment="center", key="barra"):
     if st.button(T("tour_boton"), icon=":material/explore:", key="btn_tour"):
         ss.tour_paso = 0
@@ -163,11 +163,11 @@ with st.container(horizontal=True, horizontal_alignment="right", vertical_alignm
     st.segmented_control(T("modo"), ["claro", "noche"], key="modo", required=True, label_visibility="collapsed",
                          format_func=lambda m: T(f"modo_{m}"))
 
-# Lo primero es la banda azul: título, globo y la historia del país elegido. El globo se agrega más abajo, cuando
-# ya existen los controles de la barra lateral; todo lo que se escribe después de esta línea queda debajo de la banda.
+# First comes the blue band: title, globe and the chosen country's history. The globe is added further down, once
+# the sidebar controls exist; everything written after this line goes below the band.
 banda = st.container(key="banda")
 banda.html(ui.encabezado(T))
-contexto_ph = None  # su lugar se crea debajo del globo
+contexto_ph = None  # its place is created below the globe
 if PRES:
     st.html(ui.pitch(T))
 
@@ -191,7 +191,7 @@ def mostrar_contexto(area: str | None = None, n_celdas: int | None = None, años
         contexto_ph.html(ui.contexto(T, tel))
 
 
-# =============================================================================== datos listos?
+# =============================================================================== data ready?
 if not D.datos_listos():
     st.error(T("faltan_datos"))
     st.markdown(T("faltan_pasos"))
@@ -212,7 +212,7 @@ if VAL.get("factor_viirs_modis"):
 _cifras += [(T("imp_n3"), T("imp_n3_t"), T("imp_n3_f")), (f"{N_PAISES}", T("imp_n4_t"), "")]
 st.html(ui.por_que_importa(T, _cifras))
 
-# =============================================================================== barra lateral
+# =============================================================================== sidebar
 with st.sidebar:
     st.html(ui.marca_lateral(T("app_nombre"), T("lateral_sub")))
 
@@ -243,7 +243,7 @@ with st.sidebar:
         lon = c2.number_input(T("longitud"), -180.0, 180.0, -85.4, 0.1, format="%.3f", key="lon")
         radio = st.slider(T("radio_km"), 25, 500, 100, 25, key="radio")
 
-    # tipo de punto de calor (FIRMS): vegetación, industria y gas, volcanes, costa afuera; "todos" = la suma
+    # hot spot type (FIRMS): vegetation, industry and gas, volcanoes, offshore; "todos" = the sum
     CATS = D.categorias_disponibles()
     if len(CATS) > 1:
         st.html(ui.paso(T("tipo_titulo")))
@@ -253,23 +253,23 @@ with st.sidebar:
         tipo = "todos"
     CATS_SEL = None if tipo == "todos" else (tipo,)
 
-    # meses traídos de FIRMS para esta área (pestaña Últimos días): alargan el periodo hasta hoy
+    # months fetched from FIRMS for this area ("Last few days" tab): extend the period up to today
     id_previo = {"pais": lambda: f"pais:{pais}", "region": lambda: f"region:{region}",
                  "coords": lambda: f"coords:{lat},{lon},{radio}"}[modo_area]()
     ss.setdefault("recientes", {})
     ss.setdefault("recientes_pts", {})
-    recientes = ss.recientes.get(id_previo) if not CATS_SEL else None  # FIRMS casi real no trae el tipo
+    recientes = ss.recientes.get(id_previo) if not CATS_SEL else None  # near-real-time FIRMS does not include the type
     AÑO_TOPE = max(AÑO_MAX, int(recientes.año.max())) if recientes is not None and len(recientes) else AÑO_MAX
     _ir = ss.pop("_ir_a_mes", None)
     if _ir:
         ss["años"] = (ss.get("años", (AÑO_MIN, AÑO_TOPE))[0], AÑO_TOPE)
         for _i in X.IDIOMAS:
             ss[f"mes_eval_{_i}"] = f"{_ir[0]}-{_ir[1]:02d}"
-    if "años" in ss and ss["años"][1] > AÑO_TOPE:  # otra área sin meses recientes
+    if "años" in ss and ss["años"][1] > AÑO_TOPE:  # another area without recent months
         ss["años"] = (min(ss["años"][0], AÑO_TOPE), AÑO_TOPE)
 
     st.html(ui.paso(T("periodo_titulo")))
-    # 2003: primer año completo con Terra y Aqua (2000–2002 solo Terra, más incertidumbre; se pueden elegir)
+    # 2003: first complete year with Terra and Aqua (2000–2002 Terra only, more uncertainty; they can be chosen)
     años = st.slider(T("años_historia"), AÑO_MIN, AÑO_TOPE, (max(AÑO_MIN, 2003), AÑO_TOPE), key="años")
     opciones = MESES_DF[MESES_DF.año.between(*años)]
     claves_mes = [f"{a}-{m:02d}" for a, m in zip(opciones.año, opciones.mes)]
@@ -287,7 +287,7 @@ with st.sidebar:
 
 
 
-RAMPA = "Cividis"  # calendario y mapa: perceptualmente uniforme y legible para daltonismo
+RAMPA = "Cividis"  # calendar and map: perceptually uniform and readable with colour blindness
 
 
 @st.cache_data(show_spinner=False)
@@ -301,7 +301,7 @@ def composicion_cache(clave: str, filas: tuple, cols: tuple) -> pd.DataFrame:
 
 
 def reparto(c: pd.DataFrame, años: tuple[int, int]) -> str:
-    """"96 % vegetación · 3 % industria y gas · …" en el periodo (solo si hay más de un tipo)."""
+    """"96 % vegetation · 3 % industry and gas · …" over the period (only if there is more than one type)."""
     d = c[c.año.between(*años)].groupby("categoria").det.sum()
     if len(d) < 2 or d.sum() <= 0:
         return ""
@@ -309,9 +309,9 @@ def reparto(c: pd.DataFrame, años: tuple[int, int]) -> str:
     return " · ".join(f"{'<1' if v < 1 else f'{v:.0f}'} % {T(f'tipo_{k}').lower()}" for k, v in d.items() if v > 0)
 
 
-# =============================================================================== evaluación del modelo (pestaña ¿Cómo armonizamos?)
+# =============================================================================== model evaluation ("How do we harmonize?" tab)
 def comparacion() -> dict:
-    """Cifras para comparar el modelo de la app con LightGBM + corrección (todos los tipos juntos), en prueba."""
+    """Figures to compare the app's model with LightGBM + correction (all types together), on the test years."""
     m, otro = EV["metricas"][MODELO_APP]["prueba"], EV["metricas"].get("lightgbm_corregido", {}).get("prueba")
     if not otro:
         return {}
@@ -320,7 +320,7 @@ def comparacion() -> dict:
     p_app = set(EV_P[(EV_P.modelo == MODELO_APP) & (EV_P.estado == "no funciona bien")].country)
     p_otro = set(EV_P[(EV_P.modelo == "lightgbm_corregido") & (EV_P.estado == "no funciona bien")].country)
     nombres = lambda c: [X.pais(n, IDI) for n in sorted(c, key=lambda n: X.pais(n, IDI))]  # noqa: E731
-    # en qué queda mejor LightGBM con corrección (solo si la diferencia se ve con un decimal)
+    # where LightGBM with correction does better (only if the difference shows with one decimal)
     ventajas = [T(f"cmp_err_{n}", a=otro[n]["error_tipico"], b=m[n]["error_tipico"]) for n in ("pais_mes", "pais_año")
                 if round(otro[n]["error_tipico"], 1) < round(m[n]["error_tipico"], 1)]
     mse = [T(f"cmp_nivel_{n}") for n in ("celda_mes", "pais_mes", "pais_año") if otro[n]["mse"] < m[n]["mse"]]
@@ -336,7 +336,7 @@ def comparacion() -> dict:
 
 
 def metricas_modelo() -> None:
-    """R², MSE y error del modelo de la app (LightGBM); sobreajuste de los tres modelos; países donde no funciona bien."""
+    """R², MSE and error of the app's model (LightGBM); overfitting of the three models; countries where it does not work well."""
     mr = EV["metricas"][MODELO_APP]
     with st.container(key="tarjeta_metricas"):
         st.html(ui.seccion(T("ev_titulo"), T("ev_sub")))
@@ -401,7 +401,7 @@ def metricas_modelo() -> None:
         st.html(ui.tabla(tabla_malos, alto=440))
 
 
-# =============================================================================== globo + historia del país (lo primero)
+# =============================================================================== globe + country history (first thing)
 def seccion_globo() -> None:
     pais_g = ss.get("pais_globo")
     if pais_g not in paises:
@@ -445,7 +445,7 @@ def seccion_globo() -> None:
             st.html(ui.ficha_pais(X.pais(pais_g, IDI), sub_g, frase)
                     + ui.kpis(cifras, "dm-kpis-mini")
                     + (f'<p class="dm-reparto">{esc(T("hist_reparto"))} {esc(rep_g)}</p>' if rep_g else ""))
-            if prom > 0:  # sin puntos de ese tipo no hay historia que dibujar (la frase ya lo dice)
+            if prom > 0:  # without points of that type there is no history to draw (the sentence already says so)
                 grafica(G.historia_pais(s_g, años, idioma=IDI, modo="banda"))
             st.html(ui.nota(None, esc(T("hist_nota"))))
 
@@ -454,7 +454,7 @@ if paises:
     seccion_globo()
 contexto_ph = st.empty()
 
-# =============================================================================== área seleccionada
+# =============================================================================== selected area
 if modo_area == "pais":
     sel, nombre_area, id_area = D.celdas_pais(pais), X.pais(pais, IDI), f"pais:{pais}"
 elif modo_area == "region":
@@ -471,36 +471,36 @@ if sel.empty:
 mostrar_contexto(nombre_area, len(sel), años, coordenadas(float(sel.lat.mean()), float(sel.lon.mean())))
 
 
-if CATS_SEL:  # el nombre del área lleva el tipo elegido (títulos, informe, descargas)
+if CATS_SEL:  # the area name carries the chosen type (titles, report, downloads)
     nombre_area = f"{nombre_area} · {T(f'tipo_{tipo}')}"
 with st.spinner(T("calculando")):
     s = serie_cache(id_area, tuple(sel.fila), tuple(sel.col), CATS_SEL)
     s_todos = serie_cache(id_area, tuple(sel.fila), tuple(sel.col)) if CATS_SEL else s
     comp = composicion_cache(id_area, tuple(sel.fila), tuple(sel.col))
 rec = ss.recientes.get(id_area)
-if rec is not None and len(rec) and not CATS_SEL:  # meses de FIRMS en tiempo casi real (fuente "R"); no traen tipo
+if rec is not None and len(rec) and not CATS_SEL:  # FIRMS near-real-time months (source "R"); they have no type
     _n = rec.assign(fuente="R", det_bajo=rec.det, det_alto=rec.det, modis_n=0.0, viirs_n=rec.det,
                     fecha=pd.to_datetime(dict(year=rec.año, month=rec.mes, day=1)), sin_armonizar=rec.det)
     s = pd.concat([s, _n[[*s.columns, "dias", "dias_mes"]]], ignore_index=True)
 s_rango = s[s.año.between(*años)]
-if CATS_SEL and not (s.det > 0).any():  # ningún punto de calor de este tipo en el área
+if CATS_SEL and not (s.det > 0).any():  # no hot spot of this type in the area
     st.info(T("tipo_vacio", tipo=T(f"tipo_{tipo}"), area=nombre_area.split(" · ")[0], a0=AÑO_MIN, a1=AÑO_MAX),
             icon=":material/travel_explore:")
     st.html(ui.pie(T))
     st.stop()
 
 
-# =============================================================================== panel de estado
+# =============================================================================== status panel
 def evaluar_mes(s, año, mes, año0):
-    """Misma regla de siempre; devuelve la clave del nivel en lugar del texto (los textos están en textos.py).
-    Si el mes va en curso (meses de FIRMS en tiempo casi real), la historia se escala a los días transcurridos."""
+    """Same rule as always; returns the level key instead of the text (the texts are in textos.py).
+    If the month is in progress (FIRMS near-real-time months), the history is scaled to the days elapsed."""
     fila = s[(s.año == año) & (s.mes == mes)]
     x = float(fila.det.iloc[0]) if len(fila) else np.nan
     frac = 1.0
     if len(fila) and "dias" in s.columns and pd.notna(fila.dias.iloc[0]):
         frac = float(fila.dias.iloc[0]) / float(fila.dias_mes.iloc[0])
     hist = s[(s.mes == mes) & s.año.between(año0, año - 1) & (s.fuente != "R")].det.to_numpy() * frac
-    return {**A.clasificar(x, hist, A.MINIMO["mes"]), "frac": frac}  # la misma regla que la pestaña Alertas
+    return {**A.clasificar(x, hist, A.MINIMO["mes"]), "frac": frac}  # the same rule as the Alerts tab
 
 
 ev = evaluar_mes(s, año_ref, mes_ref, años[0])
@@ -534,11 +534,11 @@ else:
                 ui.kpi(T("kpi_mediana"), "—"), ui.kpi(T("kpi_percentil"), "—"), ui.kpi(T("kpi_z"), "—")]
 
 def hechos_area(s: pd.DataFrame, años: tuple[int, int]) -> dict:
-    """Datos del área que dicen para qué sirve el análisis: la conclusión falsa que se evita, la temporada y el
-    año extremo. Solo años completos y sin meses provisionales."""
+    """Area facts that show what the analysis is for: the false conclusion it avoids, the season and the
+    extreme year. Only complete years with no provisional months."""
     d = s[s.año.between(*años) & (s.fuente != "R")]
     h = {}
-    # tendencia: promedio mensual de cada año con al menos 9 meses válidos (misma regla que la historia del país)
+    # trend: monthly average of each year with at least 9 valid months (same rule as the country history)
     prom = d.groupby("año").agg(det=("det", "mean"), ing=("sin_armonizar", "mean"), n=("mes", "count"))
     prom = prom[prom.n >= 9]
     antes, despues = prom[prom.index < 2012].head(5), prom[prom.index >= 2013].tail(5)
@@ -593,12 +593,12 @@ nivel = ev["nivel"]
 frase = T(f"frase_{nivel}", mes=Mes_txt if nivel != "sin_historia" else mes_txt, año=año_ref)
 st.html(ui.alerta(T, nivel, frase, T("alerta_titulo", mes=Mes_txt, año=año_ref, area=nombre_area), detalle, tarjetas))
 
-# =============================================================================== pestañas
+# =============================================================================== tabs
 t_al, t_cal, t_imp, t_tend, t_mapa, t_arm, t_nrt, t_datos, t_met = st.tabs(
     [T("tab_alertas"), T("tab_calendario"), T("tab_impacto"), T("tab_tendencias"), T("tab_mapa"), T("tab_armonizacion"),
      T("tab_nrt"), T("tab_descargas"), T("tab_metodo")], key="pestanas")
 
-# =============================================================================== alertas por semana o por mes
+# =============================================================================== alerts by week or by month
 sem = D.serie_semanal(id_area, CATS_SEL)
 sem_todos = D.serie_semanal(id_area) if CATS_SEL else sem
 
@@ -614,7 +614,7 @@ def fecha_periodo(f: pd.Timestamp, periodo: str, dia: bool = True) -> str:
 
 
 def aviso_alerta(e: dict, periodo: str) -> tuple[str, str]:
-    """(nivel para el color, frase) del final de la ventana."""
+    """(level for the colour, sentence) for the end of the window."""
     mes_ = periodo == "mes"
     k = e.get("clave")
     if k == "racha":
@@ -628,7 +628,7 @@ def aviso_alerta(e: dict, periodo: str) -> tuple[str, str]:
                          periodo=fecha_periodo(ultimo.fecha, periodo, dia=False), r=e["ultima"],
                          k=A.RACHA[periodo], u=unidades(periodo))
     if k == "termino":
-        fin_ep = e["fin"] + pd.Timedelta(days=6) if periodo == "semana" else e["fin"]  # último día de la racha
+        fin_ep = e["fin"] + pd.Timedelta(days=6) if periodo == "semana" else e["fin"]  # last day of the run
         return "normal", T("al_termino", n=e["periodos"], u=unidades(periodo, e["periodos"]),
                            inicio=fecha_periodo(e["inicio"], periodo), fin=fecha_periodo(fin_ep, periodo))
     if k == "normal":
@@ -644,7 +644,7 @@ with t_al:
     with st.container(key="tarjeta_alertas"):
         st.html(ui.seccion(T("al_titulo")))
         opciones_al = ["semana", "mes"] if sem is not None else ["mes"]
-        if len(opciones_al) == 1:  # área sin serie semanal: por mes, sin olvidar lo que se había elegido
+        if len(opciones_al) == 1:  # area without a weekly series: by month, keeping what had been chosen
             ss._al_forzado = ss.get("_al_forzado") or ss.get("al_periodo") != "mes"
             ss.al_periodo = "mes"
         elif ss.pop("_al_forzado", False) or ss.get("al_periodo") not in opciones_al:
@@ -656,7 +656,7 @@ with t_al:
             base = sem[(sem.fecha >= pd.Timestamp(años[0], 1, 1)) & (sem.fecha <= fin_mes)]
         else:
             base = s[(s.año >= años[0]) & (s.fecha <= fin_mes)].copy()
-            if "dias" in base:  # mes en curso traído de FIRMS: la historia se escala a los días que van
+            if "dias" in base:  # current month fetched from FIRMS: the history is scaled to the days so far
                 base["frac"] = (base.dias / base.dias_mes).fillna(1.0)
             base = base[["fecha", "det", *(["frac"] if "frac" in base else [])]]
         n_al = A.niveles(base.reset_index(drop=True), periodo, años[0]) if len(base) else base.assign(nivel=[])
@@ -807,7 +807,7 @@ with t_mapa:
     with c1:
         st.html(ui.nota(None, esc(nota_mapa)))
     with c2, st.container(key="tarjeta_mapa"):
-        if fig:  # fronteras servidas desde app/static: el mapa funciona sin internet
+        if fig:  # borders served from app/static: the map works offline
             grafica(fig, topojsonURL="app/static/topojson/")
         else:
             st.info(T("mapa_vacio"), icon=":material/map:")
@@ -871,8 +871,8 @@ with t_nrt:
                 else:
                     (nrt, satelite), dias = D.firms_7d(sel), 7
             hoy = date.today()
-            # FIRMS en tiempo casi real no trae el tipo de fuente: se compara con todos los puntos de calor. Lo normal
-            # es la mediana de la misma semana del año (países y regiones) o del mismo mes, escalada a los días
+            # near-real-time FIRMS does not include the source type: it is compared with all hot spots. Normal
+            # is the median of the same week of the year (countries and regions) or of the same month, scaled to the days
             if sem_todos is not None:
                 _w = sem_todos.fecha.dt.isocalendar().week.clip(upper=52)
                 hist = sem_todos[_w == min(hoy.isocalendar().week, 52)].det
@@ -1001,7 +1001,7 @@ with t_datos:
                 with st.spinner(T("desc_consultando")):
                     crudo = D.detecciones_crudas(sel, f0, f1, limite=int(limite))
                     pts = ss.recientes_pts.get(id_area)
-                    if pts is not None and len(pts):  # meses traídos de FIRMS en tiempo casi real
+                    if pts is not None and len(pts):  # months fetched from FIRMS in near real time
                         pts = pts.assign(acq_date=pd.to_datetime(pts.acq_date).dt.date, sensor="VIIRS")
                         pts = pts[(pts.acq_date >= f0) & (pts.acq_date <= f1)]
                         crudo = pd.concat([crudo, pts[[c for c in crudo.columns if c in pts.columns]]],

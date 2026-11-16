@@ -1,17 +1,17 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Crea data/db_nasa.duckdb: UNA base con todas las detecciones FIRMS (todos los países, sensores y años).
+"""Creates data/db_nasa.duckdb: ONE database with every FIRMS detection (every country, sensor and year).
 
-Pasos (reanudable: si se corta, vuelve a correrlo y sigue donde quedó):
-  1. Consolida los ZIP de data/raw a Parquet (scripts/consolidar.py), solo los que falten.
-  2. Carga cada Parquet en la tabla `hotspots` de DuckDB.
-  3. Crea la tabla resumen `resumen_mensual` y vistas útiles.
+Steps (resumable: if it stops, run it again and it continues where it left off):
+  1. Consolidates the ZIPs in data/raw into Parquet (scripts/consolidar.py), only the missing ones.
+  2. Loads each Parquet into the DuckDB `hotspots` table.
+  3. Creates the summary table `resumen_mensual` and useful views.
 
-Uso:
+Usage:
     python scripts/crear_db.py
     python scripts/crear_db.py --workers 6
-    python scripts/crear_db.py --borrar-parquet     # libera espacio al final (el .duckdb ya tiene todo)
+    python scripts/crear_db.py --borrar-parquet     # frees space at the end (the .duckdb already has everything)
 
-Consultar:
+Querying:
     import duckdb
     con = duckdb.connect("data/db_nasa.duckdb", read_only=True)
     con.sql("SELECT sensor, year(acq_date) y, count(*) FROM hotspots WHERE country='Costa Rica' GROUP BY ALL ORDER BY y").df()
@@ -81,7 +81,7 @@ FROM resumen_mensual GROUP BY country;
 def paso_consolidar(workers: int):
     zips = [p for p in sorted(consolidar.RAW.glob("*.zip")) if consolidar.parse_name(p)]
     todo = [p for p in zips if not consolidar.out_path(*consolidar.parse_name(p)).exists()]
-    print(f"[1/3] Consolidar: {len(zips)} ZIP, {len(todo)} por convertir a Parquet")
+    print(f"[1/3] Consolidate: {len(zips)} ZIPs, {len(todo)} to convert to Parquet")
     if not todo:
         return
     from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -89,7 +89,7 @@ def paso_consolidar(workers: int):
         futs = {ex.submit(consolidar.consolidate_zip, str(p), None): p for p in todo}
         for i, fut in enumerate(as_completed(futs), 1):
             r = fut.result()
-            print(f"    [{i}/{len(todo)}] {r['archivo']}: {r['filas']:,} filas ({r['seg']} s)", flush=True)
+            print(f"    [{i}/{len(todo)}] {r['archivo']}: {r['filas']:,} rows ({r['seg']} s)", flush=True)
 
 
 def run_sql(con, script: str):
@@ -103,7 +103,7 @@ def paso_cargar(con):
     files = sorted(consolidar.OUT.rglob("*.parquet"))
     done = {r[0] for r in con.execute("SELECT archivo FROM _cargados").fetchall()}
     todo = [f for f in files if f.name not in done]
-    print(f"[2/3] Cargar a DuckDB: {len(files)} Parquet, {len(todo)} por cargar")
+    print(f"[2/3] Load into DuckDB: {len(files)} Parquet files, {len(todo)} to load")
     for i, f in enumerate(todo, 1):
         t0 = time.time()
         con.execute("BEGIN")
@@ -111,24 +111,24 @@ def paso_cargar(con):
         con.execute(RESUMEN_ARCHIVO.format(f=f.as_posix())).fetchall()
         con.execute("INSERT INTO _cargados VALUES (?, ?, now())", [f.name, n]).fetchall()
         con.execute("COMMIT")
-        print(f"    [{i}/{len(todo)}] {f.name}: {n:,} filas ({time.time() - t0:.0f} s)", flush=True)
+        print(f"    [{i}/{len(todo)}] {f.name}: {n:,} rows ({time.time() - t0:.0f} s)", flush=True)
 
 
 def paso_resumen(con):
-    print("[3/3] Vistas y resumen…", flush=True)
+    print("[3/3] Views and summary…", flush=True)
     run_sql(con, POST)
     total = con.execute("SELECT sum(detecciones) FROM resumen_mensual").fetchall()[0][0]
-    print(con.sql("SELECT sensor, min(year) desde, max(year) hasta, sum(detecciones) filas, "
-                  "count(DISTINCT country) paises FROM resumen_mensual GROUP BY sensor ORDER BY sensor"))
+    print(con.sql("SELECT sensor, min(year) first_year, max(year) last_year, sum(detecciones) detections, "
+                  "count(DISTINCT country) countries FROM resumen_mensual GROUP BY sensor ORDER BY sensor"))
     con.execute("CHECKPOINT").fetchall()
-    print(f"Total: {total:,} detecciones · {DB.stat().st_size / 1e9:.1f} GB en {DB.relative_to(ROOT)}")
+    print(f"Total: {total:,} detections · {DB.stat().st_size / 1e9:.1f} GB in {DB.relative_to(ROOT)}")
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 1))
-    ap.add_argument("--solo", choices=["consolidar", "cargar", "resumen"], help="correr un solo paso")
-    ap.add_argument("--borrar-parquet", action="store_true", help="borra data/consolidado al terminar")
+    ap.add_argument("--solo", choices=["consolidar", "cargar", "resumen"], help="run a single step")
+    ap.add_argument("--borrar-parquet", action="store_true", help="delete data/consolidado at the end")
     args = ap.parse_args()
 
     if args.solo in (None, "consolidar"):
@@ -143,7 +143,7 @@ def main():
         con.close()
     if args.borrar_parquet and args.solo is None:
         shutil.rmtree(consolidar.OUT, ignore_errors=True)
-        print("data/consolidado borrado.")
+        print("data/consolidado deleted.")
 
 
 if __name__ == "__main__":

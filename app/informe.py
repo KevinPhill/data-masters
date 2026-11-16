@@ -1,7 +1,7 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Informe descargable del área: analíticas y gráficas en un solo archivo HTML.
+"""Downloadable report for the area: analytics and charts in a single HTML file.
 
-Plotly va incluido una sola vez dentro del archivo, así que el informe se abre y se puede explorar sin internet.
+Plotly is embedded once inside the file, so the report opens and can be explored offline.
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ td.v { font-variant-numeric: tabular-nums; font-weight: 600; }
 def construir(*, idioma: str, titulo: str, evento: str, generado: str, frase: str, detalle: str,
               metricas: list[tuple[str, str]], hechos: list[str], figuras: list[tuple[str, go.Figure]],
               etiquetas: dict[str, str], metodo: str, credito: str) -> str:
-    """`detalle` y `hechos` llegan como HTML ya escapado; el resto es texto plano."""
+    """`detalle` and `hechos` arrive as already-escaped HTML; the rest is plain text."""
     filas = "".join(f'<tr><td>{esc(k)}</td><td class="v">{esc(v)}</td></tr>' for k, v in metricas)
     graficas = []
     for i, (nombre, fig) in enumerate(figuras):

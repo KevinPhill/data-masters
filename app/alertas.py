@@ -1,16 +1,16 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Alzas de fuego fuera de lo normal, semana a semana o mes a mes.
+"""Hot spot rises above normal, week by week or month by month.
 
-Cada periodo se compara con el mismo periodo del año (la misma semana ISO, o el mismo mes) en los años anteriores
-del periodo de historia elegido. Es la regla del estado del mes:
-    muy alto   ≥ 2 veces la mediana, o percentil ≥ 90
-    alto       ≥ 1.25 veces la mediana, o percentil ≥ 75
-    bajo       ≤ la mitad de la mediana
-Para no alertar por ruido, un alza tiene que superar la mediana en al menos MINIMO detecciones.
+Each period is compared with the same period of the year (the same ISO week, or the same month) in the previous years
+of the chosen history period. It is the same rule as the month status:
+    very high  ≥ 2 times the median, or percentile ≥ 90
+    high       ≥ 1.25 times the median, or percentile ≥ 75
+    low        ≤ half the median
+To avoid alerting on noise, a rise has to exceed the median by at least MINIMO detections.
 
-Un episodio es una seguidilla de periodos altos o muy altos. Es alerta si dura al menos RACHA periodos (un patrón de
-alzas, no una semana rara) o si alguno de sus periodos es muy alto, al menos duplica la mediana y la pasa por
-3 × MINIMO detecciones.
+An episode is a run of high or very high periods. It is an alert if it lasts at least RACHA periods (a pattern of
+rises, not one odd week) or if one of its periods is very high, at least doubles the median and exceeds it by
+3 × MINIMO detections.
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ ALTOS = ("alto", "muy_alto")
 
 
 def clasificar(x: float, hist: np.ndarray, minimo: float = 0.0) -> dict:
-    """Nivel de un valor frente a su historia (los mismos periodos de años anteriores)."""
+    """Level of a value against its history (the same periods in previous years)."""
     hist = np.asarray(hist, dtype=float)
     if len(hist) < 3 or not np.isfinite(x):
         return dict(x=x, n=len(hist), nivel="sin_historia")
@@ -50,8 +50,8 @@ def clasificar(x: float, hist: np.ndarray, minimo: float = 0.0) -> dict:
 
 
 def niveles(d: pd.DataFrame, periodo: str, año0: int) -> pd.DataFrame:
-    """d: fecha (inicio del periodo) y det, en orden. Agrega año, clave (semana ISO o mes) y la comparación de cada
-    periodo con los mismos periodos de [año0, año − 1]. Con la columna frac (mes en curso), la historia se escala."""
+    """d: date (start of the period) and det, in order. Adds year, key (ISO week or month) and the comparison of each
+    period with the same periods of [year0, year − 1]. With the frac column (current month), the history is scaled."""
     d = d.copy()
     if periodo == "semana":
         iso = d.fecha.dt.isocalendar()
@@ -70,7 +70,7 @@ def niveles(d: pd.DataFrame, periodo: str, año0: int) -> pd.DataFrame:
 
 
 def episodios(n: pd.DataFrame, periodo: str) -> pd.DataFrame:
-    """Seguidillas de periodos altos o muy altos (seguidos en el calendario) y si cada una es alerta."""
+    """Runs of high or very high periods (consecutive in the calendar) and whether each one is an alert."""
     paso = pd.Timedelta(days=7) if periodo == "semana" else None
     alto = n.nivel.isin(ALTOS).to_numpy()
     fechas = n.fecha.to_numpy()
@@ -103,7 +103,7 @@ def episodios(n: pd.DataFrame, periodo: str) -> pd.DataFrame:
 
 
 def estado(n: pd.DataFrame, ep: pd.DataFrame, periodo: str) -> dict:
-    """Lo que hay que decir del final de la ventana: alerta en curso, alza que ya terminó o nada fuera de lo normal."""
+    """What to say about the end of the window: an ongoing alert, a rise that already ended or nothing out of the ordinary."""
     if n.empty:
         return dict(clave="sin_datos")
     ult = n.iloc[-1]
@@ -124,7 +124,7 @@ def estado(n: pd.DataFrame, ep: pd.DataFrame, periodo: str) -> dict:
 
 
 def ranking_paises(pm: pd.DataFrame, año: int, mes: int, año0: int) -> pd.DataFrame:
-    """Países cuyo mes está fuera de lo normal: pm = country, año, mes, det (meses sin fuego = sin fila)."""
+    """Countries whose month is out of the ordinary: pm = country, year, month, det (months without fire = no row)."""
     m = pm[pm.mes == mes]
     tabla = m.pivot_table(index="country", columns="año", values="det", aggfunc="sum")
     años_hist = [a for a in range(año0, año) if a in tabla.columns]

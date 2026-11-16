@@ -1,19 +1,20 @@
 # AI-assisted code (Claude, Anthropic), directed and reviewed by the team. See README: "Use of artificial intelligence".
-"""Series semanales armonizadas por país y región de ejemplo, y serie mensual de cada país (alertas de la app).
+"""Harmonized weekly series per country and example region, and monthly series per country (the app's alerts).
 
-La armonización es mensual (celda × mes, scripts/preparar_app.py). Para ver semana a semana, cada mes armonizado se
-reparte entre sus días según lo que vio el sensor de ese mes: VIIRS S-NPP o NOAA-20 donde es lo observado, MODIS
-(Terra + Aqua, o solo Terra) donde el mes viene del modelo. Así la suma de las semanas de un mes da el mes de la app.
-Si el sensor no vio nada ese mes pero el modelo estima algo (fuentes fijas), se reparte parejo entre los días.
+Harmonization is monthly (cell × month, scripts/preparar_app.py). To see week by week, each harmonized month is
+split among its days according to what that month's sensor saw: VIIRS S-NPP or NOAA-20 where it is the observation,
+MODIS (Terra + Aqua, or Terra only) where the month comes from the model. So the weeks of a month add up to the app's
+month. If the sensor saw nothing that month but the model estimates something (fixed sources), it is spread evenly
+across the days.
 
-Semanas ISO (de lunes a domingo). Solo quedan las semanas con los siete días dentro de meses con datos.
+ISO weeks (Monday to Sunday). Only weeks whose seven days fall inside months with data are kept.
 
-  data/app/semanas.parquet     area ("pais:<país>" o "region:<región>"), categoria, semana (lunes), det
-  data/app/paises_mes.parquet  country, categoria, año, mes, det   (para ver qué países están fuera de lo normal)
+  data/app/semanas.parquet     area ("pais:<country>" or "region:<region>"), categoria, semana (Monday), det
+  data/app/paises_mes.parquet  country, categoria, año, mes, det   (to see which countries are out of the ordinary)
 
-Necesita data/db_nasa.duckdb (scripts/crear_db.py) y data/app (scripts/preparar_app.py).
+Needs data/db_nasa.duckdb (scripts/crear_db.py) and data/app (scripts/preparar_app.py).
 
-Uso:  python scripts/semanas.py
+Usage:  python scripts/semanas.py
 """
 
 from __future__ import annotations
@@ -40,7 +41,7 @@ def main():
     con.execute(f"CREATE VIEW celdas AS SELECT * FROM read_parquet([{celdas}], union_by_name = true)")
     con.execute(f"CREATE TABLE meses AS SELECT * FROM '{(APP / 'meses.parquet').as_posix()}'")
 
-    # celdas de cada área, con la misma regla que la app (datos.celdas_pais y datos.celdas_caja)
+    # cells of each area, with the same rule as the app (datos.celdas_pais and datos.celdas_caja)
     con.execute(f"""
     CREATE TABLE areas AS
     WITH p AS (SELECT * FROM '{(APP / 'paises.parquet').as_posix()}'),
@@ -52,15 +53,15 @@ def main():
     for nombre, (la0, la1, lo0, lo1) in REGIONES.items():
         con.execute(f"""INSERT INTO areas SELECT 'region:' || ?, fila, col FROM todas
                         WHERE lat BETWEEN {la0} AND {la1} AND lon BETWEEN {lo0} AND {lo1}""", [nombre])
-    print(f"[{time.time() - t0:4.0f} s] {con.sql('SELECT count(DISTINCT area) FROM areas').fetchall()[0][0]} áreas")
+    print(f"[{time.time() - t0:4.0f} s] {con.sql('SELECT count(DISTINCT area) FROM areas').fetchall()[0][0]} areas")
 
-    # mes armonizado de cada área (lo que muestra la app)
+    # harmonized month of each area (what the app shows)
     con.execute("""
     CREATE TABLE mes_area AS
     SELECT a.area, c.categoria, c.año, c.mes, sum(c.det) det
     FROM celdas c JOIN areas a USING (fila, col) GROUP BY ALL
     """)
-    # detecciones por día, área, tipo y sensor (Terra, Aqua, N = S-NPP, N20 = NOAA-20)
+    # detections per day, area, type and sensor (Terra, Aqua, N = S-NPP, N20 = NOAA-20)
     con.execute(f"""
     CREATE TABLE dia AS
     WITH h AS (
@@ -72,9 +73,9 @@ def main():
     SELECT a.area, h.categoria, h.acq_date fecha, h.sat, count(*)::INT n
     FROM h JOIN areas a USING (fila, col) GROUP BY ALL
     """)
-    print(f"[{time.time() - t0:4.0f} s] {con.sql('SELECT count(*) FROM dia').fetchall()[0][0]:,} área-día")
+    print(f"[{time.time() - t0:4.0f} s] {con.sql('SELECT count(*) FROM dia').fetchall()[0][0]:,} area-days")
 
-    # el sensor que cuenta en cada mes, según la fuente del mes en la app
+    # the sensor that counts in each month, according to the month's source in the app
     con.execute("""
     CREATE TABLE peso AS
     WITH d AS (
@@ -91,8 +92,8 @@ def main():
     FROM range(DATE '2000-11-01', DATE '2026-01-01', INTERVAL 1 DAY) t(d)
     JOIN meses m ON m.año = year(d) AND m.mes = month(d)
     """)
-    # cada día se lleva su parte del mes; los días sin detecciones también existen (dias), así que el total del mes
-    # (n_mes) va aparte, en pm
+    # each day takes its share of the month; days without detections also exist (dias), so the month total
+    # (n_mes) is kept separately, in pm
     con.execute("""
     CREATE TABLE sem AS
     WITH x AS (
@@ -107,7 +108,7 @@ def main():
     )
     SELECT area, categoria, date_trunc('week', fecha)::DATE semana, CAST(sum(det) AS FLOAT) det FROM x GROUP BY ALL
     """)
-    # solo semanas completas: sus siete días caen en meses con datos
+    # only complete weeks: their seven days fall in months with data
     con.execute("""
     CREATE TABLE completas AS
     SELECT date_trunc('week', fecha)::DATE semana FROM dias GROUP BY 1 HAVING count(*) = 7
@@ -122,9 +123,9 @@ def main():
           FROM mes_area WHERE area LIKE 'pais:%' AND det > 0 ORDER BY country, categoria, año, mes)
     TO '{(APP / 'paises_mes.parquet').as_posix()}' (FORMAT parquet, COMPRESSION zstd)
     """)
-    # control: las semanas suman lo mismo que los meses (en los meses de semanas completas, aprox.)
+    # check: the weeks add up to the same as the months (in months of complete weeks, approx.)
     tot = con.sql("SELECT (SELECT sum(det) FROM sem) s, (SELECT sum(det) FROM mes_area) m").fetchall()[0]
-    print(f"[{time.time() - t0:4.0f} s] listo · suma semanas {tot[0]:,.0f} · suma meses {tot[1]:,.0f}")
+    print(f"[{time.time() - t0:4.0f} s] done · sum of weeks {tot[0]:,.0f} · sum of months {tot[1]:,.0f}")
 
 
 if __name__ == "__main__":
