@@ -41,7 +41,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FUENTE = ROOT / "docs" / "presentacion" / "fuente"
 SALIDA = ROOT / "docs" / "presentacion"
 DEMO_URL = "https://data-masters.streamlit.app"
-EQUIPO = "Kevin Alexander Delgado Phillips"  # integrantes en la portada
+EQUIPO = "Kevin Alexander Delgado Phillips, Dana Mata Ramirez"  # integrantes en la portada, separados por coma
 TITULO = "Data Masters"
 ASUNTO = "NASA Space Apps Challenge 2026 Costa Rica · Harmonization of MODIS and VIIRS Hot Spots"
 NOTA_IA = ("Slides written and designed with AI assistance (Claude, Anthropic). Maps and charts are data visualizations "
@@ -66,7 +66,7 @@ def main():
     texto = (FUENTE / "slides.html").read_text(encoding="utf-8")
     nombres = [n.strip() for n in a.equipo.split(",") if n.strip()]
     equipo = (f'      <div><span>{"Member" if len(nombres) == 1 else "Members"}</span>'
-              f'<a>{html.escape(", ".join(nombres))}</a></div>\n') if nombres else ""
+              f'<a>{"<br>".join(html.escape(n) for n in nombres)}</a></div>\n') if nombres else ""
     texto = (texto.replace("{{DEMO_URL}}", html.escape(a.demo))
              .replace("{{DEMO_TEXTO}}", html.escape(a.demo.split("://", 1)[-1].rstrip("/")))
              .replace("{{EQUIPO}}", equipo)
