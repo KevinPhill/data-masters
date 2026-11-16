@@ -109,19 +109,19 @@ aside.notas { display: none; }
 .s4 .pie { position: absolute; left: 96px; bottom: 34px; font-size: 15px; color: var(--tenue); letter-spacing: .03em; }
 
 /* 5 · la app: capturas reales sobre papel claro, una se sale del cuadro */
-.s5 { background: var(--papel); color: var(--tinta); }
-.s5 h2 { position: absolute; left: 96px; top: 76px; font-family: "Fira Sans"; font-weight: 900; font-size: 84px; line-height: .98; color: var(--tinta); }
-.s5 .texto { position: absolute; left: 96px; top: 236px; width: 520px; font-size: 24px; line-height: 1.4; }
+.s5 { background: var(--noche); color: #fff; }
+.s5 h2 { position: absolute; left: 96px; top: 76px; font-family: "Fira Sans"; font-weight: 900; font-size: 84px; line-height: .98; color: #fff; }
+.s5 .texto { position: absolute; left: 96px; top: 236px; width: 520px; font-size: 24px; line-height: 1.4; color: var(--claro); }
+.s5 .texto b { color: #fff; }
 .s5 .texto p + p { margin-top: 18px; }
 .s5 .texto b { font-family: "Fira Sans"; font-weight: 700; }
-.s5 .alerta { position: absolute; left: 700px; top: 76px; width: 1300px; border: 1px solid #C9C3B4; background: #fff; padding: 22px 26px; }
+.s5 .alerta { position: absolute; left: 700px; top: 76px; width: 1300px; border: 1px solid rgba(201,214,242,.3); background: #fff; padding: 22px 26px; }
 .s5 .alerta img { display: block; width: 100%; }
-.s5 .globo { position: absolute; left: 96px; top: 640px; width: 470px; border: 1px solid #07173F; }
+.s5 .globo { position: absolute; left: 96px; top: 640px; width: 470px; border: 1px solid rgba(201,214,242,.3); }
 .s5 .globo img { display: block; width: 100%; }
-.s5 .cita { position: absolute; left: 700px; top: 760px; width: 1100px; font-family: "Fira Sans"; font-weight: 600; font-size: 34px; line-height: 1.22; color: var(--rocket); }
-.s5 .cita span { display: block; font-family: "Overpass"; font-weight: 500; font-size: 20px; color: #4A5878; margin-top: 12px; line-height: 1.4; }
-.s5 .pie { position: absolute; left: 700px; bottom: 34px; font-size: 16px; color: #4A5878; letter-spacing: .03em; }
-.s5 .n { color: #4A5878; }
+.s5 .cita { position: absolute; left: 700px; top: 760px; width: 1100px; font-family: "Fira Sans"; font-weight: 600; font-size: 34px; line-height: 1.22; color: var(--brasa); }
+.s5 .cita span { display: block; font-family: "Overpass"; font-weight: 500; font-size: 20px; color: var(--claro); margin-top: 12px; line-height: 1.4; }
+.s5 .pie { position: absolute; left: 700px; bottom: 34px; font-size: 16px; color: var(--tenue); letter-spacing: .03em; }
 
 /* 6 · método y resultados: un número grande y una pista con cuatro pasos */
 .s6 { background: linear-gradient(45deg, var(--electric) 0%, var(--deep) 62%, #040A1E 100%); }
@@ -152,22 +152,21 @@ aside.notas { display: none; }
 .s6 .ia b { font-family: "Fira Sans"; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--yonder); margin-right: 8px; } .s6 .modelos .app i { background: var(--yellow); }
 
 /* 7 · lo que está en juego: muertes por humo de incendios por región, y una nota corta de IA */
-.s7 { background: var(--papel); color: var(--tinta); }
-.s7 .eyebrow { position: absolute; left: 96px; top: 70px; font-size: 18px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--rocket); }
+.s7 { background: var(--noche); color: #fff; }
+.s7 .eyebrow { position: absolute; left: 96px; top: 70px; font-size: 18px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--brasa); }
 .s7 h2 { position: absolute; left: 96px; top: 100px; font-family: "Fira Sans"; font-weight: 900; font-size: 92px; line-height: 1; letter-spacing: -.01em; }
-.s7 .sub { position: absolute; left: 96px; top: 214px; width: 1180px; font-size: 25px; line-height: 1.38; color: #2B3A5C; }
-.s7 .sub b { font-family: "Fira Sans"; font-weight: 700; color: var(--tinta); }
+.s7 .sub { position: absolute; left: 96px; top: 214px; width: 1180px; font-size: 25px; line-height: 1.38; color: var(--claro); }
+.s7 .sub b { font-family: "Fira Sans"; font-weight: 700; color: #fff; }
 .s7 .grafica { position: absolute; left: 96px; top: 352px; width: 1160px; }
-.s7 h3 { font-size: 17px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #4A5878; margin-bottom: 18px; }
+.s7 h3 { font-size: 17px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--tenue); margin-bottom: 18px; }
 .s7 .fila { display: flex; align-items: center; height: 70px; }
 .s7 .fila span { width: 250px; font-family: "Fira Sans"; font-weight: 600; font-size: 24px; }
 .s7 .fila i { height: 44px; background: linear-gradient(90deg, var(--martian), var(--rocket)); }
-.s7 .fila b { margin-left: 16px; font-family: "Fira Sans"; font-weight: 700; font-size: 26px; color: var(--rocket); }
-.s7 .fila.resto i { background: #B9B3A5; } .s7 .fila.resto b { color: #4A5878; }
-.s7 .nota { margin-top: 14px; width: 1080px; font-size: 16px; line-height: 1.45; color: #4A5878; }
+.s7 .fila b { margin-left: 16px; font-family: "Fira Sans"; font-weight: 700; font-size: 26px; color: var(--brasa); }
+.s7 .fila.resto i { background: #33456F; } .s7 .fila.resto b { color: var(--tenue); }
+.s7 .nota { margin-top: 14px; width: 1080px; font-size: 16px; line-height: 1.45; color: var(--tenue); }
 .s7 .ayuda { position: absolute; left: 1340px; top: 352px; width: 484px; }
-.s7 .punto { border-top: 1px solid #C9C3B4; padding: 12px 0 14px; font-size: 20px; line-height: 1.38; color: #2B3A5C; }
-.s7 .punto b { display: block; font-family: "Fira Sans"; font-weight: 700; font-size: 22px; color: var(--tinta); margin-bottom: 4px; }
-.s7 .cierre { position: absolute; left: 96px; right: 150px; bottom: 34px; font-size: 15px; line-height: 1.5; color: #4A5878; }
-.s7 .cierre a { color: var(--electric); font-weight: 700; }
-.s7 .n { color: #4A5878; }
+.s7 .punto { border-top: 1px solid rgba(201,214,242,.25); padding: 12px 0 14px; font-size: 20px; line-height: 1.38; color: var(--claro); }
+.s7 .punto b { display: block; font-family: "Fira Sans"; font-weight: 700; font-size: 22px; color: #fff; margin-bottom: 4px; }
+.s7 .cierre { position: absolute; left: 96px; right: 150px; bottom: 34px; font-size: 15px; line-height: 1.5; color: var(--tenue); }
+.s7 .cierre a { color: var(--yonder); font-weight: 700; }
